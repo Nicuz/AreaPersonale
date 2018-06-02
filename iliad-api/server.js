@@ -3,26 +3,17 @@ const app = express();
 const request = require('request');
 const cheerio = require('cheerio');
 
-
-
-
-
 app.get('/', function (req, res) {
     var userid = req.query.userid
     var password = req.query.password
     var token = req.query.token
     var iccid = req.query.iccid
-    
+
     var data_store = {};
     data_store["iliad"] = {};
-  
-    
-  
-    if (iccid != undefined && token != undefined){
-      
-      
-      
-      var headers = {
+
+    if (iccid != undefined && token != undefined) {
+        var headers = {
             'authority': 'www.iliad.it',
             'cache-control': 'max-age=0',
             'origin': 'https://www.iliad.it',
@@ -47,25 +38,25 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-              const $ = cheerio.load(body);
-              var results = $('body');
-              results.each(function (i, result) {
-                
-                  data_store["iliad"]["sim"] = {};
-                
-                  var sim = $(result)
-                  .find('div.flash-error').text().split('   ').join('').split('\n')
-                  sim = sim[1];
-                
-                  if (sim != undefined)
-                    data_store["iliad"]["sim"][0]= sim;
-                  else
-                    data_store["iliad"]["sim"][0]= 'Attivazione avvenuta correttamente';
-                  
-                  res.send(data_store);
-                  
-              });
-              
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+
+                    data_store["iliad"]["sim"] = {};
+
+                    var sim = $(result)
+                        .find('div.flash-error').text().split('   ').join('').split('\n')
+                    sim = sim[1];
+
+                    if (sim != undefined)
+                        data_store["iliad"]["sim"][0] = sim;
+                    else
+                        data_store["iliad"]["sim"][0] = 'Attivazione avvenuta correttamente';
+
+                    res.send(data_store);
+
+                });
+
             }
         })
     }
@@ -133,27 +124,26 @@ app.get('/', function (req, res) {
                         var date = orderdate[3].split('   ').join('')
 
                         var preparazione = array[1]
-                        
-                        
-                        try {
-                          
-                          results.each(function (i, result) {
-                
-                          data_store["iliad"]["sim"] = {};
-                
-                          var activation = $(result)
-                          .find('p.explain').text().split('   ').join('').split('\n')
-                          activation = activation[1];
-                            
-                          var title = $(result)
-                          .find('div.form-activation').text().split('   ').join('').split('\n')
-                          title = title[1];
-                            
-                          data_store["iliad"]["sim"][0] = activation;
-                          data_store["iliad"]["sim"][1] = title;
 
-                      });
-                          
+
+                        try {
+
+                            results.each(function (i, result) {
+                                data_store["iliad"]["sim"] = {};
+
+                                var activation = $(result)
+                                    .find('p.explain').text().split('   ').join('').split('\n')
+                                activation = activation[1];
+
+                                var title = $(result)
+                                    .find('div.form-activation').text().split('   ').join('').split('\n')
+                                title = title[1];
+
+                                data_store["iliad"]["sim"][0] = activation;
+                                data_store["iliad"]["sim"][1] = title;
+
+                            });
+
                         } catch (Exception) {}
 
                         try {
@@ -163,7 +153,7 @@ app.get('/', function (req, res) {
                             var order_shipped = $(result)
                                 .find('div.step__text').find('p').text()
                             data_store["iliad"]["shipping"][0] = spedizione;
-                            data_store["iliad"]["shipping"][1] = order_shipped;  
+                            data_store["iliad"]["shipping"][1] = order_shipped;
                             data_store["iliad"]["shipping"][2] = tracking;
                         } catch (Exception) {}
 
