@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +26,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import es.dmoral.toasty.Toasty;
 
 public class Main2Activity extends AppCompatActivity {
 
@@ -78,8 +81,8 @@ public class Main2Activity extends AppCompatActivity {
 
         final Bundle extras = getIntent().getExtras();
         assert extras != null;
-        String userid = extras.getString("userid");
-        String password = extras.getString("password");
+        final String userid = extras.getString("userid");
+        final String password = extras.getString("password");
         final String token = extras.getString("token");
 
         final String site_url = "https://iliad-unofficial.glitch.me/";
@@ -208,6 +211,17 @@ public class Main2Activity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         int error_code = error.networkResponse.statusCode;
+                        if (error_code == 503) {
+                            settings = getSharedPreferences("sharedPreferences", 0);
+                            editor = settings.edit();
+                            editor.putString("userid", null);
+                            editor.putString("password", null);
+                            editor.apply();
+
+                            Toasty.warning(Main2Activity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
+                            Intent mainActivity = new Intent(Main2Activity.this, MainActivity.class);
+                            startActivity(mainActivity);
+                        }
 
                     }
                 });

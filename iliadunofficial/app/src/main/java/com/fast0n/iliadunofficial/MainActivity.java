@@ -38,26 +38,31 @@ public class MainActivity extends AppCompatActivity {
         edt_id = findViewById(R.id.edt_id);
         edt_password = findViewById(R.id.edt_password);
 
-        settings = getSharedPreferences("sharedPreferences", 0);
-        String userid = settings.getString("userid", null);
-        String password = settings.getString("password", null);
-        editor = settings.edit();
 
-        if (userid.length() != 0) {
-            edt_id.setText(userid);
-            edt_password.setText(password);
+        try {
+            settings = getSharedPreferences("sharedPreferences", 0);
+            String userid = settings.getString("userid", null);
+            String password = settings.getString("password", null);
+            editor = settings.edit();
 
-            btn_login.postDelayed(new Runnable() { // delay button
-                public void run() {
-                    btn_login.performClick();
-                    btn_login.setPressed(true);
-                    btn_login.invalidate();
-                    btn_login.setPressed(false);
-                    btn_login.invalidate();
-                }
-            }, 1000);
+            if (password.length() > 7) {
+                edt_id.setText(userid);
+                edt_password.setText(password);
 
+                btn_login.postDelayed(new Runnable() { // delay button
+                    public void run() {
+                        btn_login.performClick();
+                        btn_login.setPressed(true);
+                        btn_login.invalidate();
+                        btn_login.setPressed(false);
+                        btn_login.invalidate();
+                    }
+                }, 1000);
+
+            }
         }
+        catch (Exception ignores){}
+
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -8,4 +8,5 @@
     <string name="tracking">Tracking</string>
     <string name="iccid">ICCID</string>
     <string name="active">Attiva</string>
+    <string name="error_login">ID utente o password non corretto.</string>
 </resources>
