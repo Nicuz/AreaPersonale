@@ -18,19 +18,19 @@ app.get('/', function (req, res) {
     var data_store = {};
     data_store["iliad"] = {};
 
+    var headers = {
+        'authority': 'www.iliad.it',
+        'cache-control': 'max-age=0',
+        'origin': 'https://www.iliad.it',
+        'upgrade-insecure-requests': '1',
+        'content-type': 'application/x-www-form-urlencoded',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
+        'cookie': 'ACCOUNT_SESSID=' + token
+    };
+
     if (email != undefined && email_confirm != undefined && password != undefined && token != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/mes-informations/email',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
         var formData = {
             email: email,
             'email-confirm': email_confirm,
@@ -44,22 +44,12 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error) {
-                res.send('true');
+                data_store['iliad'][0] = 'true';
+                res.send(data_store);
+                console.log(data_store);
             }
         });
     } else if (new_password != undefined && new_password_confirm != undefined && password != undefined && token != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/mes-informations/password',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
         var formData = {
             'password-current': password,
             'password-new': new_password,
@@ -73,23 +63,12 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error) {
-                res.send('true');
+                data_store['iliad'][0] = 'true';
+                res.send(data_store);
+                console.log(data_store);
             }
         });
     } else if (iccid != undefined && token != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/activation-sim',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
-
         var formData = {
             iccid: parseInt(req.query.iccid)
         }
@@ -122,19 +101,6 @@ app.get('/', function (req, res) {
             }
         });
     } else if (userid != undefined && password != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
-
         var formData = {
             'login-ident': parseInt(userid),
             'login-pwd': '' + password
@@ -236,18 +202,6 @@ app.get('/', function (req, res) {
         });
     }
     else if (info == 'true' && token != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
         var options = {
             url: 'https://www.iliad.it/account/mes-informations',
             method: 'POST',
@@ -282,8 +236,8 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["address"] = {};
                         data_store["iliad"]["pay"] = {};
                         data_store["iliad"]["mail"] = {};
-                        data_store["iliad"]["puk"] = {};
                         data_store["iliad"]["password"] = {};
+                        data_store["iliad"]["puk"] = {};
 
                         data_store["iliad"]["address"][0] = address_title;
                         data_store["iliad"]["address"][1] = address;
@@ -295,8 +249,8 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["password"][0] = password_title;
                         data_store["iliad"]["password"][1] = password;
                         data_store["iliad"]["puk"][0] = puk_title;
-                        data_store["iliad"]["puk"][1] = puk_text;
-                        data_store["iliad"]["puk"][2] = puk;
+                        data_store["iliad"]["puk"][1] = puk;
+                        data_store["iliad"]["puk"][2] = puk_text;
 
                         res.send(data_store);
                         console.log(data_store);
@@ -306,18 +260,6 @@ app.get('/', function (req, res) {
         });
     }
     else if (doc == 'true' && token != undefined) {
-        var headers = {
-            'authority': 'www.iliad.it',
-            'cache-control': 'max-age=0',
-            'origin': 'https://www.iliad.it',
-            'upgrade-insecure-requests': '1',
-            'content-type': 'application/x-www-form-urlencoded',
-            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'referer': 'https://www.iliad.it/account/',
-            'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-            'cookie': 'ACCOUNT_SESSID=' + token
-        };
         var options = {
             url: 'https://www.iliad.it/account/mes-conditions',
             method: 'POST',
