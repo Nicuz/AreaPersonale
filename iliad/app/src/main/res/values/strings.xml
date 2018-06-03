@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">iliad Unofficial</string>
+    <string name="btn_login">Accedi</string>
+    <string name="edt_password">Password</string>
+    <string name="edt_id">ID utente</string>
+    <string name="id_user">ID utente:</string>
+    <string name="number_user">Numero:</string>
+    <string name="iccid">ICCID</string>
+    <string name="active">Attiva</string>
+    <string name="error_login">ID utente o password non corretto.</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="logout">Esci</string>
+    <string name="sim_layout">Attivazione della sim</string>
+    <string name="error_iccid">Inserire il codice di 19 cifre</string>
+    <string name="settings_layout">I miei dati personali</string>
+
+
+    <string name="site_url">https://iliad-api.glitch.me/</string>
+    <string name="tv_edit">Modifica</string>
+    <string name="tv_show">Visualizza</string>
+
+
+</resources>
