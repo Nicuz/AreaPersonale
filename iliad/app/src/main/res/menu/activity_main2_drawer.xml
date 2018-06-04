@@ -5,21 +5,35 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_second"
+            android:visible="false"
+            android:id="@+id/nav_first"
+            android:icon="@drawable/ic_sim_card"
+            android:title="@string/nav_one" />
+
+        <item
+            android:id="@+id/nav_info"
             android:icon="@drawable/ic_info"
-            android:title="@string/settings_layout" />
+            android:title="@string/nav_info" />
 
         <item
             android:checked="true"
-            android:id="@+id/nav_first"
+            android:id="@+id/nav_sim"
             android:icon="@drawable/ic_sim_card"
-            android:title="@string/sim_layout" />
+            android:title="@string/nav_sim" />
+
+        <item
+            android:checked="true"
+            android:id="@+id/nav_conditions"
+            android:icon="@drawable/ic_conditions"
+            android:title="@string/nav_conditions" />
+
+
 
 
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
-            android:title="@string/logout" />
+            android:title="@string/nav_logout" />
     </group>
 
 </menu>

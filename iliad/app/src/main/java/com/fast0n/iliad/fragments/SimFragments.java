@@ -10,10 +10,8 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,15 +24,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.MainActivity;
 import com.fast0n.iliad.R;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
-import net.yslibrary.android.keyboardvisibilityevent.Unregistrar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,29 +34,25 @@ import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 
-public class FirstFragments extends Fragment {
+public class SimFragments extends Fragment {
 
-    public FirstFragments() {
+    public SimFragments() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_first, container, false);
+        final View view = inflater.inflate(R.layout.fragment_sim, container, false);
 
         final ProgressBar loading;
         final CardView cardView, cardView1, cardView2, cardView3;
         final Button btn_activatesim;
         final EditText edt_iccid;
-        final AdView mAdView;
-        final InterstitialAd mInterstitialAd;
         final Context context;
-        InputMethodManager keyboard;
-        Unregistrar mUnregistrar;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         SharedPreferences settings;
         SharedPreferences.Editor editor;
 
-        mAdView = view.findViewById(R.id.adView);
+        // java adresses
         loading = view.findViewById(R.id.progressBar);
         btn_activatesim = view.findViewById(R.id.btn_activatesim);
         edt_iccid = view.findViewById(R.id.edt_iccid);
@@ -79,22 +66,6 @@ public class FirstFragments extends Fragment {
         cardView2.setVisibility(View.GONE);
         cardView3.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
-
-        // banner && interstitialAd
-        MobileAds.initialize(context, "ca-app-pub-9646303341923759~5575848020");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        mInterstitialAd = new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId("ca-app-pub-9646303341923759/8529314423");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-            }
-
-        });
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
@@ -123,49 +94,15 @@ public class FirstFragments extends Fragment {
             }
         });
 
-        mUnregistrar = KeyboardVisibilityEvent.registerEventListener(getActivity(),
-                new KeyboardVisibilityEventListener() {
-                    @Override
-                    public void onVisibilityChanged(boolean isOpen) {
-                        updateKeyboardStatusText(isOpen, view);
-                    }
-                });
-        updateKeyboardStatusText(KeyboardVisibilityEvent.isKeyboardVisible(getActivity()), view);
+        edt_iccid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateKeyboardStatusText(KeyboardVisibilityEvent.isKeyboardVisible(getActivity()), view);
 
-
+            }
+        });
 
         return view;
-    }
-
-    private void changeMail(String url) {
-
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
-
-                            System.out.println(iliad);
-
-                        } catch (JSONException ignored) {
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                });
-
-        queue.add(getRequest);
-
     }
 
     private void activateSim(String url, final Context context) {
@@ -217,6 +154,7 @@ public class FirstFragments extends Fragment {
         final EditText edt_iccid;
         final Button btn_activatesim;
 
+        // java adresses
         tvvalidation = view.findViewById(R.id.validation);
         tvorder_date = view.findViewById(R.id.order_date);
         tvdate = view.findViewById(R.id.date);
@@ -226,10 +164,8 @@ public class FirstFragments extends Fragment {
         tvactivation = view.findViewById(R.id.activation);
         tvtitle_activation = view.findViewById(R.id.title_activation);
         tvoffer = view.findViewById(R.id.offer);
-
         edt_iccid = view.findViewById(R.id.edt_iccid);
         btn_activatesim = view.findViewById(R.id.btn_activatesim);
-
         cardView = view.findViewById(R.id.cardView);
         cardView1 = view.findViewById(R.id.cardView1);
         cardView2 = view.findViewById(R.id.cardView2);
@@ -333,21 +269,18 @@ public class FirstFragments extends Fragment {
 
     }
 
-
     private void updateKeyboardStatusText(boolean isOpen, View view) {
 
         final CardView cardView3;
-        LinearLayout layout;
+
+        // java adresses
         cardView3 = view.findViewById(R.id.cardView3);
-        layout = view.findViewById(R.id.layout);
 
         if (isOpen) {
             cardView3.setVisibility(View.INVISIBLE);
-            layout.setVisibility(View.GONE);
 
         } else {
             cardView3.setVisibility(View.VISIBLE);
-            layout.setVisibility(View.VISIBLE);
         }
     }
 

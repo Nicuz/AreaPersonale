@@ -1,4 +1,4 @@
-package com.fast0n.iliad;
+package com.fast0n.iliad.java;
 
 import java.util.Random;
 

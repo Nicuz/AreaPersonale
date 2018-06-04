@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.fast0n.iliad.java.GenerateToken;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         edt_id = findViewById(com.fast0n.iliad.R.id.edt_id);
         edt_password = findViewById(com.fast0n.iliad.R.id.edt_password);
 
-
         try {
             settings = getSharedPreferences("sharedPreferences", 0);
             String userid = settings.getString("userid", null);
@@ -54,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
                 startActivity(intent);
             }
+        } catch (Exception ignores) {
         }
-        catch (Exception ignores){}
-
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override

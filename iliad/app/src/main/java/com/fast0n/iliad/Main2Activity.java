@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +25,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.iliad.fragments.FirstFragments;
-import com.fast0n.iliad.fragments.SecondFragments;
+import com.fast0n.iliad.fragments.SimFragments;
+import com.fast0n.iliad.fragments.ConditionsFragment;
+import com.fast0n.iliad.fragments.InfoFragments.InfoFragments;
+import com.fast0n.iliad.fragments.FirstFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,16 +53,6 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
-        Fragment fragment = null;
-        fragment = new FirstFragments();
-
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
-            ft.commit();
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(com.fast0n.iliad.R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 com.fast0n.iliad.R.string.navigation_drawer_open, com.fast0n.iliad.R.string.navigation_drawer_close);
@@ -68,6 +61,7 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
         NavigationView navigationView = (NavigationView) findViewById(com.fast0n.iliad.R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        Menu nav_Menu = navigationView.getMenu();
 
         headerView = navigationView.getHeaderView(0);
 
@@ -80,7 +74,7 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         final String site_url = getString(com.fast0n.iliad.R.string.site_url);
         String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
 
-        getObject(url);
+        getObject(url, nav_Menu);
 
         settings = getSharedPreferences("sharedPreferences", 0);
         editor = settings.edit();
@@ -90,10 +84,17 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
     }
 
-    private void getObject(String url) {
+    private void getObject(String url, final Menu nav_Menu) {
+
+        final ProgressBar loading;
+
+        // java adresses
         final TextView textView = headerView.findViewById(com.fast0n.iliad.R.id.textView);
         final TextView textView1 = headerView.findViewById(com.fast0n.iliad.R.id.textView1);
         final TextView textView2 = headerView.findViewById(com.fast0n.iliad.R.id.textView2);
+
+        loading = findViewById(R.id.progressBar);
+
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -109,12 +110,47 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
                             JSONObject json = new JSONObject(iliad);
                             String stringUser = json.getString("user");
+                            String stringSim = json.getString("sim");
 
                             JSONObject json_user = new JSONObject(stringUser);
                             String user_name = json_user.getString("user_name");
                             String user_id = json_user.getString("user_id");
                             String user_numtell = json_user.getString("user_numtell");
 
+                            JSONObject json_sim = new JSONObject(stringSim);
+                            String sim_state = json_sim.getString("2");
+
+                            if (sim_state.equals("false")) {
+
+                                Fragment fragment = null;
+                                fragment = new SimFragments();
+
+                                nav_Menu.findItem(R.id.nav_first).setVisible(false);
+
+                                if (fragment != null) {
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
+                                    ft.commit();
+                                }
+
+                            }
+
+                else {
+                                Fragment fragment = null;
+                                fragment = new FirstFragment();
+
+                                nav_Menu.findItem(R.id.nav_first).setVisible(true);
+
+                                if (fragment != null) {
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
+                                    ft.commit();
+                                }
+                            }
+
+                            loading.setVisibility(View.INVISIBLE);
                             textView.setText(user_name);
                             textView1.setText(getString(com.fast0n.iliad.R.string.id_user) + " " + user_id);
                             textView2.setText(getString(com.fast0n.iliad.R.string.number_user) + " " + user_numtell);
@@ -192,9 +228,15 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         Fragment fragment = null;
 
         if (id == R.id.nav_first) {
-            fragment = new FirstFragments();
-        } else if (id == R.id.nav_second) {
-            fragment = new SecondFragments();
+        }
+
+        if (id == R.id.nav_info) {
+            fragment = new InfoFragments();
+        } else if (id == R.id.nav_sim) {
+            fragment = new SimFragments();
+
+        } else if (id == R.id.nav_conditions) {
+            fragment = new ConditionsFragment();
 
         } else if (id == R.id.nav_logout) {
             settings = getSharedPreferences("sharedPreferences", 0);
