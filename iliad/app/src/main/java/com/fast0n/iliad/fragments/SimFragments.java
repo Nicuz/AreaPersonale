@@ -123,10 +123,18 @@ public class SimFragments extends Fragment {
                             String stringSim = json.getString("sim");
 
                             JSONObject json_sim = new JSONObject(stringSim);
-                            String error = json_sim.getString("0");
+                            String toast = json_sim.getString("0");
+                            String sim_state = json_sim.getString("1");
 
-                            Toasty.warning(context, error, Toast.LENGTH_LONG, true).show();
+                            if (sim_state.equals("false"))
+                                Toasty.warning(context, toast, Toast.LENGTH_LONG, true).show();
 
+                            else{
+                                Toasty.success(context, toast, Toast.LENGTH_LONG, true).show();
+                                Intent intent = new Intent(context, MainActivity.class);
+                                startActivity(intent);
+
+                            }
                         } catch (JSONException ignored) {
                         }
                     }

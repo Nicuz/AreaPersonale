@@ -21,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import es.dmoral.toasty.Toasty;
 
@@ -54,12 +56,20 @@ public class ChangeEmailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+
                 if (edt_password.getText().toString().equals(password)
                         && edt_password.getText().toString().length() != 0
                         && edt_email.getText().toString().length() != 0) {
+                    if(isEmail(edt_email.getText().toString())){
                     String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
                             + edt_email.getText().toString() + "&password=" + password + "&token=" + token;
                     changeMail(url);
+                    }
+                    else {
+                        Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,
+                                true).show();
+                    }
                 } else
                     Toasty.warning(ChangeEmailActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
                             true).show();
@@ -67,6 +77,18 @@ public class ChangeEmailActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static boolean isEmail(String email) {
+        String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
+        CharSequence inputString = email;
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputString);
+        if (matcher.matches()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void changeMail(String url) {

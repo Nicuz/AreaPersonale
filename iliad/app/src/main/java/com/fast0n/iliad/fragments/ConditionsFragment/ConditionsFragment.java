@@ -1,4 +1,4 @@
-package com.fast0n.iliad.fragments;
+package com.fast0n.iliad.fragments.ConditionsFragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +24,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.MainActivity;
 import com.fast0n.iliad.R;
+import com.fast0n.iliad.fragments.InfoFragments.CustomAdapterInfo;
+import com.fast0n.iliad.fragments.InfoFragments.DataInfoFragments;
+import com.fast0n.iliad.java.RecyclerItemListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
@@ -39,21 +46,16 @@ public class ConditionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_conditions, container, false);
 
-        final CardView cardView, cardView1, cardView2;
-
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
+        CardView cardView;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
-        cardView1 = view.findViewById(R.id.cardView1);
-        cardView2 = view.findViewById(R.id.cardView2);
 
-        cardView.setVisibility(View.GONE);
-        cardView1.setVisibility(View.GONE);
-        cardView2.setVisibility(View.GONE);
+        cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -72,23 +74,36 @@ public class ConditionsFragment extends Fragment {
     private void getObject(String url, final Context context, View view, final String token, final String password) {
 
         final ProgressBar loading;
-        final CardView cardView, cardView1, cardView2;
-        final TextView tvTitle, tvDate, tvTitle1, tvDate1;
         final SharedPreferences[] settings = new SharedPreferences[1];
         final SharedPreferences.Editor[] editor = new SharedPreferences.Editor[1];
+        final RecyclerView recyclerView;
+        final List<DataConditionsFragments> conditionList = new ArrayList<>();
+        final CardView cardView;
 
         // java adresses
-        tvTitle = view.findViewById(R.id.title);
-        tvDate = view.findViewById(R.id.date);
-        tvTitle1 = view.findViewById(R.id.title1);
-        tvDate1 = view.findViewById(R.id.date1);
-        cardView = view.findViewById(R.id.cardView);
-        cardView1 = view.findViewById(R.id.cardView1);
-        cardView2 = view.findViewById(R.id.cardView2);
+        recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
+        cardView = view.findViewById(R.id.cardView);
 
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
 
-        loading.setVisibility(View.VISIBLE);
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
+                    public void onClickItem(View arg1, int position) {
+                        TextView getUrl = arg1.findViewById(R.id.url);
+                        String url = getUrl.getText().toString();
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+
+                    public void onLongClickItem(View v, int position) {
+                    }
+                }));
+
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -101,51 +116,24 @@ public class ConditionsFragment extends Fragment {
                             String iliad = json_raw.getString("iliad");
 
                             JSONObject json = new JSONObject(iliad);
-                            String stringDoc = json.getString("0");
-                            String stringDoc1 = json.getString("1");
 
-                            JSONObject json_doc = new JSONObject(stringDoc);
-                            String doc_title = json_doc.getString("0");
-                            String doc_date = json_doc.getString("1");
-                            final String doc_link = json_doc.getString("2");
+                            System.out.println(json.length());
 
-                            tvTitle.setText(doc_title);
-                            tvDate.setText(doc_date);
+                            for (int j = 0; j < json.length(); j++) {
 
-                            JSONObject json_doc1 = new JSONObject(stringDoc1);
-                            String doc_title1 = json_doc1.getString("0");
-                            String doc_date1 = json_doc1.getString("1");
-                            final String doc_link1 = json_doc1.getString("2");
+                                String string = json.getString(String.valueOf(j));
+                                JSONObject json_strings = new JSONObject(string);
 
-                            tvTitle1.setText(doc_title1);
-                            tvDate1.setText(doc_date1);
+                                String a = json_strings.getString("0");
+                                String b = json_strings.getString("1");
+                                String c = json_strings.getString("2");
+                                conditionList.add(new DataConditionsFragments(a, b, c));
+                            }
 
-                            cardView1.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String url = doc_link;
-                                    Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse(url));
-                                    startActivity(i);
-                                }
-                            });
-
-                            cardView2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String url = doc_link1;
-                                    Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse(url));
-                                    startActivity(i);
-                                }
-                            });
-
+                            CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
+                            recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
-                            cardView1.setVisibility(View.VISIBLE);
-                            cardView2.setVisibility(View.VISIBLE);
-
                             loading.setVisibility(View.INVISIBLE);
-
                         } catch (JSONException ignored) {
                         }
                     }

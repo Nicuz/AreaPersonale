@@ -48,8 +48,6 @@ public class InfoFragments extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        SharedPreferences settings;
-        SharedPreferences.Editor editor;
         CardView cardView;
 
         // java adresses
@@ -69,12 +67,6 @@ public class InfoFragments extends Fragment {
         String url = site_url + "?info=true&token=" + token;
 
         getObject(url, context, view, token, password);
-
-        settings = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-        editor = settings.edit();
-        editor.putString("userid", userid);
-        editor.putString("password", password.replace(" ", ""));
-        editor.apply();
 
         return view;
     }
@@ -102,20 +94,21 @@ public class InfoFragments extends Fragment {
                 new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View arg1, int position) {
 
-                        if (position == 2) {
-                            Intent intent = new Intent(context, ChangeEmailActivity.class);
-                            intent.putExtra("password", password);
-                            intent.putExtra("token", token);
-
-                            startActivity(intent);
-                        }
-
-                        if (position == 4) {
-                            Intent intent = new Intent(context, ChangePasswordActivity.class);
-                            intent.putExtra("password", password);
-                            intent.putExtra("token", token);
-
-                            startActivity(intent);
+                        switch (position) {
+                            case 2:
+                                Intent intent2 = new Intent(context, ChangeEmailActivity.class);
+                                intent2.putExtra("password", password);
+                                intent2.putExtra("token", token);
+                                startActivity(intent2);
+                                break;
+                            case 4:
+                                Intent intent4 = new Intent(context, ChangePasswordActivity.class);
+                                intent4.putExtra("password", password);
+                                intent4.putExtra("token", token);
+                                startActivity(intent4);
+                                break;
+                            default:
+                                Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }
 
                     }

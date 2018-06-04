@@ -46,7 +46,6 @@ app.get('/', function (req, res) {
             if (!error) {
                 data_store['iliad'][0] = 'true';
                 res.send(data_store);
-                console.log(data_store);
             }
         });
     } else if (new_password != undefined && new_password_confirm != undefined && password != undefined && token != undefined) {
@@ -65,7 +64,6 @@ app.get('/', function (req, res) {
             if (!error) {
                 data_store['iliad'][0] = 'true';
                 res.send(data_store);
-                console.log(data_store);
             }
         });
     } else if (iccid != undefined && token != undefined) {
@@ -90,10 +88,14 @@ app.get('/', function (req, res) {
                     var sim = $(result)
                         .find('div.flash-error').text().split('   ').join('').split('\n')
                     sim = sim[1];
-                    if (sim != undefined)
+                    if (sim != undefined) {
                         data_store["iliad"]["sim"][0] = sim;
-                    else
-                        data_store["iliad"]["sim"][0] = 'Attivazione avvenuta correttamente';
+                        data_store["iliad"]["sim"][1] = "false";
+                    } else {
+                        data_store["iliad"]["sim"][0] = sim;
+                        data_store["iliad"]["sim"][1] = "true";
+                    }
+
 
                     res.send(data_store);
 
@@ -193,15 +195,13 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["validation"][1] = order_date;
                         data_store["iliad"]["validation"][2] = date;
                         res.send(data_store)
-                        console.log(data_store);
                     });
                 } catch (Exeption) {
                     res.send(503);
                 }
             }
         });
-    }
-    else if (info == 'true' && token != undefined) {
+    } else if (info == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/mes-informations',
             method: 'POST',
@@ -253,13 +253,13 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["puk"][2] = puk_text;
 
                         res.send(data_store);
-                        console.log(data_store);
                     });
-                } catch (Exeption) { }
+                } catch (Exeption) {
+                    res.send(503);
+                }
             }
         });
-    }
-    else if (doc == 'true' && token != undefined) {
+    } else if (doc == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/mes-conditions',
             method: 'POST',
@@ -290,21 +290,22 @@ app.get('/', function (req, res) {
                         var condition_doc = 'https://www.iliad.it' + array2[0];
                         var price_doc = 'https://www.iliad.it' + array2[1];
 
-                        data_store["iliad"]["condition"] = {};
-                        data_store["iliad"]["price"] = {};
-                        data_store["iliad"]["condition"][0] = condition_title;
-                        data_store["iliad"]["condition"][1] = condition_text;
-                        data_store["iliad"]["condition"][2] = condition_doc;
-                        data_store["iliad"]["price"][0] = price_title;
-                        data_store["iliad"]["price"][1] = price_text;
-                        data_store["iliad"]["price"][2] = price_doc;
+                        data_store["iliad"][0] = {};
+                        data_store["iliad"][1] = {};
+                        data_store["iliad"][0][0] = condition_title;
+                        data_store["iliad"][0][1] = condition_text;
+                        data_store["iliad"][0][2] = condition_doc;
+                        data_store["iliad"][1][0] = price_title;
+                        data_store["iliad"][1][1] = price_text;
+                        data_store["iliad"][1][2] = price_doc;
                         res.send(data_store);
-                        console.log(data_store);
                     });
-                } catch (Exeption) { }
+                } catch (Exeption) {
+                    res.send(503);
+                }
             }
         });
     }
 });
 exports = module.exports = app;
-const server = app.listen(process.env.PORT, function () { });
+const server = app.listen(process.env.PORT, function () {});

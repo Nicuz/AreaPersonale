@@ -175,6 +175,7 @@
                         android:textColor="@android:color/black" />
 
                     <EditText
+                        android:inputType="number"
                         android:id="@+id/edt_iccid"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"

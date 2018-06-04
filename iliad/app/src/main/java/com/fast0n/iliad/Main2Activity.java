@@ -26,7 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.fragments.SimFragments;
-import com.fast0n.iliad.fragments.ConditionsFragment;
+import com.fast0n.iliad.fragments.ConditionsFragment.ConditionsFragment;
 import com.fast0n.iliad.fragments.InfoFragments.InfoFragments;
 import com.fast0n.iliad.fragments.FirstFragment;
 
