@@ -14,6 +14,8 @@ app.get('/', function (req, res) {
     var new_password_confirm = req.query.new_password_confirm;
     var info = req.query.info;
     var doc = req.query.doc;
+    var credit = req.query.credit;
+    var creditestero = req.query.credit_estero;
 
     var data_store = {};
     data_store["iliad"] = {};
@@ -68,7 +70,7 @@ app.get('/', function (req, res) {
         });
     } else if (iccid != undefined && token != undefined) {
         var formData = {
-            iccid: parseInt(req.query.iccid)
+            iccid: req.query.iccid
         }
 
         var options = {
@@ -88,10 +90,11 @@ app.get('/', function (req, res) {
                     var sim = $(result)
                         .find('div.flash-error').text().split('   ').join('').split('\n')
                     sim = sim[1];
-                    if (sim != undefined) {
+                    if (sim != 'L\'état actuel de votre SIM ne requiert aucune activation.' && sim != 'Cette SIM a été résiliée et ne peux plus être utilisée.') {
                         data_store["iliad"]["sim"][0] = sim;
                         data_store["iliad"]["sim"][1] = "false";
-                    } else {
+                    }
+                    else {
                         data_store["iliad"]["sim"][0] = sim;
                         data_store["iliad"]["sim"][1] = "true";
                     }
@@ -109,7 +112,7 @@ app.get('/', function (req, res) {
         }
 
         var options = {
-            url: 'https://www.iliad.it/account/',
+            url: 'https://www.iliad.it/account/activation-sim',
             method: 'POST',
             headers: headers,
             formData: formData
@@ -194,14 +197,16 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["validation"][0] = validation;
                         data_store["iliad"]["validation"][1] = order_date;
                         data_store["iliad"]["validation"][2] = date;
+
                         res.send(data_store)
                     });
                 } catch (Exeption) {
-                    res.send(503);
+                    res.error(503);
                 }
             }
         });
-    } else if (info == 'true' && token != undefined) {
+    }
+    else if (info == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/mes-informations',
             method: 'POST',
@@ -250,16 +255,16 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["password"][1] = password;
                         data_store["iliad"]["puk"][0] = puk_title;
                         data_store["iliad"]["puk"][1] = puk;
-                        data_store["iliad"]["puk"][2] = puk_text;
 
                         res.send(data_store);
                     });
                 } catch (Exeption) {
-                    res.send(503);
+                    //res.send(503);
                 }
             }
         });
-    } else if (doc == 'true' && token != undefined) {
+    }
+    else if (doc == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/mes-conditions',
             method: 'POST',
@@ -300,12 +305,151 @@ app.get('/', function (req, res) {
                         data_store["iliad"][1][2] = price_doc;
                         res.send(data_store);
                     });
+                } catch (Exeption) { }
+            }
+        });
+    }
+
+    else if (creditestero == 'true' && token != undefined) {
+        var options = {
+            url: 'https://www.iliad.it/account/conso-et-factures',
+            method: 'POST',
+            headers: headers,
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+                var array = [];
+                var array2 = [];
+                try {
+                    results.each(function (i, result) {
+
+                        $(result)
+                            .find('div.conso__content')
+                            .each(function (index, element) {
+                                array = array.concat([$(element).find('div.conso__text').text()]);
+                            });
+                        $(result)
+                            .find('div.conso__icon')
+                            .each(function (index, element) {
+                                array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
+                            });
+
+                        var title = $(result).find('h2').text().split('\n')[1].split('   ').join('');
+
+                        var chiamate_title = array2[0].split('\n')[2].split('   ').join('');
+                        var sms_title = array2[1].split('\n')[2].split('   ').join('');
+                        var data_title = array2[2].split('\n')[5].split('   ').join('');
+                        var mms_tittle = array2[3].split('\n')[2].split('   ').join('');
+
+                        var chiamate = array[4].split('\n')[1].split('   ').join('');
+                        var consumi_voce = array[4].split('\n')[2].split('   ').join('');
+                        var sms = array[5].split('\n')[0].split('   ').join('');
+                        var sms_extra = array[5].split('\n')[2].split('   ').join('');
+                        var data = array[6].split('\n')[1].split('   ').join('');
+                        var data_consumi = array[6].split('\n')[2].split('   ').join('');
+                        var mms = array[7].split('\n')[1].split('   ').join('');
+                        var mms_consumi = array[7].split('\n')[2].split('   ').join('');
+
+                        data_store["iliad"][0] = {};
+                        data_store["iliad"][1] = {};
+                        data_store["iliad"][2] = {};
+                        data_store["iliad"][3] = {};
+                        data_store["iliad"][4] = {};
+                        data_store["iliad"][4][0] = title;
+
+                        data_store["iliad"][0][0] = chiamate;
+                        data_store["iliad"][0][1] = consumi_voce;
+                        data_store["iliad"][0][2] = chiamate_title;
+                        data_store["iliad"][1][0] = sms;
+                        data_store["iliad"][1][1] = sms_extra;
+                        data_store["iliad"][1][2] = sms_title;
+                        data_store["iliad"][2][0] = data;
+                        data_store["iliad"][2][1] = data_consumi;
+                        data_store["iliad"][2][2] = data_title;
+                        data_store["iliad"][3][0] = mms;
+                        data_store["iliad"][3][1] = mms_consumi;
+                        data_store["iliad"][3][2] = mms_tittle;
+
+                        res.send(data_store);
+                    });
                 } catch (Exeption) {
-                    res.send(503);
+                    //res.sendStatus(503);
+                }
+            }
+        });
+    }
+    else if (credit == 'true' && token != undefined) {
+        var options = {
+            url: 'https://www.iliad.it/account/conso-et-factures',
+            method: 'POST',
+            headers: headers,
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+                var array = [];
+                var array2 = [];
+                try {
+                    results.each(function (i, result) {
+
+                        $(result)
+                            .find('div.conso__content')
+                            .each(function (index, element) {
+                                array = array.concat([$(element).find('div.conso__text').text()]);
+                            });
+                        $(result)
+                            .find('div.conso__icon')
+                            .each(function (index, element) {
+                                array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
+                            });
+
+                        var title = $(result).find('h2').text().split('\n')[1].split('   ').join('');
+
+                        var chiamate_title = array2[0].split('\n')[2].split('   ').join('');
+                        var sms_title = array2[1].split('\n')[2].split('   ').join('');
+                        var data_title = array2[2].split('\n')[5].split('   ').join('');
+                        var mms_tittle = array2[3].split('\n')[2].split('   ').join('');
+
+                        var chiamate = array[0].split('\n')[1].split('   ').join('')
+                        var consumi_voce = array[0].split('\n')[2].split('   ').join('')
+                        var sms = array[1].split('\n')[0].split('   ').join('')
+                        var sms_extra = array[1].split('\n')[1].split('   ').join('')
+                        var data = array[2].split('\n')[1].split('   ').join('')
+                        var data_consumi = array[2].split('\n')[2].split('   ').join('')
+                        var mms = array[3].split('\n')[1].split('   ').join('')
+                        var mms_consumi = array[3].split('\n')[2].split('   ').join('')
+
+                        data_store["iliad"][0] = {};
+                        data_store["iliad"][1] = {};
+                        data_store["iliad"][2] = {};
+                        data_store["iliad"][3] = {};
+                        data_store["iliad"][4] = {};
+                        data_store["iliad"][4][0] = title;
+
+                        data_store["iliad"][0][0] = chiamate;
+                        data_store["iliad"][0][1] = consumi_voce;
+                        data_store["iliad"][0][2] = chiamate_title;
+                        data_store["iliad"][1][0] = sms;
+                        data_store["iliad"][1][1] = sms_extra;
+                        data_store["iliad"][1][2] = sms_title;
+                        data_store["iliad"][2][0] = data;
+                        data_store["iliad"][2][1] = data_consumi;
+                        data_store["iliad"][2][2] = data_title;
+                        data_store["iliad"][3][0] = mms;
+                        data_store["iliad"][3][1] = mms_consumi;
+                        data_store["iliad"][3][2] = mms_tittle;
+
+                        res.send(data_store);
+                    });
+                } catch (Exeption) {
+                    res.sendStatus(503);
                 }
             }
         });
     }
 });
 exports = module.exports = app;
-const server = app.listen(process.env.PORT, function () {});
+const server = app.listen(process.env.PORT, function () { });
