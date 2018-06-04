@@ -2,7 +2,7 @@
 <a href="https://paypal.me/fast0n" title="Donate"><img src="https://img.shields.io/badge/Donate-PayPal-009cde.svg?style=flat-square"></a>
 
 
-Un client/applicazione Web non ufficiale di iliad
+Una web app/client non ufficiale di iliad
 
 Caratteristiche:
 
