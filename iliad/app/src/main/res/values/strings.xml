@@ -40,14 +40,18 @@
     <string name="wrong_password">Password errata</string>
 
     <!-- drawer_menu -->
-    <string name="nav_one">Consumi e credito</string>
+    <string name="nav_credit">Consumi e credito</string>
     <string name="nav_sim">Attivazione della sim</string>
     <string name="nav_info">I miei dati personali</string>
     <string name="nav_conditions">Le condizioni della mia offerta</string>
     <string name="nav_logout">Esci</string>
 
 
-
-
     <string name="site_url">https://iliad-api.glitch.me/</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="wrong_internet">Connessione a internet assente</string>
+    <string name="italy">Italia</string>
+    <string name="estero">Estero</string>
 </resources>

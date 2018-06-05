@@ -1,7 +1,9 @@
 package com.fast0n.iliad;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,10 +27,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fast0n.iliad.fragments.MasterCreditFragment;
 import com.fast0n.iliad.fragments.SimFragments;
 import com.fast0n.iliad.fragments.ConditionsFragment.ConditionsFragment;
 import com.fast0n.iliad.fragments.InfoFragments.InfoFragments;
-import com.fast0n.iliad.fragments.FirstFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +39,7 @@ import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 
-public class Main2Activity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     SharedPreferences settings;
     SharedPreferences.Editor editor;
@@ -46,20 +48,21 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.fast0n.iliad.R.layout.activity_main2);
+        setContentView(com.fast0n.iliad.R.layout.activity_home);
         Toolbar toolbar = findViewById(com.fast0n.iliad.R.id.toolbar);
         setSupportActionBar(toolbar);
         TextView mTitle = toolbar.findViewById(com.fast0n.iliad.R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.fast0n.iliad.R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(com.fast0n.iliad.R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 com.fast0n.iliad.R.string.navigation_drawer_open, com.fast0n.iliad.R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(com.fast0n.iliad.R.id.nav_view);
+        NavigationView navigationView = findViewById(com.fast0n.iliad.R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu nav_Menu = navigationView.getMenu();
 
@@ -67,20 +70,33 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
         final Bundle extras = getIntent().getExtras();
         assert extras != null;
-        final String userid = extras.getString("userid");
-        final String password = extras.getString("password");
-        final String token = extras.getString("token");
+        final String userid = extras.getString("userid", null);
+        final String password = extras.getString("password", null);
+        final String token = extras.getString("token", null);
+        final String checkbox = extras.getString("checkbox", null);
 
         final String site_url = getString(com.fast0n.iliad.R.string.site_url);
         String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
 
-        getObject(url, nav_Menu);
+        if (isOnline())
+            getObject(url, nav_Menu);
+        else {
+            finishAffinity();
+            Toasty.error(HomeActivity.this, getString(R.string.wrong_internet), Toast.LENGTH_SHORT).show();
+        }
 
-        settings = getSharedPreferences("sharedPreferences", 0);
-        editor = settings.edit();
-        editor.putString("userid", userid);
-        editor.putString("password", password.replace(" ", ""));
-        editor.apply();
+        try {
+            if (checkbox.equals("true")) {
+
+                settings = getSharedPreferences("sharedPreferences", 0);
+                editor = settings.edit();
+                editor.putString("userid", userid);
+                editor.putString("password", password.replace(" ", ""));
+                editor.apply();
+
+            }
+        } catch (Exception ignored) {
+        }
 
     }
 
@@ -94,7 +110,6 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         final TextView textView2 = headerView.findViewById(com.fast0n.iliad.R.id.textView2);
 
         loading = findViewById(R.id.progressBar);
-
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -125,7 +140,7 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
                                 Fragment fragment = null;
                                 fragment = new SimFragments();
 
-                                nav_Menu.findItem(R.id.nav_first).setVisible(false);
+                                nav_Menu.findItem(R.id.nav_credit).setVisible(false);
 
                                 if (fragment != null) {
                                     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -138,9 +153,10 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
                 else {
                                 Fragment fragment = null;
-                                fragment = new FirstFragment();
+                                fragment = new MasterCreditFragment();
 
-                                nav_Menu.findItem(R.id.nav_first).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_credit).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_credit).setChecked(true);
 
                                 if (fragment != null) {
                                     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -169,9 +185,9 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
                             editor.putString("password", null);
                             editor.apply();
 
-                            Toasty.warning(Main2Activity.this, getString(com.fast0n.iliad.R.string.error_login),
+                            Toasty.warning(HomeActivity.this, getString(com.fast0n.iliad.R.string.error_login),
                                     Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(Main2Activity.this, MainActivity.class);
+                            Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(mainActivity);
                         }
 
@@ -183,29 +199,26 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
 
     }
 
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(com.fast0n.iliad.R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
-            this.finish();
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-
-            int pid = android.os.Process.myPid();
-            android.os.Process.killProcess(pid);
-            super.onBackPressed();
+            finishAffinity();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.fast0n.iliad.R.menu.main2, menu);
+        getMenuInflater().inflate(com.fast0n.iliad.R.menu.home, menu);
         return true;
     }
 
@@ -226,18 +239,20 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
 
         Fragment fragment = null;
+        final Bundle extras = getIntent().getExtras();
+        assert extras != null;
+        final String password = extras.getString("password");
+        final String token = extras.getString("token");
 
-        if (id == R.id.nav_first) {
+        if (id == R.id.nav_credit) {
+            fragment = new MasterCreditFragment();
         }
-
         if (id == R.id.nav_info) {
             fragment = new InfoFragments();
         } else if (id == R.id.nav_sim) {
             fragment = new SimFragments();
-
         } else if (id == R.id.nav_conditions) {
             fragment = new ConditionsFragment();
-
         } else if (id == R.id.nav_logout) {
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
@@ -245,7 +260,7 @@ public class Main2Activity extends AppCompatActivity implements NavigationView.O
             editor.putString("password", null);
             editor.apply();
 
-            Intent mainActivity = new Intent(Main2Activity.this, MainActivity.class);
+            Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
             startActivity(mainActivity);
 
         }

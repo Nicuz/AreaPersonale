@@ -53,7 +53,7 @@ public class CustomAdapterInfo extends RecyclerView.Adapter<CustomAdapterInfo.My
             holder.textView.setText(c.textView);
         } else if (c.imgInfo == 3) {
             holder.icon_info.setBackgroundResource(R.drawable.ic_puk);
-            holder.textView.setText("Visualizza");
+            holder.textView.setText("");
         } else if (c.imgInfo == 4) {
             holder.icon_info.setBackgroundResource(R.drawable.ic_password);
             holder.textView.setText(c.textView);

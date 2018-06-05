@@ -56,17 +56,14 @@ public class ChangeEmailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
-
                 if (edt_password.getText().toString().equals(password)
                         && edt_password.getText().toString().length() != 0
                         && edt_email.getText().toString().length() != 0) {
-                    if(isEmail(edt_email.getText().toString())){
-                    String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
-                            + edt_email.getText().toString() + "&password=" + password + "&token=" + token;
-                    changeMail(url);
-                    }
-                    else {
+                    if (isEmail(edt_email.getText().toString())) {
+                        String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
+                                + edt_email.getText().toString() + "&password=" + password + "&token=" + token;
+                        changeMail(url);
+                    } else {
                         Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,
                                 true).show();
                     }
@@ -110,7 +107,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
                             if (string_response.equals("true")) {
 
-                                Intent intent = new Intent(ChangeEmailActivity.this, MainActivity.class);
+                                Intent intent = new Intent(ChangeEmailActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 Toasty.success(ChangeEmailActivity.this, getString(R.string.email_change_success),
                                         Toast.LENGTH_LONG, true).show();

@@ -97,7 +97,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                 editor.putString("password", password.replace(" ", ""));
                                 editor.apply();
 
-                                Intent intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                                Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 Toasty.success(ChangePasswordActivity.this, getString(R.string.password_change_success),
                                         Toast.LENGTH_LONG, true).show();

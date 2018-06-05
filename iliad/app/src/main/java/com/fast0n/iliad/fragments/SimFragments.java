@@ -22,7 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.iliad.MainActivity;
+import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -129,9 +129,9 @@ public class SimFragments extends Fragment {
                             if (sim_state.equals("false"))
                                 Toasty.warning(context, toast, Toast.LENGTH_LONG, true).show();
 
-                            else{
+                            else {
                                 Toasty.success(context, toast, Toast.LENGTH_LONG, true).show();
-                                Intent intent = new Intent(context, MainActivity.class);
+                                Intent intent = new Intent(context, LoginActivity.class);
                                 startActivity(intent);
 
                             }
@@ -265,7 +265,7 @@ public class SimFragments extends Fragment {
                             editor[0].apply();
 
                             Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(context, MainActivity.class);
+                            Intent mainActivity = new Intent(context, LoginActivity.class);
                             startActivity(mainActivity);
                         }
 

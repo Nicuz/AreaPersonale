@@ -6,12 +6,15 @@ Una web app/client non ufficiale di iliad
 
 Caratteristiche:
 
-Login, attivazione sim, cambio password, cambio email, visualizzazione offerte
+Login, attivazione sim, cambio password, cambio email, visualizzazione costi, visualizzazione offerte
 
 ## Screenshots
-<a><img src='img/2.png' height='400' alt='icon'/></a>
-<a><img src='img/1.png' height='400' alt='icon'/></a>
-<a><img src='img/3.png' height='400' alt='icon'/></a>
+<a><img src='img/1.png' height='300' alt='icon'/></a>
+<a><img src='img/2.png' height='300' alt='icon'/></a>
+<a><img src='img/3.png' height='300' alt='icon'/></a>
+<a><img src='img/4.png' height='300' alt='icon'/></a>
+<a><img src='img/5.png' height='300' alt='icon'/></a>
+
 
 This is an unofficial api and android app developed to learn. Iliad S.A. is not responsible in any way.
 

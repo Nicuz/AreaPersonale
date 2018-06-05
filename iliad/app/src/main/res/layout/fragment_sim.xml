@@ -181,6 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:hint="@string/iccid"
+                        android:maxLength="19"
                         android:singleLine="true"
                         android:textColor="@android:color/black" />
 

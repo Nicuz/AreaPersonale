@@ -22,7 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.ChangeEmailActivity;
 import com.fast0n.iliad.ChangePasswordActivity;
-import com.fast0n.iliad.MainActivity;
+import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.fast0n.iliad.java.RecyclerItemListener;
 
@@ -38,7 +38,6 @@ import es.dmoral.toasty.Toasty;
 public class InfoFragments extends Fragment {
 
     public InfoFragments() {
-        // Required empty public constructor
     }
 
     @Override
@@ -95,20 +94,22 @@ public class InfoFragments extends Fragment {
                     public void onClickItem(View arg1, int position) {
 
                         switch (position) {
-                            case 2:
-                                Intent intent2 = new Intent(context, ChangeEmailActivity.class);
-                                intent2.putExtra("password", password);
-                                intent2.putExtra("token", token);
-                                startActivity(intent2);
-                                break;
-                            case 4:
-                                Intent intent4 = new Intent(context, ChangePasswordActivity.class);
-                                intent4.putExtra("password", password);
-                                intent4.putExtra("token", token);
-                                startActivity(intent4);
-                                break;
-                            default:
-                                Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
+                        case 2:
+                            Intent intent2 = new Intent(context, ChangeEmailActivity.class);
+                            intent2.putExtra("password", password);
+                            intent2.putExtra("token", token);
+                            startActivity(intent2);
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            Intent intent4 = new Intent(context, ChangePasswordActivity.class);
+                            intent4.putExtra("password", password);
+                            intent4.putExtra("token", token);
+                            startActivity(intent4);
+                            break;
+                        default:
+                            Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }
 
                     }
@@ -163,17 +164,23 @@ public class InfoFragments extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
-                        if (error_code == 503) {
-                            settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-                            editor[0] = settings[0].edit();
-                            editor[0].putString("userid", null);
-                            editor[0].putString("password", null);
-                            editor[0].apply();
+                        try {
 
-                            Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(context, MainActivity.class);
-                            startActivity(mainActivity);
+                        } catch (Exception e) {
+                            int error_code = error.networkResponse.statusCode;
+                            if (error_code == 503) {
+                                settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences",
+                                        0);
+                                editor[0] = settings[0].edit();
+                                editor[0].putString("userid", null);
+                                editor[0].putString("password", null);
+                                editor[0].apply();
+
+                                Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                                        .show();
+                                Intent mainActivity = new Intent(context, LoginActivity.class);
+                                startActivity(mainActivity);
+                            }
                         }
 
                     }
