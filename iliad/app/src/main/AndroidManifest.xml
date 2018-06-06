@@ -27,12 +27,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ChangePasswordActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name=".TabsActivity"
-            android:label="@string/nav_credit"
-            android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ErrorConnectionActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>

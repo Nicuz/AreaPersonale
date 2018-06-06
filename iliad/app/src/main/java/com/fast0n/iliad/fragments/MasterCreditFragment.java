@@ -53,7 +53,7 @@ public class MasterCreditFragment extends Fragment {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public Adapter(FragmentManager manager) {
+        Adapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -67,7 +67,7 @@ public class MasterCreditFragment extends Fragment {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

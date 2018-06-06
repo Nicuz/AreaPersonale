@@ -35,9 +35,9 @@ public class ChangeEmailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_email);
-        Toolbar toolbar = findViewById(com.fast0n.iliad.R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        TextView mTitle = toolbar.findViewById(com.fast0n.iliad.R.id.toolbar_title);
+        TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_email_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
@@ -81,11 +81,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
         CharSequence inputString = email;
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(inputString);
-        if (matcher.matches()) {
-            return true;
-        } else {
-            return false;
-        }
+        return matcher.matches();
     }
 
     private void changeMail(String url) {

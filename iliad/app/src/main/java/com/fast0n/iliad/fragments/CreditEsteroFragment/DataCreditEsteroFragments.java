@@ -4,13 +4,13 @@ public class DataCreditEsteroFragments {
 
     public String title;
     public String description;
-    public int imgInfo;
     public String iconText;
+    public String url;
 
-    public DataCreditEsteroFragments(String iconText, String description, String title, int imgInfo) {
+    DataCreditEsteroFragments(String iconText, String description, String title, String url) {
         this.title = title;
         this.description = description;
-        this.imgInfo = imgInfo;
         this.iconText = iconText;
+        this.url = url;
     }
 }

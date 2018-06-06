@@ -25,6 +25,7 @@ import com.fast0n.iliad.ChangePasswordActivity;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.fast0n.iliad.java.RecyclerItemListener;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +52,9 @@ public class InfoFragments extends Fragment {
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
+        CubeGrid cubeGrid = new CubeGrid();
+        loading.setIndeterminateDrawable(cubeGrid);
+        cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         cardView = view.findViewById(R.id.cardView);
 
         cardView.setVisibility(View.INVISIBLE);
@@ -94,22 +98,22 @@ public class InfoFragments extends Fragment {
                     public void onClickItem(View arg1, int position) {
 
                         switch (position) {
-                        case 2:
-                            Intent intent2 = new Intent(context, ChangeEmailActivity.class);
-                            intent2.putExtra("password", password);
-                            intent2.putExtra("token", token);
-                            startActivity(intent2);
-                            break;
-                        case 3:
-                            break;
-                        case 4:
-                            Intent intent4 = new Intent(context, ChangePasswordActivity.class);
-                            intent4.putExtra("password", password);
-                            intent4.putExtra("token", token);
-                            startActivity(intent4);
-                            break;
-                        default:
-                            Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
+                            case 2:
+                                Intent intent2 = new Intent(context, ChangeEmailActivity.class);
+                                intent2.putExtra("password", password);
+                                intent2.putExtra("token", token);
+                                startActivity(intent2);
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                Intent intent4 = new Intent(context, ChangePasswordActivity.class);
+                                intent4.putExtra("password", password);
+                                intent4.putExtra("token", token);
+                                startActivity(intent4);
+                                break;
+                            default:
+                                Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }
 
                     }
@@ -132,59 +136,54 @@ public class InfoFragments extends Fragment {
 
                             JSONObject json = new JSONObject(iliad);
 
-                            String[] array = { "address", "pay", "mail", "puk", "password" };
+                            for (int i = 0; i < json.length(); i++) {
 
-                            for (int i = 0; i < array.length; i++) {
+                                String string = json.getString(String.valueOf(i));
+                                JSONObject json_strings = new JSONObject(string);
 
-                                String stringArray = json.getString(array[i]);
-                                JSONObject json_shipping = new JSONObject(stringArray);
                                 try {
-                                    String a = json_shipping.getString("0");
-                                    String b = json_shipping.getString("1");
-                                    String c = json_shipping.getString("2");
-                                    infoList.add(new DataInfoFragments("Modifica", a, b, c, i));
+                                    String a = json_strings.getString("0");
+                                    String b = json_strings.getString("1");
+                                    String c = json_strings.getString("2");
+                                    String d = json_strings.getString("3");
+                                    String e = json_strings.getString("4");
+                                    infoList.add(new DataInfoFragments(d, a, b, c, i, e));
 
                                 } catch (Exception e) {
-                                    String a = json_shipping.getString("0");
-                                    String b = json_shipping.getString("1");
-                                    infoList.add(new DataInfoFragments("Modifica", a, b, "", i));
+                                    String a = json_strings.getString("0");
+                                    String b = json_strings.getString("1");
+                                    String c = json_strings.getString("2");
+                                    String d = json_strings.getString("3");
+
+                                    infoList.add(new DataInfoFragments(c, a, b, "", i, d));
 
                                 }
 
                             }
 
-                            CustomAdapterInfo ca = new CustomAdapterInfo(infoList);
+                            CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 
-                        } catch (JSONException ignored) {
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        try {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try {
 
-                        } catch (Exception e) {
-                            int error_code = error.networkResponse.statusCode;
-                            if (error_code == 503) {
-                                settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences",
-                                        0);
-                                editor[0] = settings[0].edit();
-                                editor[0].putString("userid", null);
-                                editor[0].putString("password", null);
-                                editor[0].apply();
-
-                                Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true)
-                                        .show();
-                                Intent mainActivity = new Intent(context, LoginActivity.class);
-                                startActivity(mainActivity);
-                            }
-                        }
-
+                } catch (Exception e) {
+                    int error_code = error.networkResponse.statusCode;
+                    if (error_code == 503) {
+                        startActivity(new Intent(context, LoginActivity.class));
                     }
-                });
+                }
+
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

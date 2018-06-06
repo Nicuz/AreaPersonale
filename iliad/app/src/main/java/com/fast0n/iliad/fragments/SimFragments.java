@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
@@ -54,6 +55,9 @@ public class SimFragments extends Fragment {
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
+        CubeGrid cubeGrid = new CubeGrid();
+        loading.setIndeterminateDrawable(cubeGrid);
+        cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         btn_activatesim = view.findViewById(R.id.btn_activatesim);
         edt_iccid = view.findViewById(R.id.edt_iccid);
         cardView = view.findViewById(R.id.cardView);
@@ -135,16 +139,20 @@ public class SimFragments extends Fragment {
                                 startActivity(intent);
 
                             }
-                        } catch (JSONException ignored) {
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                int error_code = error.networkResponse.statusCode;
+                if (error_code == 503) {
+                    startActivity(new Intent(context, LoginActivity.class));
+                }
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);
@@ -254,23 +262,23 @@ public class SimFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
-                        if (error_code == 503) {
-                            settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-                            editor[0] = settings[0].edit();
-                            editor[0].putString("userid", null);
-                            editor[0].putString("password", null);
-                            editor[0].apply();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                int error_code = error.networkResponse.statusCode;
+                if (error_code == 503) {
+                    settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
+                    editor[0] = settings[0].edit();
+                    editor[0].putString("userid", null);
+                    editor[0].putString("password", null);
+                    editor[0].apply();
 
-                            Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(context, LoginActivity.class);
-                            startActivity(mainActivity);
-                        }
+                    Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
+                    Intent mainActivity = new Intent(context, LoginActivity.class);
+                    startActivity(mainActivity);
+                }
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

@@ -2,9 +2,9 @@ package com.fast0n.iliad.fragments.ConditionsFragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.fast0n.iliad.java.RecyclerItemListener;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import es.dmoral.toasty.Toasty;
 
 public class ConditionsFragment extends Fragment {
 
@@ -41,7 +40,7 @@ public class ConditionsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_conditions, container, false);
 
         final ProgressBar loading;
@@ -51,6 +50,9 @@ public class ConditionsFragment extends Fragment {
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
+        CubeGrid cubeGrid = new CubeGrid();
+        cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
+        loading.setIndeterminateDrawable(cubeGrid);
         cardView = view.findViewById(R.id.cardView);
 
         cardView.setVisibility(View.INVISIBLE);
@@ -58,22 +60,19 @@ public class ConditionsFragment extends Fragment {
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
-        final String password = extras.getString("password");
         final String token = extras.getString("token");
 
         final String site_url = getString(R.string.site_url);
         String url = site_url + "?doc=true&token=" + token;
 
-        getObject(url, context, view, token, password);
+        getObject(url, context, view);
 
         return view;
     }
 
-    private void getObject(String url, final Context context, View view, final String token, final String password) {
+    private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final SharedPreferences[] settings = new SharedPreferences[1];
-        final SharedPreferences.Editor[] editor = new SharedPreferences.Editor[1];
         final RecyclerView recyclerView;
         final List<DataConditionsFragments> conditionList = new ArrayList<>();
         final CardView cardView;
@@ -108,14 +107,14 @@ public class ConditionsFragment extends Fragment {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        try {
 
-                            JSONObject json_raw = new JSONObject(response.toString());
+                        JSONObject json_raw;
+                        try {
+                            json_raw = new JSONObject(response.toString());
+
                             String iliad = json_raw.getString("iliad");
 
                             JSONObject json = new JSONObject(iliad);
-
-                            System.out.println(json.length());
 
                             for (int j = 0; j < json.length(); j++) {
 
@@ -132,27 +131,20 @@ public class ConditionsFragment extends Fragment {
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
-                        } catch (JSONException ignored) {
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
-                        if (error_code == 503) {
-                            settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-                            editor[0] = settings[0].edit();
-                            editor[0].putString("userid", null);
-                            editor[0].putString("password", null);
-                            editor[0].apply();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                int error_code = error.networkResponse.statusCode;
+                if (error_code == 503) {
+                    startActivity(new Intent(context, LoginActivity.class));
+                }
 
-                            Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(context, LoginActivity.class);
-                            startActivity(mainActivity);
-                        }
-
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

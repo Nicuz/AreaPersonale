@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,10 +28,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.iliad.fragments.MasterCreditFragment;
-import com.fast0n.iliad.fragments.SimFragments;
+import com.fast0n.iliad.fragments.AboutFragment.AboutFragment;
 import com.fast0n.iliad.fragments.ConditionsFragment.ConditionsFragment;
 import com.fast0n.iliad.fragments.InfoFragments.InfoFragments;
+import com.fast0n.iliad.fragments.MasterCreditFragment;
+import com.fast0n.iliad.fragments.OptionsFragment.OptionsFragment;
+import com.fast0n.iliad.fragments.ServicesFragment.ServicesFragment;
+import com.fast0n.iliad.fragments.SimFragments;
+import com.github.ybq.android.spinkit.style.CubeGrid;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +47,11 @@ import es.dmoral.toasty.Toasty;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    ActionBarDrawerToggle toggle;
+    DrawerLayout drawer;
+    Menu nav_Menu;
+    NavigationView navigationView;
+    ProgressBar loading;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
     View headerView;
@@ -48,69 +59,59 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.fast0n.iliad.R.layout.activity_home);
-        Toolbar toolbar = findViewById(com.fast0n.iliad.R.id.toolbar);
+        setContentView(R.layout.activity_home);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        TextView mTitle = toolbar.findViewById(com.fast0n.iliad.R.id.toolbar_title);
+        TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
-        DrawerLayout drawer = findViewById(com.fast0n.iliad.R.id.drawer_layout);
+        // java adresses
+        drawer = findViewById(R.id.drawer_layout);
+        loading = findViewById(R.id.progressBar);
+        CubeGrid cubeGrid = new CubeGrid();
+        loading.setIndeterminateDrawable(cubeGrid);
+        cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
+        navigationView = findViewById(R.id.nav_view);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                com.fast0n.iliad.R.string.navigation_drawer_open, com.fast0n.iliad.R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = findViewById(com.fast0n.iliad.R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Menu nav_Menu = navigationView.getMenu();
-
         headerView = navigationView.getHeaderView(0);
+        nav_Menu = navigationView.getMenu();
 
-        final Bundle extras = getIntent().getExtras();
+
+        Bundle extras = getIntent().getExtras();
         assert extras != null;
-        final String userid = extras.getString("userid", null);
-        final String password = extras.getString("password", null);
-        final String token = extras.getString("token", null);
-        final String checkbox = extras.getString("checkbox", null);
+        String userid = extras.getString("userid", null);
+        String password = extras.getString("password", null);
+        String token = extras.getString("token", null);
+        String checkbox = extras.getString("checkbox", null);
 
-        final String site_url = getString(com.fast0n.iliad.R.string.site_url);
-        String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
-
-        if (isOnline())
+        if (isOnline()) {
+            String site_url = getString(R.string.site_url);
+            String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
             getObject(url, nav_Menu);
-        else {
-            finishAffinity();
-            Toasty.error(HomeActivity.this, getString(R.string.wrong_internet), Toast.LENGTH_SHORT).show();
+
+            toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+        } else {
+            Intent mainActivity = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
+            startActivity(mainActivity);
         }
 
-        try {
-            if (checkbox.equals("true")) {
+        if (checkbox != null && checkbox.equals("true")) {
+            settings = getSharedPreferences("sharedPreferences", 0);
+            editor = settings.edit();
+            editor.putString("userid", userid);
+            editor.putString("password", password.replace(" ", ""));
+            editor.apply();
 
-                settings = getSharedPreferences("sharedPreferences", 0);
-                editor = settings.edit();
-                editor.putString("userid", userid);
-                editor.putString("password", password.replace(" ", ""));
-                editor.apply();
-
-            }
-        } catch (Exception ignored) {
         }
 
     }
 
     private void getObject(String url, final Menu nav_Menu) {
-
-        final ProgressBar loading;
-
-        // java adresses
-        final TextView textView = headerView.findViewById(com.fast0n.iliad.R.id.textView);
-        final TextView textView1 = headerView.findViewById(com.fast0n.iliad.R.id.textView1);
-        final TextView textView2 = headerView.findViewById(com.fast0n.iliad.R.id.textView2);
-
-        loading = findViewById(R.id.progressBar);
-
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -135,79 +136,78 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             JSONObject json_sim = new JSONObject(stringSim);
                             String sim_state = json_sim.getString("2");
 
+
                             if (sim_state.equals("false")) {
 
-                                Fragment fragment = null;
+                                Fragment fragment;
                                 fragment = new SimFragments();
 
-                                nav_Menu.findItem(R.id.nav_credit).setVisible(false);
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction ft = fragmentManager.beginTransaction();
+                                ft.replace(R.id.fragment, fragment);
+                                ft.commit();
 
-                                if (fragment != null) {
-                                    FragmentManager fragmentManager = getSupportFragmentManager();
-                                    FragmentTransaction ft = fragmentManager.beginTransaction();
-                                    ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
-                                    ft.commit();
-                                }
-
-                            }
-
-                else {
-                                Fragment fragment = null;
+                            } else {
+                                Fragment fragment;
                                 fragment = new MasterCreditFragment();
 
                                 nav_Menu.findItem(R.id.nav_credit).setVisible(true);
                                 nav_Menu.findItem(R.id.nav_credit).setChecked(true);
+                                nav_Menu.findItem(R.id.nav_options).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_services).setVisible(true);
 
-                                if (fragment != null) {
-                                    FragmentManager fragmentManager = getSupportFragmentManager();
-                                    FragmentTransaction ft = fragmentManager.beginTransaction();
-                                    ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
-                                    ft.commit();
-                                }
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction ft = fragmentManager.beginTransaction();
+                                ft.replace(R.id.fragment, fragment);
+                                ft.commit();
                             }
+
+
+                            TextView textView = headerView.findViewById(R.id.textView);
+                            TextView textView1 = headerView.findViewById(R.id.textView1);
+                            TextView textView2 = headerView.findViewById(R.id.textView2);
 
                             loading.setVisibility(View.INVISIBLE);
                             textView.setText(user_name);
-                            textView1.setText(getString(com.fast0n.iliad.R.string.id_user) + " " + user_id);
-                            textView2.setText(getString(com.fast0n.iliad.R.string.number_user) + " " + user_numtell);
+                            textView1.setText(user_id);
+                            textView2.setText(user_numtell);
 
                         } catch (JSONException ignored) {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
-                        if (error_code == 503) {
-                            settings = getSharedPreferences("sharedPreferences", 0);
-                            editor = settings.edit();
-                            editor.putString("userid", null);
-                            editor.putString("password", null);
-                            editor.apply();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                int error_code = error.networkResponse.statusCode;
+                if (error_code == 503) {
+                    settings = getSharedPreferences("sharedPreferences", 0);
+                    editor = settings.edit();
+                    editor.putString("userid", null);
+                    editor.putString("password", null);
+                    editor.apply();
 
-                            Toasty.warning(HomeActivity.this, getString(com.fast0n.iliad.R.string.error_login),
-                                    Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                            startActivity(mainActivity);
-                        }
+                    Toasty.warning(HomeActivity.this, getString(R.string.error_login),
+                            Toast.LENGTH_LONG, true).show();
+                    Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                    startActivity(mainActivity);
+                }
 
-                    }
-                });
+            }
 
-        // add it to the RequestQueue
+        });
+
         queue.add(getRequest);
 
     }
 
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        return (cm != null ? cm.getActiveNetworkInfo() : null) != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.fast0n.iliad.R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -217,62 +217,98 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.fast0n.iliad.R.menu.home, menu);
+        getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         Fragment fragment = null;
-        final Bundle extras = getIntent().getExtras();
-        assert extras != null;
-        final String password = extras.getString("password");
-        final String token = extras.getString("token");
 
         if (id == R.id.nav_credit) {
-            fragment = new MasterCreditFragment();
-        }
-        if (id == R.id.nav_info) {
-            fragment = new InfoFragments();
+            if (isOnline())
+                fragment = new MasterCreditFragment();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+        } else if (id == R.id.nav_options) {
+
+            if (isOnline())
+                fragment = new OptionsFragment();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+        } else if (id == R.id.nav_services) {
+
+            if (isOnline())
+                fragment = new ServicesFragment();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+        } else if (id == R.id.nav_info) {
+
+            if (isOnline())
+                fragment = new InfoFragments();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
         } else if (id == R.id.nav_sim) {
-            fragment = new SimFragments();
+
+            if (isOnline())
+                fragment = new SimFragments();
+
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
         } else if (id == R.id.nav_conditions) {
-            fragment = new ConditionsFragment();
+
+            if (isOnline())
+                fragment = new ConditionsFragment();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+        } else if (id == R.id.nav_about) {
+
+            if (isOnline())
+                fragment = new AboutFragment();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+
         } else if (id == R.id.nav_logout) {
-            settings = getSharedPreferences("sharedPreferences", 0);
-            editor = settings.edit();
-            editor.putString("userid", null);
-            editor.putString("password", null);
-            editor.apply();
 
-            Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-            startActivity(mainActivity);
+            if (isOnline()) {
+                settings = getSharedPreferences("sharedPreferences", 0);
+                editor = settings.edit();
+                editor.putString("userid", null);
+                editor.putString("password", null);
+                editor.apply();
 
-        }
+                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(mainActivity);
+            }
+        } else
+            startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(com.fast0n.iliad.R.id.fragment, fragment);
+            ft.replace(R.id.fragment, fragment);
             ft.commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(com.fast0n.iliad.R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

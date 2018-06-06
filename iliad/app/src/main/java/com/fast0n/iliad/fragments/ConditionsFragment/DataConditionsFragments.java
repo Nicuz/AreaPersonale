@@ -2,13 +2,13 @@ package com.fast0n.iliad.fragments.ConditionsFragment;
 
 public class DataConditionsFragments {
 
-    public String title;
-    public String date;
+    public String textView;
+    public String textView1;
     public String url;
 
-    public DataConditionsFragments(String title, String date, String url) {
-        this.title = title;
-        this.date = date;
+    DataConditionsFragments(String textView, String textView1, String url) {
+        this.textView = textView;
+        this.textView1 = textView1;
         this.url = url;
     }
 }

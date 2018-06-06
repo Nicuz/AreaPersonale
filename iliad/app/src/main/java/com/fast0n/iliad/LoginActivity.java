@@ -31,40 +31,37 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.fast0n.iliad.R.layout.activity_login);
-        Toolbar toolbar = findViewById(com.fast0n.iliad.R.id.toolbar);
+        setContentView(R.layout.activity_login);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        TextView mTitle = toolbar.findViewById(com.fast0n.iliad.R.id.toolbar_title);
+        TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // java adresses
-        btn_login = findViewById(com.fast0n.iliad.R.id.btn_login);
-        edt_id = findViewById(com.fast0n.iliad.R.id.edt_id);
-        edt_password = findViewById(com.fast0n.iliad.R.id.edt_password);
+        btn_login = findViewById(R.id.btn_login);
+        edt_id = findViewById(R.id.edt_id);
+        edt_password = findViewById(R.id.edt_password);
         checkBox = findViewById(R.id.checkBox);
 
+        settings = getSharedPreferences("sharedPreferences", 0);
+        String userid = settings.getString("userid", null);
+        String password = settings.getString("password", null);
+        editor = settings.edit();
+        editor.apply();
 
-        try {
-            settings = getSharedPreferences("sharedPreferences", 0);
-            String userid = settings.getString("userid", null);
-            String password = settings.getString("password", null);
-            editor = settings.edit();
+        if (password != null && password.trim().length() > 7) {
+            edt_id.setText(userid);
+            edt_password.setText(password);
 
-            if (password.length() > 7) {
-                edt_id.setText(userid);
-                edt_password.setText(password);
+            String token = GenerateToken.randomString(20);
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 
-                String token = GenerateToken.randomString(20);
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.putExtra("userid", userid);
+            intent.putExtra("password", password);
+            intent.putExtra("token", token);
 
-                intent.putExtra("userid", userid);
-                intent.putExtra("password", password);
-                intent.putExtra("token", token);
-
-                startActivity(intent);
-            }
-        } catch (Exception ignores) {
+            startActivity(intent);
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else {
-                    Toasty.error(LoginActivity.this, getString(R.string.wrong_internet), Toast.LENGTH_SHORT).show();
+                    Toasty.error(LoginActivity.this, getString(R.string.errorconnection), Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -2,8 +2,8 @@ package com.fast0n.iliad.fragments.CreditEsteroFragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,16 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import es.dmoral.toasty.Toasty;
 
 public class CreditEsteroFragment extends Fragment {
 
@@ -39,7 +39,7 @@ public class CreditEsteroFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_credit_estero, container, false);
 
         final ProgressBar loading;
@@ -53,34 +53,36 @@ public class CreditEsteroFragment extends Fragment {
 
         cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
+        VolleyLog.DEBUG = false;
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
-        final String password = extras.getString("password");
         final String token = extras.getString("token");
 
         final String site_url = getString(R.string.site_url);
         String url = site_url + "?creditestero=true&token=" + token;
 
-        getObject(url, context, view, token, password);
+        getObject(url, context, view);
 
         return view;
     }
 
-    private void getObject(String url, final Context context, View view, final String token, final String password) {
+    private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final SharedPreferences[] settings = new SharedPreferences[1];
-        final SharedPreferences.Editor[] editor = new SharedPreferences.Editor[1];
         final RecyclerView recyclerView;
         final List<DataCreditEsteroFragments> creditEsteroList = new ArrayList<>();
         final CardView cardView;
+        final TextView credit;
 
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
+        CubeGrid cubeGrid = new CubeGrid();
+        loading.setIndeterminateDrawable(cubeGrid);
+        cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         cardView = view.findViewById(R.id.cardView);
-        final TextView credit = view.findViewById(R.id.creditText);
+        credit = view.findViewById(R.id.creditText);
 
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -100,57 +102,40 @@ public class CreditEsteroFragment extends Fragment {
 
                             JSONObject json = new JSONObject(iliad);
 
-                            try {
-                                String string1 = json.getString("4");
-                                JSONObject json_strings1 = new JSONObject(string1);
-                                String stringCredit = json_strings1.getString("0");
-                                credit.setText(stringCredit);
-                            } catch (Exception ignored) {
-                            }
+                            String string1 = json.getString("0");
+                            JSONObject json_strings1 = new JSONObject(string1);
+                            String stringCredit = json_strings1.getString("0");
+                            credit.setText(stringCredit);
 
-                            for (int j = 0; j < json.length(); j++) {
+                            for (int j = 1; j < json.length(); j++) {
 
                                 String string = json.getString(String.valueOf(j));
                                 JSONObject json_strings = new JSONObject(string);
 
-                                try {
-                                    String c = json_strings.getString("0");
-                                    String b = json_strings.getString("1");
-                                    String a = json_strings.getString("2");
-                                    creditEsteroList.add(new DataCreditEsteroFragments(a, b, c, j));
-
-                                } catch (Exception ignored) {
-                                }
+                                String c = json_strings.getString("0");
+                                String b = json_strings.getString("1");
+                                String a = json_strings.getString("2");
+                                String d = json_strings.getString("3");
+                                creditEsteroList.add(new DataCreditEsteroFragments(a, b, c, d));
 
                             }
 
-                            CustomAdapterCreditEstero ca = new CustomAdapterCreditEstero(creditEsteroList);
+                            CustomAdapterCreditEstero ca = new CustomAdapterCreditEstero(context, creditEsteroList);
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
-                        } catch (JSONException ignored) {
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        int error_code = error.networkResponse.statusCode;
-                        if (error_code == 503) {
-                            settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-                            editor[0] = settings[0].edit();
-                            editor[0].putString("userid", null);
-                            editor[0].putString("password", null);
-                            editor[0].apply();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                    startActivity(new Intent(context, LoginActivity.class));
 
-                            Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                            Intent mainActivity = new Intent(context, LoginActivity.class);
-                            startActivity(mainActivity);
-                        }
+            }
+        });
 
-                    }
-                });
-
-        // add it to the RequestQueue
         queue.add(getRequest);
 
     }
