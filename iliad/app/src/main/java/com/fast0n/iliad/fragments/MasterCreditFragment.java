@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fast0n.iliad.R;
-import com.fast0n.iliad.fragments.CreditEsteroFragment.CreditEsteroFragment;
+import com.fast0n.iliad.fragments.CreditRoamingFragment.CreditRoamingFragment;
 import com.fast0n.iliad.fragments.CreditFragment.CreditFragment;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class MasterCreditFragment extends Fragment {
 
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new CreditFragment(), getString(R.string.italy));
-        adapter.addFragment(new CreditEsteroFragment(), getString(R.string.estero));
+        adapter.addFragment(new CreditRoamingFragment(), getString(R.string.estero));
         viewPager.setAdapter(adapter);
 
     }

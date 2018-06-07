@@ -1,13 +1,13 @@
-package com.fast0n.iliad.fragments.CreditEsteroFragment;
+package com.fast0n.iliad.fragments.CreditRoamingFragment;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
+import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,15 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+public class CreditRoamingFragment extends Fragment {
 
-public class CreditEsteroFragment extends Fragment {
-
-    public CreditEsteroFragment() {
+    public CreditRoamingFragment() {
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_credit_estero, container, false);
+        final View view = inflater.inflate(R.layout.fragment_credit_roaming, container, false);
 
         final ProgressBar loading;
         final Context context;
@@ -70,8 +70,8 @@ public class CreditEsteroFragment extends Fragment {
     private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final RecyclerView recyclerView;
-        final List<DataCreditEsteroFragments> creditEsteroList = new ArrayList<>();
+        final PullToRefreshRecyclerView recyclerView;
+        final List<DataCreditRoamingFragments> creditEsteroList = new ArrayList<>();
         final CardView cardView;
         final TextView credit;
 
@@ -84,10 +84,17 @@ public class CreditEsteroFragment extends Fragment {
         cardView = view.findViewById(R.id.cardView);
         credit = view.findViewById(R.id.creditText);
 
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setSwipeEnable(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
+
+        recyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startActivity(new Intent(context, LoginActivity.class));
+            }
+        });
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -116,11 +123,11 @@ public class CreditEsteroFragment extends Fragment {
                                 String b = json_strings.getString("1");
                                 String a = json_strings.getString("2");
                                 String d = json_strings.getString("3");
-                                creditEsteroList.add(new DataCreditEsteroFragments(a, b, c, d));
+                                creditEsteroList.add(new DataCreditRoamingFragments(a, b, c, d));
 
                             }
 
-                            CustomAdapterCreditEstero ca = new CustomAdapterCreditEstero(context, creditEsteroList);
+                            CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
@@ -129,12 +136,12 @@ public class CreditEsteroFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                    startActivity(new Intent(context, LoginActivity.class));
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                    }
+                });
 
         queue.add(getRequest);
 

@@ -5,6 +5,7 @@
 
     <group android:checkableBehavior="single">
         <item
+
             android:id="@+id/nav_credit"
             android:icon="@drawable/ic_credit"
             android:title="@string/nav_credit"
@@ -43,7 +44,7 @@
                 <item
                     android:id="@+id/nav_about"
                     android:checkable="true"
-                    android:icon="@drawable/ic_info_outline_white_48dp"
+                    android:icon="@drawable/ic_info_outline"
                     android:title="@string/nav_aboutus" />
 
                 <item

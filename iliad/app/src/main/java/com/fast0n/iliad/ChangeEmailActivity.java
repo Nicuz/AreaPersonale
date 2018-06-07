@@ -2,8 +2,10 @@ package com.fast0n.iliad;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,6 +32,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
     EditText edt_email, edt_password;
     Button btn_change_email;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,12 @@ public class ChangeEmailActivity extends AppCompatActivity {
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_email_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+
+        // set row icon in the toolbar
+        actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         final Bundle extras = getIntent().getExtras();
         assert extras != null;
@@ -122,5 +131,19 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
         queue.add(getRequest);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+        case android.R.id.home:
+
+            super.onBackPressed();
+
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -20,7 +20,7 @@
 
     <string name="tv_edit">Modifica</string>
     <string name="tv_show">Visualizza</string>
-    <string name="coming_soon">Presto disponibile</string>
+    <string name="coming_soon">Funzionalità disponibile a breve</string>
 
     <!-- ChangeEmailActivity -->
     <string name="change_email_title">Cambio Email</string>
@@ -42,6 +42,8 @@
     <string name="nav_sim">Attivazione della sim</string>
     <string name="nav_info">I miei dati personali</string>
     <string name="nav_conditions">Le condizioni della mia offerta</string>
+    <string name="nav_options">Le mie opzioni</string>
+    <string name="nav_services">I miei servizi</string>
     <string name="nav_aboutus">Chi siamo</string>
     <string name="nav_logout">Esci</string>
     <string name="split_menu">Info</string>
@@ -52,10 +54,7 @@
     <string name="italy">Italia</string>
     <string name="estero">Estero</string>
 
-    <string name="site_url">https://iliad-api.glitch.me/</string>
-
-    <string name="nav_options">Le mie opzioni</string>
-    <string name="nav_services">I miei servizi</string>
+    <!-- AboutActivity -->
     <string name="reload">Ricarica</string>
     <string name="toggle_enable">Attivo</string>
     <string name="toggle_disable">Non attivo</string>
@@ -65,5 +64,18 @@
     <string name="content">L\'app è stata creata in modo non ufficiale ILIAD SPA. non è responsabile in alcun modo</string>
     <string name="donate">Dona</string>
     <string name="follow">Seguimi su instagram</string>
+    <string name="old_version_title">Versione obsoleta</string>
+    <string name="old_version">Aggiorna l\'applicazione e riprova…</string>
+    <string name="update">Aggiorna</string>
+
+
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="dialog_exit">Sei sicuro di voler uscire?</string>
+    <string name="press_back">Premere ancora una volta per uscire</string>
+
+    <string name="site_url">https://iliad-api-beta.glitch.me/</string>
+    <string name="appwidget_text">0,00€</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

@@ -3,8 +3,10 @@ package com.fast0n.iliad;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     Button btn_password;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +45,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mTitle.setText(R.string.change_password_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
+        // set row icon in the toolbar
+        actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
         final Bundle extras = getIntent().getExtras();
         assert extras != null;
-        final String password = extras.getString("password");
-        final String token = extras.getString("token");
+        final String password = extras.getString("password", null);
+        final String token = extras.getString("token", null);
         final String site_url = getString(R.string.site_url);
 
         // java adresses
         edt_newpassword = findViewById(R.id.edt_newpassword);
-        edt_password = findViewById(R.id.edt_password);
+        edt_password = findViewById(R.id.edt_oldpassword);
         btn_password = findViewById(R.id.btn_password);
 
         btn_password.setOnClickListener(new View.OnClickListener() {
@@ -109,13 +118,27 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class));
+                    }
+                });
 
         queue.add(getRequest);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+        case android.R.id.home:
+
+            super.onBackPressed();
+
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
 }

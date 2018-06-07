@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 public class ConditionsFragment extends Fragment {
 
     public ConditionsFragment() {
@@ -136,15 +135,12 @@ public class ConditionsFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    startActivity(new Intent(context, LoginActivity.class));
-                }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

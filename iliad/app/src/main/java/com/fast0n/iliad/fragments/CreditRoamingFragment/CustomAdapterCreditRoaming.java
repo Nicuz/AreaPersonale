@@ -1,4 +1,4 @@
-package com.fast0n.iliad.fragments.CreditEsteroFragment;
+package com.fast0n.iliad.fragments.CreditRoamingFragment;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -14,19 +14,19 @@ import com.fast0n.iliad.R;
 
 import java.util.List;
 
-public class CustomAdapterCreditEstero extends RecyclerView.Adapter<CustomAdapterCreditEstero.MyViewHolder> {
+public class CustomAdapterCreditRoaming extends RecyclerView.Adapter<CustomAdapterCreditRoaming.MyViewHolder> {
 
-    private List<DataCreditEsteroFragments> creditEsteroList;
+    private List<DataCreditRoamingFragments> creditEsteroList;
     private Context context;
 
-    CustomAdapterCreditEstero(Context context, List<DataCreditEsteroFragments> creditEsteroList) {
+    CustomAdapterCreditRoaming(Context context, List<DataCreditRoamingFragments> creditEsteroList) {
         this.context = context;
         this.creditEsteroList = creditEsteroList;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        DataCreditEsteroFragments c = creditEsteroList.get(position);
+        DataCreditRoamingFragments c = creditEsteroList.get(position);
 
         holder.textView2.setText(c.title);
         holder.textView3.setText(c.description);

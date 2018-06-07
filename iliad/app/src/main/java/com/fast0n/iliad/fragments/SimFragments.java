@@ -73,19 +73,15 @@ public class SimFragments extends Fragment {
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
-        final String userid = extras.getString("userid");
-        final String password = extras.getString("password");
         final String token = extras.getString("token");
 
         final String site_url = getString(R.string.site_url);
-        String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
+        String url = site_url + "?activation_sim=true&token=" + token;
 
         getObject(url, context, view);
 
         settings = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
         editor = settings.edit();
-        editor.putString("userid", userid);
-        editor.putString("password", password.replace(" ", ""));
         editor.apply();
 
         btn_activatesim.setOnClickListener(new View.OnClickListener() {
@@ -144,15 +140,12 @@ public class SimFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    startActivity(new Intent(context, LoginActivity.class));
-                }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);
@@ -165,8 +158,6 @@ public class SimFragments extends Fragment {
         final CardView cardView, cardView1, cardView2, cardView3;
         final TextView tvvalidation, tvorder_date, tvdate, tvtracking, tvshipping, tvorder_shipped, tvactivation,
                 tvtitle_activation, tvoffer;
-        final SharedPreferences[] settings = new SharedPreferences[1];
-        final SharedPreferences.Editor[] editor = new SharedPreferences.Editor[1];
         final EditText edt_iccid;
         final Button btn_activatesim;
 
@@ -262,23 +253,11 @@ public class SimFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    settings[0] = context.getApplicationContext().getSharedPreferences("sharedPreferences", 0);
-                    editor[0] = settings[0].edit();
-                    editor[0].putString("userid", null);
-                    editor[0].putString("password", null);
-                    editor[0].apply();
-
-                    Toasty.warning(context, getString(R.string.error_login), Toast.LENGTH_LONG, true).show();
-                    Intent mainActivity = new Intent(context, LoginActivity.class);
-                    startActivity(mainActivity);
-                }
-
-            }
-        });
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

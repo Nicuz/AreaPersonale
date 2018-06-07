@@ -8,26 +8,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.R;
 import com.github.angads25.toggle.LabeledSwitch;
+import com.github.angads25.toggle.interfaces.OnToggledListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
+
+import es.dmoral.toasty.Toasty;
 
 public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterServices.MyViewHolder> {
 
     Context context;
     private List<DataServicesFragments> ServicesList;
+    String token;
 
-    CustomAdapterServices(Context context, List<DataServicesFragments> ServicesList) {
+    CustomAdapterServices(Context context, List<DataServicesFragments> ServicesList, String token) {
         this.context = context;
         this.ServicesList = ServicesList;
+        this.token = token;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        DataServicesFragments c = ServicesList.get(position);
-
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        final DataServicesFragments c = ServicesList.get(position);
         holder.textView.setText(c.textView);
 
         if (c.toggle.equals("false")) {
@@ -41,6 +55,70 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
             holder.toggle.setLabelOn(c.toggle.replace("true", "Attivo"));
             holder.toggle.setLabelOff(context.getString(R.string.toggle_disable));
         }
+
+        holder.toggle.setOnToggledListener(new OnToggledListener() {
+            @Override
+            public void onSwitched(LabeledSwitch labeledSwitch, boolean isOn) {
+
+                final String site_url = context.getString(R.string.site_url);
+
+                if (!isOn) {
+                    holder.toggle.setColorOn((ContextCompat.getColor(context, R.color.colorPrimary)));
+                    holder.toggle.setLabelOn(context.getString(R.string.toggle_enable));
+
+                    String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
+                            + "&activate=0";
+                    request_options_services(url, holder.textView.getText() + " " + holder.toggle.getLabelOff());
+                }
+
+                else if (isOn) {
+                    holder.toggle.setColorOn(Color.parseColor("#0d8200"));
+                    holder.toggle.setLabelOff(context.getString(R.string.toggle_disable));
+
+                    String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
+                            + "&activate=1";
+                    request_options_services(url, holder.textView.getText() + " " + holder.toggle.getLabelOn());
+                }
+
+            }
+
+            private void request_options_services(String url, final String labelOn) {
+
+                RequestQueue queue = Volley.newRequestQueue(context);
+
+                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    JSONObject json_raw = new JSONObject(response.toString());
+                                    String iliad = json_raw.getString("iliad");
+
+                                    JSONObject json = new JSONObject(iliad);
+                                    String string_response = json.getString("0");
+
+                                    if (string_response.equals("true")) {
+
+                                        Toasty.warning(context, labelOn, Toast.LENGTH_SHORT, true).show();
+                                    }
+
+                                } catch (JSONException ignored) {
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+
+                queue.add(getRequest);
+
+            }
+
+        });
     }
 
     @Override

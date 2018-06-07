@@ -1,6 +1,5 @@
 package com.fast0n.iliad.fragments.ServicesFragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,17 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 public class ServicesFragment extends Fragment {
-
 
     public ServicesFragment() {
     }
 
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_services, container, false);
 
         final ProgressBar loading;
@@ -86,11 +81,14 @@ public class ServicesFragment extends Fragment {
         cardView = view.findViewById(R.id.cardView);
         credit = view.findViewById(R.id.creditText);
 
+        final Bundle extras = getActivity().getIntent().getExtras();
+        assert extras != null;
+        final String token = extras.getString("token");
+
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -118,13 +116,13 @@ public class ServicesFragment extends Fragment {
 
                                 String a = json_strings.getString("0");
                                 String b = json_strings.getString("2");
+                                String c = json_strings.getString("3");
 
-                                infoList.add(new DataServicesFragments(a, b));
-
+                                infoList.add(new DataServicesFragments(a, b, c));
 
                             }
 
-                            CustomAdapterServices ca = new CustomAdapterServices(context, infoList);
+                            CustomAdapterServices ca = new CustomAdapterServices(context, infoList, token);
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
@@ -134,15 +132,12 @@ public class ServicesFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    startActivity(new Intent(context, LoginActivity.class));
-                }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

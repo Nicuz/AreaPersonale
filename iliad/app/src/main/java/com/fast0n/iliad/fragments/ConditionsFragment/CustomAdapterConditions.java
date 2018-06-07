@@ -13,10 +13,9 @@ import java.util.List;
 
 public class CustomAdapterConditions extends RecyclerView.Adapter<CustomAdapterConditions.MyViewHolder> {
 
-    private List<com.fast0n.iliad.fragments.ConditionsFragment.DataConditionsFragments> conditionList;
+    private List<DataConditionsFragments> conditionList;
 
-    CustomAdapterConditions(
-            List<com.fast0n.iliad.fragments.ConditionsFragment.DataConditionsFragments> conditionList) {
+    CustomAdapterConditions(List<DataConditionsFragments> conditionList) {
         this.conditionList = conditionList;
     }
 

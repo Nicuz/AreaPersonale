@@ -44,7 +44,7 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.RecyclerView
+        <com.lhh.ptrrv.library.PullToRefreshRecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="fill_parent"
             android:layout_height="0dp"

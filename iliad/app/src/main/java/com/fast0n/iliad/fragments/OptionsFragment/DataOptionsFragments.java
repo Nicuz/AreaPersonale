@@ -4,9 +4,13 @@ public class DataOptionsFragments {
 
     public String textView;
     public String toggle;
+    public String name;
+    public int i;
 
-    public DataOptionsFragments(String textView, String toggle) {
+    DataOptionsFragments(String textView, String toggle, String name, int i) {
         this.textView = textView;
         this.toggle = toggle;
+        this.name = name;
+        this.i = i;
     }
 }

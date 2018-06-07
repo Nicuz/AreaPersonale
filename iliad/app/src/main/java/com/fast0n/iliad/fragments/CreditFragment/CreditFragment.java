@@ -2,9 +2,11 @@ package com.fast0n.iliad.fragments.CreditFragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
+import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +34,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 
 public class CreditFragment extends Fragment {
 
@@ -58,9 +60,10 @@ public class CreditFragment extends Fragment {
         cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
-        final Bundle extras = getActivity().getIntent().getExtras();
-        assert extras != null;
-        final String token = extras.getString("token");
+        SharedPreferences settings = context.getSharedPreferences("sharedPreferences", 0);
+        String token = settings.getString("token", null);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.apply();
 
         final String site_url = getString(R.string.site_url);
         String url = site_url + "?credit=true&token=" + token;
@@ -73,7 +76,7 @@ public class CreditFragment extends Fragment {
     private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final RecyclerView recyclerView;
+        final PullToRefreshRecyclerView recyclerView;
         final List<DataCreditFragments> creditList = new ArrayList<>();
         final CardView cardView;
 
@@ -83,10 +86,17 @@ public class CreditFragment extends Fragment {
         cardView = view.findViewById(R.id.cardView);
         final TextView credit = view.findViewById(R.id.creditText);
 
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setSwipeEnable(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
+
+        recyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startActivity(new Intent(context, LoginActivity.class));
+            }
+        });
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -118,7 +128,6 @@ public class CreditFragment extends Fragment {
 
                                 creditList.add(new DataCreditFragments(a, b, c, d));
 
-
                             }
 
                             CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
@@ -130,15 +139,12 @@ public class CreditFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    startActivity(new Intent(context, LoginActivity.class));
-                }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

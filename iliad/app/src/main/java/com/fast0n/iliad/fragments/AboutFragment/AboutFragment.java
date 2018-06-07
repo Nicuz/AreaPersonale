@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fast0n.iliad.BuildConfig;
 import com.fast0n.iliad.R;
@@ -18,6 +19,7 @@ import com.fast0n.iliad.R;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import es.dmoral.toasty.Toasty;
 
 
 public class AboutFragment extends Fragment {
@@ -66,7 +68,6 @@ public class AboutFragment extends Fragment {
         listView.setAdapter(adapter);
 
 
-
         // setOnItemClickListener listview
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,8 +87,10 @@ public class AboutFragment extends Fragment {
                         break;
 
                     case 5:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
-                        break;
+
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
+    break;
+
                     case 6:
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/matte_monteleone/")));
                         break;

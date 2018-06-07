@@ -1,6 +1,5 @@
 package com.fast0n.iliad.fragments.OptionsFragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,6 +22,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
+import com.github.angads25.toggle.LabeledSwitch;
+import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
@@ -31,21 +33,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import es.dmoral.toasty.Toasty;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class OptionsFragment extends Fragment {
 
-
     public OptionsFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_options, container, false);
 
         final ProgressBar loading;
@@ -83,6 +83,10 @@ public class OptionsFragment extends Fragment {
         final CardView cardView;
         final TextView credit;
 
+        final Bundle extras = getActivity().getIntent().getExtras();
+        assert extras != null;
+        final String token = extras.getString("token");
+
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
@@ -93,7 +97,6 @@ public class OptionsFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
 
         RequestQueue queue = Volley.newRequestQueue(context);
 
@@ -114,7 +117,6 @@ public class OptionsFragment extends Fragment {
                             String stringCredit = json_strings1.getString("0");
                             credit.setText(stringCredit);
 
-
                             for (int i = 1; i < json.length(); i++) {
 
                                 String string = json.getString(String.valueOf(i));
@@ -122,12 +124,12 @@ public class OptionsFragment extends Fragment {
 
                                 String a = json_strings.getString("0");
                                 String b = json_strings.getString("2");
-                                infoList.add(new DataOptionsFragments(a, b));
-
+                                String c = json_strings.getString("3");
+                                infoList.add(new DataOptionsFragments(a, b, c, i));
 
                             }
 
-                            CustomAdapterOptions ca = new CustomAdapterOptions(context, infoList);
+                            CustomAdapterOptions ca = new CustomAdapterOptions(context, infoList, token);
                             recyclerView.setAdapter(ca);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
@@ -137,16 +139,12 @@ public class OptionsFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    startActivity(new Intent(context, LoginActivity.class));
-                }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
 
-
-            }
-        });
+                    }
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

@@ -28,11 +28,19 @@
         <activity
             android:name=".ChangePasswordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ErrorConnectionActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <receiver android:name=".Widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
     </application>
 
 </manifest>

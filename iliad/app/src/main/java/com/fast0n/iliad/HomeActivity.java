@@ -1,10 +1,12 @@
 package com.fast0n.iliad;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -55,6 +58,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences settings;
     SharedPreferences.Editor editor;
     View headerView;
+    private boolean backPressedToExitOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         headerView = navigationView.getHeaderView(0);
         nav_Menu = navigationView.getMenu();
 
+        toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         Bundle extras = getIntent().getExtras();
         assert extras != null;
@@ -90,11 +98,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             String site_url = getString(R.string.site_url);
             String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
             getObject(url, nav_Menu);
+            settings = getSharedPreferences("sharedPreferences", 0);
+            editor = settings.edit();
+            editor.putString("token", token);
+            editor.apply();
 
-            toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
         } else {
             Intent mainActivity = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
             startActivity(mainActivity);
@@ -125,43 +133,48 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             String iliad = json_raw.getString("iliad");
 
                             JSONObject json = new JSONObject(iliad);
-                            String stringUser = json.getString("user");
+
                             String stringSim = json.getString("sim");
+                            String stringVersion = json.getString("version");
+                            String user_name = json.getString("user_name");
+                            String user_id = json.getString("user_id");
+                            String user_numtell = json.getString("user_numtell");
 
-                            JSONObject json_user = new JSONObject(stringUser);
-                            String user_name = json_user.getString("user_name");
-                            String user_id = json_user.getString("user_id");
-                            String user_numtell = json_user.getString("user_numtell");
+                            if (BuildConfig.VERSION_CODE < Integer.parseInt(stringVersion)) {
+                                Intent intent = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
+                                intent.putExtra("errorAPI", "true");
+                                startActivity(intent);
 
-                            JSONObject json_sim = new JSONObject(stringSim);
-                            String sim_state = json_sim.getString("2");
-
-
-                            if (sim_state.equals("false")) {
-
-                                Fragment fragment;
-                                fragment = new SimFragments();
-
-                                FragmentManager fragmentManager = getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.fragment, fragment);
-                                ft.commit();
-
-                            } else {
-                                Fragment fragment;
-                                fragment = new MasterCreditFragment();
-
-                                nav_Menu.findItem(R.id.nav_credit).setVisible(true);
-                                nav_Menu.findItem(R.id.nav_credit).setChecked(true);
-                                nav_Menu.findItem(R.id.nav_options).setVisible(true);
-                                nav_Menu.findItem(R.id.nav_services).setVisible(true);
-
-                                FragmentManager fragmentManager = getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.fragment, fragment);
-                                ft.commit();
                             }
 
+                            try {
+                                if (stringSim.equals("false")) {
+
+                                    Fragment fragment;
+                                    fragment = new SimFragments();
+
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.fragment, fragment);
+                                    ft.commit();
+
+                                } else {
+                                    Fragment fragment;
+                                    fragment = new MasterCreditFragment();
+
+                                    nav_Menu.findItem(R.id.nav_credit).setVisible(true);
+                                    nav_Menu.findItem(R.id.nav_credit).setChecked(true);
+                                    nav_Menu.findItem(R.id.nav_options).setVisible(true);
+                                    nav_Menu.findItem(R.id.nav_services).setVisible(true);
+
+                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.fragment, fragment);
+                                    ft.commit();
+                                }
+                            } catch (IllegalStateException ignored) {
+                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                            }
 
                             TextView textView = headerView.findViewById(R.id.textView);
                             TextView textView1 = headerView.findViewById(R.id.textView1);
@@ -172,29 +185,29 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             textView1.setText(user_id);
                             textView2.setText(user_numtell);
 
+                            toggle.syncState();
+                            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
                         } catch (JSONException ignored) {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                int error_code = error.networkResponse.statusCode;
-                if (error_code == 503) {
-                    settings = getSharedPreferences("sharedPreferences", 0);
-                    editor = settings.edit();
-                    editor.putString("userid", null);
-                    editor.putString("password", null);
-                    editor.apply();
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        settings = getSharedPreferences("sharedPreferences", 0);
+                        editor = settings.edit();
+                        editor.putString("userid", null);
+                        editor.putString("password", null);
+                        editor.apply();
 
-                    Toasty.warning(HomeActivity.this, getString(R.string.error_login),
-                            Toast.LENGTH_LONG, true).show();
-                    Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                    startActivity(mainActivity);
-                }
+                        Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                                .show();
+                        Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                        startActivity(mainActivity);
 
-            }
+                    }
 
-        });
+                });
 
         queue.add(getRequest);
 
@@ -202,7 +215,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return (cm != null ? cm.getActiveNetworkInfo() : null) != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+        return (cm != null ? cm.getActiveNetworkInfo() : null) != null
+                && cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
     @Override
@@ -211,7 +225,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            finishAffinity();
+            if (backPressedToExitOnce) {
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        finishAffinity();
+                    }
+                }, 500);
+
+            } else {
+                this.backPressedToExitOnce = true;
+                Toasty.info(HomeActivity.this, getString(R.string.press_back), Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        backPressedToExitOnce = false;
+                    }
+                }, 1000);
+            }
+
         }
     }
 
@@ -285,18 +319,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             else
                 startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-
         } else if (id == R.id.nav_logout) {
 
             if (isOnline()) {
-                settings = getSharedPreferences("sharedPreferences", 0);
-                editor = settings.edit();
-                editor.putString("userid", null);
-                editor.putString("password", null);
-                editor.apply();
 
-                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(mainActivity);
+                new AlertDialog.Builder(this).setMessage(R.string.dialog_exit).setCancelable(false)
+                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                settings = getSharedPreferences("sharedPreferences", 0);
+                                editor = settings.edit();
+                                editor.putString("userid", null);
+                                editor.putString("password", null);
+                                editor.apply();
+
+                                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                                startActivity(mainActivity);
+                            }
+                        }).setNegativeButton(getString(R.string.no), null).show();
+
             }
         } else
             startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));

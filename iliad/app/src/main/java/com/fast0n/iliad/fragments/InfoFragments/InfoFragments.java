@@ -88,32 +88,28 @@ public class InfoFragments extends Fragment {
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
 
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
-
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View arg1, int position) {
 
                         switch (position) {
-                            case 2:
-                                Intent intent2 = new Intent(context, ChangeEmailActivity.class);
-                                intent2.putExtra("password", password);
-                                intent2.putExtra("token", token);
-                                startActivity(intent2);
-                                break;
-                            case 3:
-                                break;
-                            case 4:
-                                Intent intent4 = new Intent(context, ChangePasswordActivity.class);
-                                intent4.putExtra("password", password);
-                                intent4.putExtra("token", token);
-                                startActivity(intent4);
-                                break;
-                            default:
-                                Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
+                        case 1:
+                            break;
+                        case 2:
+                            Intent intent2 = new Intent(context, ChangeEmailActivity.class);
+                            intent2.putExtra("password", password);
+                            intent2.putExtra("token", token);
+                            startActivity(intent2);
+                            break;
+                        case 3:
+                            Intent intent = new Intent(context, ChangePasswordActivity.class);
+                            intent.putExtra("password", password);
+                            intent.putExtra("token", token);
+                            startActivity(intent);
+                        case 4:
+                            break;
+                        default:
+                            Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }
 
                     }
@@ -147,7 +143,7 @@ public class InfoFragments extends Fragment {
                                     String c = json_strings.getString("2");
                                     String d = json_strings.getString("3");
                                     String e = json_strings.getString("4");
-                                    infoList.add(new DataInfoFragments(d, a, b, c, i, e));
+                                    infoList.add(new DataInfoFragments(d, a, b, c, e));
 
                                 } catch (Exception e) {
                                     String a = json_strings.getString("0");
@@ -155,11 +151,16 @@ public class InfoFragments extends Fragment {
                                     String c = json_strings.getString("2");
                                     String d = json_strings.getString("3");
 
-                                    infoList.add(new DataInfoFragments(c, a, b, "", i, d));
+                                    infoList.add(new DataInfoFragments(c, a, b, "", d));
 
                                 }
 
                             }
+
+                            recyclerView.setHasFixedSize(true);
+                            LinearLayoutManager llm = new LinearLayoutManager(context);
+                            llm.setOrientation(LinearLayoutManager.VERTICAL);
+                            recyclerView.setLayoutManager(llm);
 
                             CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
                             recyclerView.setAdapter(ca);
@@ -171,19 +172,17 @@ public class InfoFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
 
-                } catch (Exception e) {
-                    int error_code = error.networkResponse.statusCode;
-                    if (error_code == 503) {
-                        startActivity(new Intent(context, LoginActivity.class));
+                        } catch (Exception e) {
+                            startActivity(new Intent(context, LoginActivity.class));
+
+                        }
+
                     }
-                }
-
-            }
-        });
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);
