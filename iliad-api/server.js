@@ -45,34 +45,36 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                const $ = cheerio.load(body);
-                var results = $('body');
-                results.each(function (i, result) {
-                    var nav = $(result).find('div.current-user').first().text().split('\n');
-                    var check = $(result).find('input').attr('name');
-                    var user_name = nav[1].split('  ').join('');
-                    var user_id = nav[2].split('  ').join('');
-                    var user_numtell = nav[3].split('  ').join('');
-                    data_store["iliad"] = {};
-                    data_store["iliad"]["version"] = {};
-                    data_store["iliad"]["user_name"] = {};
-                    data_store["iliad"]["user_id"] = {};
-                    data_store["iliad"]["user_numtell"] = {};
-                    data_store["iliad"]["sim"] = {};
+                try {
+                    const $ = cheerio.load(body);
+                    var results = $('body');
+                    results.each(function (i, result) {
+                        var nav = $(result).find('div.current-user').first().text().split('\n');
+                        var check = $(result).find('div.step__text').find('p.green').text();
+                        var user_name = nav[1].split('  ').join('');
+                        var user_id = nav[2].split('  ').join('');
+                        var user_numtell = nav[3].split('  ').join('');
+                        data_store["iliad"] = {};
+                        data_store["iliad"]["version"] = {};
+                        data_store["iliad"]["user_name"] = {};
+                        data_store["iliad"]["user_id"] = {};
+                        data_store["iliad"]["user_numtell"] = {};
+                        data_store["iliad"]["sim"] = {};
 
-                    data_store["iliad"]["version"] = "5";
-                    data_store["iliad"]["user_name"] = user_name;
-                    data_store["iliad"]["user_id"] = user_id;
-                    data_store["iliad"]["user_numtell"] = user_numtell;
+                        data_store["iliad"]["version"] = "5";
+                        data_store["iliad"]["user_name"] = user_name;
+                        data_store["iliad"]["user_id"] = user_id;
+                        data_store["iliad"]["user_numtell"] = user_numtell;
 
-                    if (check == undefined) {
-                        data_store["iliad"]["sim"] = 'true';
-                    } else {
-                        data_store["iliad"]["sim"] = 'false';
-                    }
 
-                    res.send(data_store);
-                });
+                        if (check == 'SIM attivata') {
+                            data_store["iliad"]["sim"] = 'true';
+                        } else {
+                            data_store["iliad"]["sim"] = 'false';
+                        }
+                        res.send(data_store);
+                    });
+                } catch (Exeption) { }
             };
         });
     }
@@ -94,7 +96,6 @@ app.get('/', function (req, res) {
 
                     results.each(function (i, result) {
 
-                        data_store["iliad"]["user"] = {};
                         data_store["iliad"]["validation"] = {};
                         data_store["iliad"]["shipping"] = {};
                         data_store["iliad"]["sim"] = {};
@@ -124,7 +125,7 @@ app.get('/', function (req, res) {
                         var orderdate = $(result).find('div.step__text').first().text().split('\n')
                         var tracking = $(result).find('a.red').attr('href')
                         var activation = $(result).find('p.explain').text().split('   ').join('').split('  ').join(' ').split('\n')
-                        var check = $(result).find('input').attr('name');
+                        var check = $(result).find('div.step__text').find('p.green').text();
                         var order_shipped = $(result).find('div.step__text').find('p').html()
 
                         activation = activation[1];
@@ -140,16 +141,30 @@ app.get('/', function (req, res) {
 
 
                         data_store["iliad"]["shipping"][0] = spedizione;
-                        data_store["iliad"]["shipping"][1] = order_shipped;
+                        if (order_shipped != null)
+                            data_store["iliad"]["shipping"][1] = order_shipped;
+                        else
+                            data_store["iliad"]["shipping"][1] = 'Non disponibile';
                         data_store["iliad"]["shipping"][2] = tracking_text;
-                        data_store["iliad"]["shipping"][3] = tracking;
-                        data_store["iliad"]["sim"][0] = title;
-                        data_store["iliad"]["sim"][1] = activation;
-                        if (check == undefined) {
+                        if (tracking != undefined)
+                            data_store["iliad"]["shipping"][3] = tracking;
+                        else
+                            data_store["iliad"]["shipping"][3] = 'Non disponibile';
+                        if (title != undefined)
+                            data_store["iliad"]["sim"][0] = title;
+                        else
+                            data_store["iliad"]["sim"][0] = 'Non disponibile';
+                        if (activation != undefined)
+                            data_store["iliad"]["sim"][1] = activation;
+                        else
+                            data_store["iliad"]["sim"][1] = 'Non disponibile';
+
+                        if (check == 'SIM attivata') {
                             data_store["iliad"]["sim"][2] = 'true';
                         } else {
                             data_store["iliad"]["sim"][2] = 'false';
                         }
+
                         data_store["iliad"]["sim"][3] = offer;
                         data_store["iliad"]["validation"][0] = validation;
                         data_store["iliad"]["validation"][1] = order_date;
@@ -299,17 +314,44 @@ app.get('/', function (req, res) {
                         data_store["iliad"][3][2] = "Modifica";
                         data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_puk.png";
 
-
-                        data_store["iliad"][4][0] = puk_title;
-                        if (puk.indexOf("puk") > -1)
-                            data_store["iliad"][4][1] = puk;
-                        else
-                            data_store["iliad"][4][1] = "0123456";
                         data_store["iliad"][4][2] = "";
                         data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_password.png";
+                        data_store["iliad"][4][0] = puk_title;
 
-                        //res.send(data_store);
-                        get_puk(data_store);
+                        try {
+                            var options = {
+                                method: 'GET',
+                                url: 'https://www.iliad.it/account/mes-informations',
+                                qs: { show: 'puk' },
+                                headers:
+                                    {
+                                        'Cache-Control': 'no-cache',
+                                        'x-requested-with': 'XMLHttpRequest',
+                                        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
+                                        referer: 'https://www.iliad.it/account/mes-informations',
+                                        cookie: 'ACCOUNT_SESSID=' + token,
+                                        'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
+                                        accept: 'application/json, text/javascript, */*; q=0.01',
+                                        scheme: 'https',
+                                        path: '/account/mes-informations?show=puk',
+                                        method: 'GET',
+                                        authority: 'www.iliad.it'
+                                    },
+                                json: true
+                            };
+                            request(options, function (error, response, body) {
+                                if (body[0]["result"]["data"] != undefined) {
+                                    data_store["iliad"][4][1] = body[0]["result"]["data"]["code_puk"];
+                                    res.send(data_store);
+                                }
+                                else {
+                                    data_store["iliad"][4][1] = 'xxxxxx';
+                                    res.send(data_store);
+                                }
+                            });
+                        }
+                        catch (Exeption) {
+                        }
                     });
                 } catch (Exeption) {
                     //res.send(503);
