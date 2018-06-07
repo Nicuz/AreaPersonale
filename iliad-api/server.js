@@ -22,6 +22,7 @@ app.get('/', function (req, res) {
     var change_options = req.query.change_options;
     var change_services = req.query.change_services;
     var activate = req.query.activate;
+    var activation_sim = req.query.activation_sim;
 
     var data_store = {};
     data_store["iliad"] = {};
@@ -30,7 +31,7 @@ app.get('/', function (req, res) {
         'cookie': 'ACCOUNT_SESSID=' + token
     };
 
-    if (userid != undefined && password != undefined) {
+    if (userid != undefined && password != undefined && token != undefined) {
         var formData = {
             'login-ident': userid,
             'login-pwd': password
@@ -42,7 +43,45 @@ app.get('/', function (req, res) {
             headers: headers,
             formData: formData
         };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+                    var nav = $(result).find('div.current-user').first().text().split('\n');
+                    var check = $(result).find('input').attr('name');
+                    var user_name = nav[1].split('  ').join('');
+                    var user_id = nav[2].split('  ').join('');
+                    var user_numtell = nav[3].split('  ').join('');
+                    data_store["iliad"] = {};
+                    data_store["iliad"]["version"] = {};
+                    data_store["iliad"]["user_name"] = {};
+                    data_store["iliad"]["user_id"] = {};
+                    data_store["iliad"]["user_numtell"] = {};
+                    data_store["iliad"]["sim"] = {};
 
+                    data_store["iliad"]["version"] = "5";
+                    data_store["iliad"]["user_name"] = user_name;
+                    data_store["iliad"]["user_id"] = user_id;
+                    data_store["iliad"]["user_numtell"] = user_numtell;
+
+                    if (check == undefined) {
+                        data_store["iliad"]["sim"] = 'true';
+                    } else {
+                        data_store["iliad"]["sim"] = 'false';
+                    }
+
+                    res.send(data_store);
+                });
+            };
+        });
+    }
+    else if (activation_sim == 'true' && token != undefined) {
+        var options = {
+            url: 'https://www.iliad.it/account/activation-sim',
+            method: 'POST',
+            headers: headers
+        };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
 
@@ -59,12 +98,6 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["validation"] = {};
                         data_store["iliad"]["shipping"] = {};
                         data_store["iliad"]["sim"] = {};
-                        data_store["iliad"]["version"] = {};
-
-                        var nav = $(result).find('div.current-user').first().text().split('\n')
-                        var user_name = nav[1].split('  ').join('')
-                        var user_id = nav[2].split('  ').join('')
-                        var user_numtell = nav[3].split('  ').join('')
 
                         var array = [];
                         var array2 = [];
@@ -118,10 +151,6 @@ app.get('/', function (req, res) {
                             data_store["iliad"]["sim"][2] = 'false';
                         }
                         data_store["iliad"]["sim"][3] = offer;
-                        data_store["iliad"]["version"][0] = "4";
-                        data_store["iliad"]["user"]["user_name"] = user_name;
-                        data_store["iliad"]["user"]["user_id"] = user_id;
-                        data_store["iliad"]["user"]["user_numtell"] = user_numtell;
                         data_store["iliad"]["validation"][0] = validation;
                         data_store["iliad"]["validation"][1] = order_date;
                         data_store["iliad"]["validation"][2] = date;
