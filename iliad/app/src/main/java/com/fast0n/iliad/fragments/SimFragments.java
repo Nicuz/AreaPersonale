@@ -227,17 +227,14 @@ public class SimFragments extends Fragment {
                             tvactivation.setText(activation);
                             tvtitle_activation.setText(title_activation);
 
+
                             if (response_sim.equals("true")) {
                                 tvtitle_activation.setTextColor(getResources().getColor(R.color.colorPrimary));
                                 edt_iccid.setVisibility(View.GONE);
                                 btn_activatesim.setVisibility(View.GONE);
                             }
 
-                            cardView.setVisibility(View.VISIBLE);
-                            cardView1.setVisibility(View.VISIBLE);
-                            cardView2.setVisibility(View.VISIBLE);
-                            cardView3.setVisibility(View.VISIBLE);
-                            loading.setVisibility(View.INVISIBLE);
+
 
                             cardView3.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -248,6 +245,12 @@ public class SimFragments extends Fragment {
                                     startActivity(i);
                                 }
                             });
+
+                            cardView.setVisibility(View.VISIBLE);
+                            cardView1.setVisibility(View.VISIBLE);
+                            cardView2.setVisibility(View.VISIBLE);
+                            cardView3.setVisibility(View.VISIBLE);
+                            loading.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException ignored) {
                         }

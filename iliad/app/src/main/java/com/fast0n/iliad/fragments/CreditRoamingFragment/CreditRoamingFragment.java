@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fast0n.iliad.ConsumptionRoamingDetailActivity;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -46,14 +48,16 @@ public class CreditRoamingFragment extends Fragment {
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         CardView cardView;
+        final Button button;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
+        button = view.findViewById(R.id.button);
 
         cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
-        VolleyLog.DEBUG = false;
+        button.setVisibility(View.INVISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
@@ -63,6 +67,15 @@ public class CreditRoamingFragment extends Fragment {
         String url = site_url + "?creditestero=true&token=" + token;
 
         getObject(url, context, view);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ConsumptionRoamingDetailActivity.class);
+                intent.putExtra("token", token);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -74,6 +87,7 @@ public class CreditRoamingFragment extends Fragment {
         final List<DataCreditRoamingFragments> creditEsteroList = new ArrayList<>();
         final CardView cardView;
         final TextView credit;
+        final Button button;
 
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -83,6 +97,7 @@ public class CreditRoamingFragment extends Fragment {
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         cardView = view.findViewById(R.id.cardView);
         credit = view.findViewById(R.id.creditText);
+        button = view.findViewById(R.id.button);
 
         recyclerView.setSwipeEnable(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -129,6 +144,7 @@ public class CreditRoamingFragment extends Fragment {
 
                             CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
                             recyclerView.setAdapter(ca);
+                            button.setVisibility(View.VISIBLE);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
                         } catch (JSONException e) {

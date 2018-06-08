@@ -11,16 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.fast0n.iliad.BuildConfig;
 import com.fast0n.iliad.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-import es.dmoral.toasty.Toasty;
-
 
 public class AboutFragment extends Fragment {
 

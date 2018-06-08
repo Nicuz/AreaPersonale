@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:checked="true"
-                android:text="Resta connesso" />
+                android:text="@string/stay_connected" />
 
             <Button
                 android:id="@+id/btn_login"

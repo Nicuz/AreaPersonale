@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,8 +41,9 @@ import com.fast0n.iliad.fragments.MasterCreditFragment;
 import com.fast0n.iliad.fragments.OptionsFragment.OptionsFragment;
 import com.fast0n.iliad.fragments.ServicesFragment.ServicesFragment;
 import com.fast0n.iliad.fragments.SimFragments;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.github.ybq.android.spinkit.style.CubeGrid;
-import com.github.ybq.android.spinkit.style.DoubleBounce;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (isOnline()) {
             String site_url = getString(R.string.site_url);
-            String url = site_url + "?userid=" + userid + "&password=" + password + "&token=" + token;
+            String url = site_url + "?userid=" + userid + "&password=" + password.replace("\n","").replace("    ","") + "&token=" + token;
             getObject(url, nav_Menu);
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
@@ -112,7 +116,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
             editor.putString("userid", userid);
-            editor.putString("password", password.replace(" ", ""));
+            editor.putString("password", password);
             editor.apply();
 
         }
@@ -192,26 +196,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        settings = getSharedPreferences("sharedPreferences", 0);
-                        editor = settings.edit();
-                        editor.putString("userid", null);
-                        editor.putString("password", null);
-                        editor.apply();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                settings = getSharedPreferences("sharedPreferences", 0);
+                editor = settings.edit();
+                editor.putString("userid", null);
+                editor.putString("password", null);
+                editor.apply();
 
-                        Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
-                                .show();
-                        Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                        startActivity(mainActivity);
+                Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                        .show();
+                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(mainActivity);
 
-                    }
+            }
 
-                });
+        });
 
         queue.add(getRequest);
 
     }
+
 
     public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -312,12 +317,60 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             else
                 startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
+
         } else if (id == R.id.nav_about) {
 
             if (isOnline())
                 fragment = new AboutFragment();
             else
                 startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+
+        } else if (id == R.id.nav_contactus) {
+
+            RequestQueue queue = Volley.newRequestQueue(HomeActivity.this);
+
+            String site_url = getString(R.string.site_url);
+            String url = site_url + "?alert=true";
+
+            JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    response -> {
+                        try {
+
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
+
+                            JSONObject json = new JSONObject(iliad);
+                            String string_response = json.getString("0");
+
+                            new MaterialStyledDialog.Builder(this)
+                                    .setTitle(R.string.warning)
+                                    .setDescription(Html.fromHtml(string_response))
+                                    .setScrollable(true)
+                                    .setStyle(Style.HEADER_WITH_TITLE)
+                                    .setPositiveText(R.string.accept)
+                                    .setCancelable(false)
+                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                        }
+                                    }).setScrollable(true, 10)
+                                    .show();
+
+                        } catch (JSONException ignored) {
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                }
+            });
+
+            queue.add(getRequest);
+
+
+
 
         } else if (id == R.id.nav_logout) {
 

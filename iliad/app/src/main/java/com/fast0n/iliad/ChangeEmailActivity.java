@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -65,14 +66,22 @@ public class ChangeEmailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (edt_password.getText().toString().equals(password)
+                byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
+                String ppassword = new String(decodeValue1);
+
+
+                if (edt_password.getText().toString().equals(ppassword.replace("\n","").replace("    ",""))
                         && edt_password.getText().toString().length() != 0
                         && edt_email.getText().toString().length() != 0) {
                     if (isEmail(edt_email.getText().toString())) {
                         String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
-                                + edt_email.getText().toString() + "&password=" + password + "&token=" + token;
+                                + edt_email.getText().toString() + "&password=" + password.replace("\n","").replace("    ","") + "&token=" + token;
+
                         changeMail(url);
+
+                        btn_change_email.setEnabled(false);
                     } else {
+                        btn_change_email.setEnabled(true);
                         Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,
                                 true).show();
                     }

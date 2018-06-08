@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -66,14 +67,32 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (edt_password.getText().toString().equals(password)
+
+                byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
+                String ppassword = new String(decodeValue1);
+
+
+                if (edt_password.getText().toString().equals(ppassword.replace("\n","").replace("    ",""))
                         && edt_password.getText().toString().length() != 0
                         && edt_newpassword.getText().toString().length() != 0) {
-                    String url = site_url + "?new_password=" + edt_newpassword.getText().toString()
-                            + "&new_password_confirm=" + edt_newpassword.getText().toString() + "&password=" + password
+
+                    byte[] decodeValue = Base64.encode( edt_password.getText().toString().getBytes(), Base64.DEFAULT);
+                    String oldpassword = new String(decodeValue);
+
+
+                    byte[] encodeValue1 = Base64.encode( edt_newpassword.getText().toString().getBytes(), Base64.DEFAULT);
+                    String newpassword = new String(encodeValue1);
+
+
+                    String url = site_url + "?new_password=" +newpassword.replace("\n","").replace("    ","")
+                            + "&new_password_confirm=" +newpassword.replace("\n","").replace("    ","") + "&password=" + oldpassword.replace("\n","").replace("    ","")
                             + "&token=" + token;
+
+
                     changePassword(url, password);
+                    btn_password.setEnabled(false);
                 } else
+                    btn_password.setEnabled(true);
                     Toasty.warning(ChangePasswordActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
                             true).show();
 
@@ -87,42 +106,33 @@ public class ChangePasswordActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(ChangePasswordActivity.this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String string_response = json.getString("0");
 
-                            JSONObject json = new JSONObject(iliad);
-                            String string_response = json.getString("0");
+                        if (string_response.equals("true")) {
 
-                            if (string_response.equals("true")) {
+                            settings = getSharedPreferences("sharedPreferences", 0);
+                            editor = settings.edit();
+                            editor.putString("password", password);
+                            editor.apply();
 
-                                settings = getSharedPreferences("sharedPreferences", 0);
-                                editor = settings.edit();
-                                editor.putString("password", password.replace(" ", ""));
-                                editor.apply();
+                            Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            Toasty.success(ChangePasswordActivity.this, getString(R.string.password_change_success),
+                                    Toast.LENGTH_LONG, true).show();
 
-                                Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                Toasty.success(ChangePasswordActivity.this, getString(R.string.password_change_success),
-                                        Toast.LENGTH_LONG, true).show();
-
-                            }
-
-                        } catch (JSONException ignored) {
                         }
 
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class));
-                    }
-                });
+
+                }, error -> startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class)));
 
         queue.add(getRequest);
 

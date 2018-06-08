@@ -42,6 +42,12 @@
         <item android:title="@string/split_menu">
             <menu>
                 <item
+                    android:id="@+id/nav_contactus"
+                    android:checkable="false"
+                    android:icon="@drawable/ic_warning"
+                    android:title="@string/nav_contactus" />
+
+                <item
                     android:id="@+id/nav_about"
                     android:checkable="true"
                     android:icon="@drawable/ic_info_outline"
