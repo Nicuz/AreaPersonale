@@ -1,7 +1,6 @@
 package com.fast0n.iliad.fragments.OptionsFragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -144,7 +143,7 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
 
         MyViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView);
+            textView = view.findViewById(R.id.textView1);
             toggle = view.findViewById(R.id.toggle);
 
         }

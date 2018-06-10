@@ -2,6 +2,7 @@ package com.fast0n.iliad;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_password_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -72,7 +74,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 String ppassword = new String(decodeValue1);
 
 
-                if (edt_password.getText().toString().equals(ppassword.replace("\n","").replace("    ",""))
+                if (edt_password.getText().toString().equals(ppassword.replaceAll("\\s+",""))
                         && edt_password.getText().toString().length() != 0
                         && edt_newpassword.getText().toString().length() != 0) {
 
@@ -84,8 +86,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     String newpassword = new String(encodeValue1);
 
 
-                    String url = site_url + "?new_password=" +newpassword.replace("\n","").replace("    ","")
-                            + "&new_password_confirm=" +newpassword.replace("\n","").replace("    ","") + "&password=" + oldpassword.replace("\n","").replace("    ","")
+                    String url = site_url + "?new_password=" +newpassword.replaceAll("\\s+","")
+                            + "&new_password_confirm=" +newpassword.replaceAll("\\s+","") + "&password=" + oldpassword.replaceAll("\\s+","")
                             + "&token=" + token;
 
 

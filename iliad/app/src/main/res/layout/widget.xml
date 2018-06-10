@@ -24,7 +24,7 @@
             android:src="@mipmap/ic_launcher_round" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -285,7 +285,7 @@
         android:layout_gravity="bottom"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_info_outline_white_48dp"
-        android:id="@+id/button"
+        android:id="@+id/textView1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1" />

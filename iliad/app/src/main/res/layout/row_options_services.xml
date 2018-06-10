@@ -34,7 +34,7 @@
             android:paddingTop="5dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/textView1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"

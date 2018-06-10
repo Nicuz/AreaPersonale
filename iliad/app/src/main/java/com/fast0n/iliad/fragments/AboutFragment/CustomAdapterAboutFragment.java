@@ -17,7 +17,6 @@ public class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> 
 
     private ArrayList<DataAboutFragment> dataSet;
     private Context mContext;
-    private int lastPosition = -1;
 
     CustomAdapterAboutFragment(ArrayList<DataAboutFragment> data, Context context) {
         super(context, R.layout.fragment_about, data);
@@ -50,8 +49,6 @@ public class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> 
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-        lastPosition = position;
 
 
         viewHolder.txtName.setText(DataAboutFragment.getName());

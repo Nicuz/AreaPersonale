@@ -17,10 +17,12 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.iliad.ChangeEmailActivity;
-import com.fast0n.iliad.ConsumptionDetailsActivity;
+import com.fast0n.iliad.ChargeActivity;
+import com.fast0n.iliad.ConsumptionDetailsActivity.ConsumptionDetailsActivity;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -46,7 +48,7 @@ public class CreditFragment extends Fragment {
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         CardView cardView;
-        final Button button;
+        final Button button,button1;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
@@ -54,11 +56,13 @@ public class CreditFragment extends Fragment {
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         cardView = view.findViewById(R.id.cardView);
+        button1 = view.findViewById(R.id.button1);
         button = view.findViewById(R.id.button);
 
 
         cardView.setVisibility(View.INVISIBLE);
         button.setVisibility(View.INVISIBLE);
+        button1.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
 
@@ -75,13 +79,17 @@ public class CreditFragment extends Fragment {
         getObject(url, context, view);
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ConsumptionDetailsActivity.class);
-                intent.putExtra("token", token);
-                startActivity(intent);
-            }
+        button1.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ConsumptionDetailsActivity.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
+        });
+
+
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChargeActivity.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
         });
 
         return view;
@@ -93,18 +101,19 @@ public class CreditFragment extends Fragment {
         final PullToRefreshRecyclerView recyclerView;
         final List<DataCreditFragments> creditList = new ArrayList<>();
         final CardView cardView;
-        final Button button;
+        final Button button, button1;
 
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
+        button1 = view.findViewById(R.id.button1);
         button = view.findViewById(R.id.button);
+
         final TextView credit = view.findViewById(R.id.creditText);
 
         recyclerView.setSwipeEnable(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        LinearLayoutManager llm = new LinearLayoutManager(context,  LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
 
         recyclerView.setOnRefreshListener(() -> startActivity(new Intent(context, LoginActivity.class)));
@@ -142,7 +151,10 @@ public class CreditFragment extends Fragment {
                         recyclerView.setAdapter(ca);
                         cardView.setVisibility(View.VISIBLE);
                         button.setVisibility(View.VISIBLE);
+                        button1.setVisibility(View.VISIBLE);
                         loading.setVisibility(View.INVISIBLE);
+
+
                     } catch (JSONException e) {
                         startActivity(new Intent(context, LoginActivity.class));
                     }

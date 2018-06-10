@@ -139,7 +139,7 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
 
         MyViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView);
+            textView = view.findViewById(R.id.textView1);
             toggle = view.findViewById(R.id.toggle);
 
         }

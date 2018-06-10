@@ -26,6 +26,8 @@
     <string name="change_email_title">Cambio Email</string>
     <string name="btn_change_email">Cambia Email</string>
     <string name="tv_email">Email</string>
+    <string name="new_email">Nuova Email</string>
+
     <string name="email_wrong">Inserire una email valida</string>
     <string name="email_change_success">Il tuo indirizzo email è stato modificato con successo.</string>
 
@@ -85,5 +87,11 @@
     <string name="nav_contactus">Contattaci</string>
     <string name="warning">Attenzione</string>
     <string name="accept">Dichiaro di aver letto</string>
+    <string name="title_activity_change_email">ChangeEmail</string>
+    <string name="title_activity_charge">ChargeActivity</string>
+    <string name="chargeNumber">Ricarica il tuo numero</string>
+    <string name="edtCvv">CVV</string>
+    <string name="edtExpiration">Data di scadenza</string>
+    <string name="edtCard">Numero della carta</string>
 
 </resources>

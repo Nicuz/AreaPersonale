@@ -4,16 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,6 +29,8 @@ import com.fast0n.iliad.ChangePasswordActivity;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.fast0n.iliad.java.RecyclerItemListener;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
@@ -69,12 +75,12 @@ public class InfoFragments extends Fragment {
         final String site_url = getString(R.string.site_url);
         String url = site_url + "?info=true&token=" + token;
 
-        getObject(url, context, view, token, password);
+        getObject(site_url, url, context, view, token, password);
 
         return view;
     }
 
-    private void getObject(String url, final Context context, View view, final String token, final String password) {
+    private void getObject(String site_url,String url, final Context context, View view, final String token, final String password) {
 
         final ProgressBar loading;
         final SharedPreferences[] settings = new SharedPreferences[1];
@@ -107,7 +113,33 @@ public class InfoFragments extends Fragment {
                             intent.putExtra("token", token);
                             startActivity(intent);
                         case 4:
-                            break;
+                                RequestQueue queue = Volley.newRequestQueue(context);
+                                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?puk=true&token="+ token, null,
+                                        response -> {
+                                            try {
+
+                                                JSONObject json_raw = new JSONObject(response.toString());
+                                                String iliad = json_raw.getString("iliad");
+
+                                                JSONObject json = new JSONObject(iliad);
+                                                String string = json.getString(String.valueOf(0));
+
+
+                                                new MaterialStyledDialog.Builder(getContext())
+                                                        .setStyle(Style.HEADER_WITH_TITLE)
+                                                        .setTitle(string)
+                                                        .show();
+
+
+
+                                            } catch (JSONException e) {
+                                                startActivity(new Intent(context, LoginActivity.class));
+                                            }
+                                        }, error -> startActivity(new Intent(context, LoginActivity.class)));
+
+                                // add it to the RequestQueue
+                                queue.add(getRequest);
+                                break;
                         default:
                             Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }

@@ -1,8 +1,7 @@
-package com.fast0n.iliad;
+package com.fast0n.iliad.ConsumptionDetailsActivity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fast0n.iliad.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +34,7 @@ public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_consumption_roaming_detail);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.consumptionroamingdetail);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -51,18 +52,9 @@ public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
 
 
         // java adresses
-        requests = findViewById(R.id.button);
 
-
-        requests.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                String url = site_url + "?consumptionroamingdetails=true&token=" + token;
-                getConsumption(url);
-            }
-        });
+        String url = site_url + "?consumptionroamingdetails=true&token=" + token;
+        getConsumption(url);
 
 
     }

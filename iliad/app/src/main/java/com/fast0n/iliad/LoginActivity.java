@@ -3,6 +3,7 @@ package com.fast0n.iliad;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -62,6 +65,28 @@ public class LoginActivity extends AppCompatActivity {
         edt_id = findViewById(R.id.edt_id);
         edt_password = findViewById(R.id.edt_password);
         checkBox = findViewById(R.id.checkBox);
+
+        if (checkBox.isChecked()){
+            checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
+        }
+        else{
+            checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
+        }
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (checkBox.isChecked()){
+                    checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
+                }
+                else{
+                    checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
+                }
+
+            }
+        });
+
 
         settings = getSharedPreferences("sharedPreferences", 0);
         String userid = settings.getString("userid", null);

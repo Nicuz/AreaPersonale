@@ -54,7 +54,7 @@ public class CustomAdapterCreditRoaming extends RecyclerView.Adapter<CustomAdapt
 
         MyViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView);
+            textView = view.findViewById(R.id.textView1);
             textView2 = view.findViewById(R.id.textView2);
             textView3 = view.findViewById(R.id.textView3);
             icon_info = view.findViewById(R.id.icon_info);

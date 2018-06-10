@@ -5,23 +5,14 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.AppWidgetTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.fast0n.iliad.java.GenerateToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class Widget extends AppWidgetProvider {
@@ -116,7 +107,7 @@ public class Widget extends AppWidgetProvider {
                     .load("http://android12.altervista.org/res/widget/ic_mms.png").apply(options).into(img9);
 
 
-            AppWidgetTarget button = new AppWidgetTarget(context, R.id.button, views, appWidgetId) {
+            AppWidgetTarget button = new AppWidgetTarget(context, R.id.textView1, views, appWidgetId) {
                 @Override
                 public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                     super.onResourceReady(resource, transition);
@@ -355,7 +346,7 @@ public class Widget extends AppWidgetProvider {
                     0, intent1, 0);
 
 
-            views.setOnClickPendingIntent(R.id.button, pendingIntent1);
+            views.setOnClickPendingIntent(R.id.textView1, pendingIntent1);
             appWidgetManager.updateAppWidget(appWidgetId, views);
 
 

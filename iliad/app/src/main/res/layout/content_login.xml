@@ -1,98 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".LoginActivity"
-    tools:showIn="@layout/activity_login">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="250dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        card_view:cardCornerRadius="5dp"
-        card_view:cardElevation="2dp">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:isScrollContainer="false"
+    android:fillViewport="true">
 
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".LoginActivity"
+        tools:showIn="@layout/activity_login">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp">
+            android:layout_marginBottom="250dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardCornerRadius="5dp"
+            card_view:cardElevation="2dp">
 
-            <EditText
-                android:id="@+id/edt_id"
+
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:autofillHints="username"
-                android:ems="10"
-                android:hint="@string/edt_id"
-                android:inputType="number"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:background="#FFFFFF"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp">
 
-            <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
-                android:id="@+id/edt_password"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:autofillHints="password"
-                android:ems="10"
-                android:hint="@string/edt_password"
-                android:inputType="textPassword"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edt_id" />
+                <EditText
+                    android:id="@+id/edt_id"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:autofillHints="username"
+                    android:ems="10"
+                    android:hint="@string/edt_id"
+                    android:inputType="number"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.503"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:checked="true"
-                android:text="@string/stay_connected" />
+                <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+                    android:id="@+id/edt_password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:autofillHints="password"
+                    android:ems="10"
+                    android:hint="@string/edt_password"
+                    android:inputType="textPassword"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_id" />
 
-            <Button
-                android:id="@+id/btn_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/colorPrimary"
-                android:text="@string/btn_login"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edt_password" />
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/stay_connected" />
+
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="@string/btn_login"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edt_password" />
 
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

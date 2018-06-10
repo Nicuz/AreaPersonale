@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,6 +71,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -100,7 +102,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (isOnline()) {
             String site_url = getString(R.string.site_url);
-            String url = site_url + "?userid=" + userid + "&password=" + password.replace("\n","").replace("    ","") + "&token=" + token;
+            String url = site_url + "?userid=" + userid + "&password=" + password.replaceAll("\\s+","") + "&token=" + token;
             getObject(url, nav_Menu);
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
@@ -180,7 +182,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                             }
 
-                            TextView textView = headerView.findViewById(R.id.textView);
+                            TextView textView = headerView.findViewById(R.id.textView1);
                             TextView textView1 = headerView.findViewById(R.id.textView1);
                             TextView textView2 = headerView.findViewById(R.id.textView2);
 
@@ -241,6 +243,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             } else {
                 this.backPressedToExitOnce = true;
+                Fragment fragment;
+                fragment = new MasterCreditFragment();
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.fragment, fragment);
+                ft.commit();
+
+
                 Toasty.info(HomeActivity.this, getString(R.string.press_back), Toast.LENGTH_SHORT).show();
                 new Handler().postDelayed(new Runnable() {
 

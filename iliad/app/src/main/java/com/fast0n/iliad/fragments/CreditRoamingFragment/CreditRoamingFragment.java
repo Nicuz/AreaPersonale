@@ -19,10 +19,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.iliad.ConsumptionRoamingDetailActivity;
+import com.fast0n.iliad.ChargeActivity;
+import com.fast0n.iliad.ConsumptionDetailsActivity.ConsumptionRoamingDetailActivity;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -43,21 +43,22 @@ public class CreditRoamingFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_credit_roaming, container, false);
-
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
         CardView cardView;
-        final Button button;
+        final Button button,button1;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
         button = view.findViewById(R.id.button);
+        button1 = view.findViewById(R.id.button1);
 
         cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
         button.setVisibility(View.INVISIBLE);
+        button1.setVisibility(View.INVISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
         assert extras != null;
@@ -68,10 +69,20 @@ public class CreditRoamingFragment extends Fragment {
 
         getObject(url, context, view);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ConsumptionRoamingDetailActivity.class);
+                intent.putExtra("token", token);
+                startActivity(intent);
+            }
+        });
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ChargeActivity.class);
                 intent.putExtra("token", token);
                 startActivity(intent);
             }
@@ -87,7 +98,7 @@ public class CreditRoamingFragment extends Fragment {
         final List<DataCreditRoamingFragments> creditEsteroList = new ArrayList<>();
         final CardView cardView;
         final TextView credit;
-        final Button button;
+        final Button button, button1;
 
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -97,11 +108,11 @@ public class CreditRoamingFragment extends Fragment {
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         cardView = view.findViewById(R.id.cardView);
         credit = view.findViewById(R.id.creditText);
+        button1 = view.findViewById(R.id.button1);
         button = view.findViewById(R.id.button);
 
         recyclerView.setSwipeEnable(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        LinearLayoutManager llm = new LinearLayoutManager(context,  LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
 
         recyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -145,8 +156,10 @@ public class CreditRoamingFragment extends Fragment {
                             CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
                             recyclerView.setAdapter(ca);
                             button.setVisibility(View.VISIBLE);
+                            button1.setVisibility(View.VISIBLE);
                             cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
+
                         } catch (JSONException e) {
                             startActivity(new Intent(context, LoginActivity.class));
                         }

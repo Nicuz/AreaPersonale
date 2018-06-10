@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,9 +25,10 @@ public class ErrorConnectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error_connection);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        button = findViewById(R.id.button);
-        textView = findViewById(R.id.textView);
+        button = findViewById(R.id.textView1);
+        textView = findViewById(R.id.textView1);
         textView1 = findViewById(R.id.textView1);
 
         try {
