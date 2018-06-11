@@ -5,7 +5,8 @@ const cheerio = require('cheerio');
 
 app.get('/', function (req, res) {
     var userid = req.query.userid;
-    var password = req.query.password;
+    var psw = req.query.password;
+    const password = Buffer.from(psw + '', 'base64').toString('utf8');
     var token = req.query.token;
     var iccid = req.query.iccid;
     var email = req.query.email;
@@ -23,6 +24,23 @@ app.get('/', function (req, res) {
     var change_services = req.query.change_services;
     var activate = req.query.activate;
     var activation_sim = req.query.activation_sim;
+    var consumptiondetails = req.query.consumptiondetails;
+    var consumptionroamingdetails = req.query.consumptionroamingdetails;
+    var alert = req.query.alert;
+    var puk = req.query.puk;
+    var phonecharge = req.query.phonecharge;
+    var cbtype = req.query.cbtype;
+    var cbnumero = req.query.cbnumero;
+    var montant = req.query.montant;
+    var cbexpmois = req.query.cbexpmois;
+    var cbexpannee = req.query.cbexpannee;
+    var cbcrypto = req.query.cbcrypto;
+    var payinfoprice = req.query.payinfoprice
+    var payinfocard = req.query.payinfocard
+
+    var getNumTell = req.query.getNumTell;
+
+
 
     var data_store = {};
     data_store["iliad"] = {};
@@ -45,40 +63,40 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                try {
-                    const $ = cheerio.load(body);
-                    var results = $('body');
-                    results.each(function (i, result) {
-                        var nav = $(result).find('div.current-user').first().text().split('\n');
-                        var check = $(result).find('div.step__text').find('p.green').text();
-                        var user_name = nav[1].split('  ').join('');
-                        var user_id = nav[2].split('  ').join('');
-                        var user_numtell = nav[3].split('  ').join('');
-                        data_store["iliad"] = {};
-                        data_store["iliad"]["version"] = {};
-                        data_store["iliad"]["user_name"] = {};
-                        data_store["iliad"]["user_id"] = {};
-                        data_store["iliad"]["user_numtell"] = {};
-                        data_store["iliad"]["sim"] = {};
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+                    var nav = $(result).find('div.current-user').first().text().split('\n');
+                    var check = $(result).find('div.step__text').find('p.green').text();
+                    var user_name = nav[1].replace(/^\s+|\s+$/gm, '');
+                    var user_id = nav[2].replace(/^\s+|\s+$/gm, '');
+                    var user_numtell = nav[3].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"] = {};
+                    data_store["iliad"]["version"] = {};
+                    data_store["iliad"]["user_name"] = {};
+                    data_store["iliad"]["user_id"] = {};
+                    data_store["iliad"]["user_numtell"] = {};
+                    data_store["iliad"]["sim"] = {};
 
-                        data_store["iliad"]["version"] = "5";
-                        data_store["iliad"]["user_name"] = user_name;
-                        data_store["iliad"]["user_id"] = user_id;
-                        data_store["iliad"]["user_numtell"] = user_numtell;
+                    data_store["iliad"]["version"] = "8";
+                    data_store["iliad"]["user_name"] = user_name;
+                    data_store["iliad"]["user_id"] = user_id;
+                    data_store["iliad"]["user_numtell"] = user_numtell;
 
 
-                        if (check == 'SIM attivata') {
-                            data_store["iliad"]["sim"] = 'true';
-                        } else {
-                            data_store["iliad"]["sim"] = 'false';
-                        }
-                        res.send(data_store);
-                    });
-                } catch (Exeption) { }
+                    if (check == 'SIM attivata') {
+                        data_store["iliad"]["sim"] = 'true';
+                    } else {
+                        data_store["iliad"]["sim"] = 'false';
+                    }
+
+                    res.send(data_store);
+
+
+                });
             };
         });
-    }
-    else if (activation_sim == 'true' && token != undefined) {
+    } else if (activation_sim == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/activation-sim',
             method: 'POST',
@@ -124,16 +142,16 @@ app.get('/', function (req, res) {
                         var title = $(result).find('div.form-activation').text().split('   ').join('').split('\n')
                         var orderdate = $(result).find('div.step__text').first().text().split('\n')
                         var tracking = $(result).find('a.red').attr('href')
-                        var activation = $(result).find('p.explain').text().split('   ').join('').split('  ').join(' ').split('\n')
+                        var activation = $(result).find('p.explain').text().replace(/^\s+|\s+$/gm, '').split('  ').join(' ').split('\n')
                         var check = $(result).find('div.step__text').find('p.green').text();
                         var order_shipped = $(result).find('div.step__text').find('p').html()
 
-                        activation = activation[1];
+                        activation = activation[0];
                         title = title[1];
 
-                        var offer = array[0].split('\n')[1].split('   ').join('')
-                        var order_date = orderdate[2].split('   ').join('')
-                        var date = orderdate[3].split('   ').join('')
+                        var offer = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var order_date = orderdate[2].replace(/^\s+|\s+$/gm, '')
+                        var date = orderdate[3].replace(/^\s+|\s+$/gm, '')
                         var tracking_text = array3[2]
                         var validation = array2[0]
                         var preparazione = array2[1]
@@ -198,10 +216,11 @@ app.get('/', function (req, res) {
             }
         });
     } else if (new_password != undefined && new_password_confirm != undefined && password != undefined && token != undefined) {
+
         var formData = {
             'password-current': password,
-            'password-new': new_password,
-            'password-new-confirm': new_password_confirm
+            'password-new': Buffer.from(new_password + '', 'base64').toString('utf8'),
+            'password-new-confirm': Buffer.from(new_password_confirm + '', 'base64').toString('utf8'),
         }
         var options = {
             url: 'https://www.iliad.it/account/mes-informations/password',
@@ -236,7 +255,7 @@ app.get('/', function (req, res) {
                     data_store["iliad"]["sim"] = {};
 
                     var sim = $(result)
-                        .find('div.flash-error').text().split('   ').join('').split('\n')
+                        .find('div.flash-error').text().replace(/^\s+|\s+$/gm, '').split('\n')
                     sim = sim[1];
                     if (sim != 'L\'état actuel de votre SIM ne requiert aucune activation.' && sim != 'Cette SIM a été résiliée et ne peux plus être utilisée.') {
                         data_store["iliad"]["sim"][0] = sim;
@@ -273,17 +292,17 @@ app.get('/', function (req, res) {
                             });
                         var puk = $(result).find('span.bulle-info').attr('data-help-content');
 
-                        var address_title = array[0].split('\n')[1].split('  ').join('');
-                        var address = array[0].split('\n')[3].split('  ').join('');
-                        var cap = array[0].split('\n')[5].split('   ').join('');
-                        var pay_title = array[1].split('\n')[1].split('  ').join('');
-                        var pay_method = array[1].split('\n')[2].split('   ').join('');
-                        var mail_title = array[2].split('\n')[1].split('  ').join('');
-                        var mail = array[2].split('\n')[2].split('  ').join('');
-                        var password_title = array[3].split('\n')[1].split('  ').join('');
-                        var password = array[3].split('\n')[2].split('  ').join('');
+                        var address_title = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var address = array[0].split('\n')[3].replace(/^\s+|\s+$/gm, '');
+                        var cap = array[0].split('\n')[5].replace(/^\s+|\s+$/gm, '');
+                        var pay_title = array[1].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var pay_method = array[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var mail_title = array[2].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var mail = array[2].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var password_title = array[3].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var password = array[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
                         var puk_title = array[4].split('\n')[3].split('     ').join('');
-                        var puk_text = array[4].split('\n')[7].split('   ').join('');
+                        var puk_text = array[4].split('\n')[7].replace(/^\s+|\s+$/gm, '');
 
                         data_store["iliad"][0] = {};
                         data_store["iliad"][1] = {};
@@ -314,50 +333,54 @@ app.get('/', function (req, res) {
                         data_store["iliad"][3][2] = "Modifica";
                         data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_puk.png";
 
-                        data_store["iliad"][4][2] = "";
-                        data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_password.png";
                         data_store["iliad"][4][0] = puk_title;
+                        data_store["iliad"][4][1] = 'xxxxxx';
+                        data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_password.png";
+                        data_store["iliad"][4][2] = "Visualizza"
+                        res.send(data_store);
 
-                        try {
-                            var options = {
-                                method: 'GET',
-                                url: 'https://www.iliad.it/account/mes-informations',
-                                qs: { show: 'puk' },
-                                headers:
-                                    {
-                                        'Cache-Control': 'no-cache',
-                                        'x-requested-with': 'XMLHttpRequest',
-                                        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
-                                        referer: 'https://www.iliad.it/account/mes-informations',
-                                        cookie: 'ACCOUNT_SESSID=' + token,
-                                        'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
-                                        accept: 'application/json, text/javascript, */*; q=0.01',
-                                        scheme: 'https',
-                                        path: '/account/mes-informations?show=puk',
-                                        method: 'GET',
-                                        authority: 'www.iliad.it'
-                                    },
-                                json: true
-                            };
-                            request(options, function (error, response, body) {
-                                if (body[0]["result"]["data"] != undefined) {
-                                    data_store["iliad"][4][1] = body[0]["result"]["data"]["code_puk"];
-                                    res.send(data_store);
-                                }
-                                else {
-                                    data_store["iliad"][4][1] = 'xxxxxx';
-                                    res.send(data_store);
-                                }
-                            });
-                        }
-                        catch (Exeption) {
-                        }
+
+
+
                     });
                 } catch (Exeption) {
                     //res.send(503);
                 }
             }
         });
+    } else if (puk == 'true' && token != undefined) {
+        var options = {
+            method: 'GET',
+            url: 'https://www.iliad.it/account/mes-informations',
+            qs: {
+                show: 'puk'
+            },
+            headers: {
+                'Cache-Control': 'no-cache',
+                'x-requested-with': 'XMLHttpRequest',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
+                referer: 'https://www.iliad.it/account/mes-informations',
+                cookie: 'ACCOUNT_SESSID=' + token,
+                'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
+                accept: 'application/json, text/javascript, */*; q=0.01',
+                scheme: 'https',
+                path: '/account/mes-informations?show=puk',
+                method: 'GET',
+                authority: 'www.iliad.it'
+            },
+            json: true
+        };
+        request(options, function (error, response, body) {
+            data_store["iliad"][0] = {}
+            if (body[0]["result"]["data"] != undefined) {
+                data_store["iliad"][0] = body[0]["result"]["data"]["code_puk"];
+                res.send(data_store);
+            } else {
+                data_store["iliad"][0] = 'Codice PUK non disponibile';
+                res.send(data_store);
+            }
+        });
+
     } else if (option == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/mes-options',
@@ -368,68 +391,65 @@ app.get('/', function (req, res) {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(body);
                 var results = $('body');
-                var array = [];
-                var array2 = [];
+                var status = [];
+                var text = [];
                 var array3 = [];
-                try {
-                    results.each(function (i, result) {
-                        $(result)
-                            .find('div.as__status--active')
-                            .each(function (index, element) {
-                                array = array.concat([$(element).find('span.as__status__text').text()]);
-                            });
-                        $(result)
-                            .find('div.as__status--active')
-                            .each(function (index, element) {
-                                array2 = array2.concat([$(element).find('i').attr('class')]);
-                            });
-                        $(result)
-                            .find('div.bold')
-                            .each(function (index, element) {
-                                array3 = array3.concat([$(element).find('a').text()]);
-                            });
+                results.each(function (i, result) {
 
-                        var title_option = $(result).find('h1').text().split('\n')[1].split('   ').join('');
+                    var title_option = $(result).find('h1').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var status_text_4g = array[0];
-                        var block_number_status_text = array[1];
-                        var title_4g = array3[4].split('\n')[2].split('   ').join('');
-                        var block_number_title = array3[5].split('\n')[2].split('   ').join('');
+                    $(result)
+                        .find('div.as__status--active')
+                        .each(function (index, element) {
+                            text = text.concat([$(element).find('span.as__status__text').text()]);
+                        });
+                    $(result)
+                        .find('div.as__status--active')
+                        .each(function (index, element) {
+                            status = status.concat([$(element).find('i').attr('class')]);
+                        });
+                    $(result)
+                        .find('div.bold')
+                        .each(function (index, element) {
+                            array3 = array3.concat([$(element).find('a').text()]);
+                        });
 
-                        if (array2[0] == 'icon i-check') {
-                            var status_4g = 'true';
+                    var query = [
+                        "",
+                        "blocage_premium"
+                    ];
+
+                    var option = {};
+
+                    for (var x = 0; x < 3; x++) {
+                        option[x] = [];
+                    }
+
+                    for (var x = 0; x < Object.keys(option).length - 1; x++) {
+                        option[x][0] = array3[x + 4].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        option[x][1] = text[x];
+                        if (status[x] == 'icon i-check') {
+                            option[x][2] = 'true';
                         } else {
-                            var status_4g = 'false';
+                            option[x][2] = 'false';
                         }
-                        if (array2[1] == 'icon i-check') {
-                            var block_number_status = 'true';
-                        } else {
-                            var block_number_status = 'false';
+                        option[x][3] = query[x];
+                    }
+
+                    for (var x = 0; x < 3; x++) {
+                        data_store["iliad"][x] = {};
+                    }
+
+                    data_store["iliad"][0][0] = title_option;
+
+                    for (var x = 0; x < Object.keys(option).length - 1; x++) {
+                        for (var y = 0; y < option[x].length; y++) {
+                            data_store["iliad"][x + 1][y] = option[x][y];
                         }
+                    }
+                    res.send(data_store);
 
-
-                        data_store["iliad"][0] = {};
-                        data_store["iliad"][1] = {};
-                        data_store["iliad"][2] = {};
-
-                        data_store["iliad"][0][0] = title_option;
-
-                        data_store["iliad"][1][0] = title_4g;
-                        data_store["iliad"][1][1] = status_text_4g;
-                        data_store["iliad"][1][2] = status_4g;
-                        data_store["iliad"][1][3] = ""
-
-                        data_store["iliad"][2][0] = block_number_title;
-                        data_store["iliad"][2][1] = block_number_status_text;
-                        data_store["iliad"][2][2] = block_number_status;
-                        data_store["iliad"][2][3] = "blocage_premium"
-
-
-
-                        res.send(data_store);
-
-                    });
-                } catch (Exeption) { }
+                });
             }
         });
     } else if (services == 'true' && token != undefined) {
@@ -442,133 +462,70 @@ app.get('/', function (req, res) {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(body);
                 var results = $('body');
-                var array = [];
-                var array2 = [];
+                var status = [];
+                var text = [];
                 var array3 = [];
-                try {
-                    results.each(function (i, result) {
-                        $(result)
-                            .find('div.as__status--active')
-                            .each(function (index, element) {
-                                array = array.concat([$(element).find('span.as__status__text').text()]);
-                            });
-                        $(result)
-                            .find('div.as__status--active')
-                            .each(function (index, element) {
-                                array2 = array2.concat([$(element).find('i').attr('class')]);
-                            });
-                        $(result)
-                            .find('div.bold')
-                            .each(function (index, element) {
-                                array3 = array3.concat([$(element).find('a').text()]);
-                            });
+                results.each(function (i, result) {
 
-                        var title_service = $(result).find('h1').text().split('\n')[1].split('   ').join('');
+                    var title_service = $(result).find('h1').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var block_hidden_number_status_text = array[0];
-                        var voice_mail_status_text = array[1];
-                        var call_transfer_status_text = array[2];
-                        var user_status_text = array[3];
-                        var fast_call_status_text = array[4];
-                        var filter_status_text = array[5];
+                    $(result)
+                        .find('div.as__status--active')
+                        .each(function (index, element) {
+                            text = text.concat([$(element).find('span.as__status__text').text()]);
+                        });
+                    $(result)
+                        .find('div.as__status--active')
+                        .each(function (index, element) {
+                            status = status.concat([$(element).find('i').attr('class')]);
+                        });
+                    $(result)
+                        .find('div.bold')
+                        .each(function (index, element) {
+                            array3 = array3.concat([$(element).find('a').text()]);
+                        });
 
-                        var block_hidden_number_status_title = array3[4].split('\n')[2].split('   ').join('');
-                        var voice_mail_status_title = array3[5].split('\n')[2].split('   ').join('');
-                        var call_transfer_status_title = array3[6].split('\n')[2].split('   ').join('');
-                        var user_status_title = array3[7].split('\n')[2].split('   ').join('');
-                        var fast_call_status_title = array3[8].split('\n')[2].split('   ').join('');
-                        var filter_status_title = array3[9].split('\n')[2].split('   ').join('');
+                    var query = [
+                        "block_anonymous",
+                        "voicemail_roaming",
+                        "block_redirect",
+                        "absent_subscriber",
+                        "speed_dial",
+                        "filter_rules"
+                    ];
 
-                        //Blocco numeri nascosti 
-                        if (array2[0] == 'icon i-check') {
-                            var block_hidden_number_status = 'true';
+                    var service = {};
+
+                    for (var x = 0; x < 7; x++) {
+                        service[x] = [];
+                    }
+
+
+                    for (var x = 0; x < Object.keys(service).length - 1; x++) {
+                        service[x][0] = array3[x + 4].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        service[x][1] = text[x];
+                        if (status[x] == 'icon i-check') {
+                            service[x][2] = 'true';
                         } else {
-                            var block_hidden_number_status = 'false';
+                            service[x][2] = 'false';
                         }
-                        //Inoltro verso segreteria telefonica all'estero
-                        if (array2[1] == 'icon i-check') {
-                            var voice_mail_status = 'true';
-                        } else {
-                            var voice_mail_status = 'false';
+                        service[x][3] = query[x];
+                    }
+
+                    for (var x = 0; x < 7; x++) {
+                        data_store["iliad"][x] = {};
+                    }
+
+                    data_store["iliad"][0][0] = title_service;
+
+                    for (var x = 0; x < Object.keys(service).length - 1; x++) {
+                        for (var y = 0; y < service[x].length; y++) {
+                            data_store["iliad"][x + 1][y] = service[x][y];
                         }
-                        //Protezione contro il trasferimento di chiamate
-                        if (array2[2] == 'icon i-check') {
-                            var call_transfer_status = 'true';
-                        } else {
-                            var call_transfer_status = 'false';
-                        }
-                        //Utente non disponibile 
-                        if (array2[3] == 'icon i-check') {
-                            var user_status = 'true';
-                        } else {
-                            var user_status = 'false';
-                        }
-                        //Chiamate rapide 
-                        if (array2[4] == 'icon i-check') {
-                            var fast_call_status = 'true';
-                        } else {
-                            var fast_call_status = 'false';
-                        }
-                        //Filtro Chiamate & SMS/MMS 
-                        if (array2[5] == 'icon i-check') {
-                            var filter_status = 'true';
-                        } else {
-                            var filter_status = 'false';
-                        }
+                    }
+                    res.send(data_store);
 
-                        data_store["iliad"][0] = {};
-                        data_store["iliad"][1] = {};
-                        data_store["iliad"][2] = {};
-                        data_store["iliad"][3] = {};
-                        data_store["iliad"][4] = {};
-                        data_store["iliad"][5] = {};
-                        data_store["iliad"][6] = {};
-
-                        data_store["iliad"][0][0] = title_service;
-
-                        data_store["iliad"][1][0] = block_hidden_number_status_title;
-                        data_store["iliad"][1][1] = block_hidden_number_status_text;
-                        data_store["iliad"][1][2] = block_hidden_number_status;
-                        data_store["iliad"][1][3] = "block_anonymous";
-
-
-
-                        data_store["iliad"][2][0] = voice_mail_status_title;
-                        data_store["iliad"][2][1] = voice_mail_status_text;
-                        data_store["iliad"][2][2] = voice_mail_status;
-                        data_store["iliad"][2][3] = "voicemail_roaming";
-
-
-
-                        data_store["iliad"][3][0] = call_transfer_status_title;
-                        data_store["iliad"][3][1] = call_transfer_status_text;
-                        data_store["iliad"][3][2] = call_transfer_status;
-                        data_store["iliad"][3][3] = "block_redirect";
-
-
-                        data_store["iliad"][4][0] = user_status_title;
-                        data_store["iliad"][4][1] = user_status_text;
-                        data_store["iliad"][4][2] = user_status;
-                        data_store["iliad"][4][3] = "absent_subscriber";
-
-
-                        data_store["iliad"][5][0] = fast_call_status_title;
-                        data_store["iliad"][5][1] = fast_call_status_text;
-                        data_store["iliad"][5][2] = fast_call_status;
-                        data_store["iliad"][5][3] = "speed_dial";
-
-
-                        data_store["iliad"][6][0] = filter_status_title;
-                        data_store["iliad"][6][1] = filter_status_text;
-                        data_store["iliad"][6][2] = filter_status;
-                        data_store["iliad"][6][3] = "filter_rules";
-
-
-
-                        res.send(data_store);
-
-                    });
-                } catch (Exeption) { }
+                });
             }
         });
     } else if (doc == 'true' && token != undefined) {
@@ -595,10 +552,10 @@ app.get('/', function (req, res) {
                             .each(function (index, element) {
                                 array2 = array2.concat([$(element).find('div.conso__text').find('a').attr('href')]);
                             });
-                        var condition_title = array[0].split('\n')[1].split('   ').join('')
-                        var condition_text = array[0].split('\n')[2].split('   ').join('')
-                        var price_title = array[1].split('\n')[1].split('   ').join('')
-                        var price_text = array[1].split('\n')[2].split('   ').join('')
+                        var condition_title = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var condition_text = array[0].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                        var price_title = array[1].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var price_text = array[1].split('\n')[2].replace(/^\s+|\s+$/gm, '')
                         var condition_doc = 'https://www.iliad.it' + array2[0];
                         var price_doc = 'https://www.iliad.it' + array2[1];
 
@@ -641,21 +598,21 @@ app.get('/', function (req, res) {
                                 array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
                             });
 
-                        var title = $(result).find('h2').text().split('\n')[1].split('   ').join('');
+                        var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate_title = array2[0].split('\n')[2].split('   ').join('');
-                        var sms_title = array2[1].split('\n')[2].split('   ').join('');
-                        var data_title = array2[2].split('\n')[5].split('   ').join('');
-                        var mms_tittle = array2[3].split('\n')[2].split('   ').join('');
+                        var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
+                        var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate = array[4].split('\n')[1].split('   ').join('');
-                        var consumi_voce = array[4].split('\n')[2].split('   ').join('');
-                        var sms = array[5].split('\n')[0].split('   ').join('');
-                        var sms_extra = array[5].split('\n')[2].split('   ').join('');
-                        var data = array[6].split('\n')[1].split('   ').join('');
-                        var data_consumi = array[6].split('\n')[2].split('   ').join('');
-                        var mms = array[7].split('\n')[1].split('   ').join('');
-                        var mms_consumi = array[7].split('\n')[2].split('   ').join('');
+                        var chiamate = array[4].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var consumi_voce = array[4].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var sms = array[5].split('\n')[0].replace(/^\s+|\s+$/gm, '');
+                        var sms_extra = array[5].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var data = array[6].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var data_consumi = array[6].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var mms = array[7].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                        var mms_consumi = array[7].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
                         data_store["iliad"][0] = {};
                         data_store["iliad"][1] = {};
@@ -688,8 +645,7 @@ app.get('/', function (req, res) {
 
                         res.send(data_store)
                     });
-                } catch (Exeption) {
-                }
+                } catch (Exeption) { }
             }
         });
     } else if (credit == 'true' && token != undefined) {
@@ -718,21 +674,21 @@ app.get('/', function (req, res) {
                                 array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
                             });
 
-                        var title = $(result).find('h2').text().split('\n')[1].split('   ').join('');
+                        var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate_title = array2[0].split('\n')[2].split('   ').join('');
-                        var sms_title = array2[1].split('\n')[2].split('   ').join('');
-                        var data_title = array2[2].split('\n')[5].split('   ').join('');
-                        var mms_tittle = array2[3].split('\n')[2].split('   ').join('');
+                        var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                        var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
+                        var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate = array[0].split('\n')[1].split('   ').join('')
-                        var consumi_voce = array[0].split('\n')[2].split('   ').join('')
-                        var sms = array[1].split('\n')[0].split('   ').join('')
-                        var sms_extra = array[1].split('\n')[1].split('   ').join('')
-                        var data = array[2].split('\n')[1].split('   ').join('')
-                        var data_consumi = array[2].split('\n')[2].split('   ').join('')
-                        var mms = array[3].split('\n')[1].split('   ').join('')
-                        var mms_consumi = array[3].split('\n')[2].split('   ').join('')
+                        var chiamate = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var consumi_voce = array[0].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                        var sms = array[1].split('\n')[0].replace(/^\s+|\s+$/gm, '')
+                        var sms_extra = array[1].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var data = array[2].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var data_consumi = array[2].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                        var mms = array[3].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                        var mms_consumi = array[3].split('\n')[2].replace(/^\s+|\s+$/gm, '')
 
 
                         data_store["iliad"][0] = {};
@@ -741,7 +697,6 @@ app.get('/', function (req, res) {
                         data_store["iliad"][3] = {};
                         data_store["iliad"][4] = {};
 
-                        data_store["iliad"][0] = {};
                         data_store["iliad"][0][0] = title;
 
                         data_store["iliad"][1][0] = chiamate;
@@ -766,8 +721,7 @@ app.get('/', function (req, res) {
 
                         res.send(data_store);
                     });
-                } catch (Exeption) {
-                }
+                } catch (Exeption) { }
             }
         });
     } else if (change_options == 'true' && update != undefined && token != undefined) {
@@ -796,10 +750,456 @@ app.get('/', function (req, res) {
                 res.send(data_store);
             }
         });
-    }
+    } else if (consumptiondetails == 'true' && token != undefined) {
+        var options = {
+            umethod: 'GET',
+            url: 'https://www.iliad.it/account/conso-et-factures',
+            qs: {
+                details: ''
+            },
+            headers: {
+                'Cache-Control': 'no-cache',
+                'x-requested-with': 'XMLHttpRequest',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
+                referer: 'https://www.iliad.it/account/conso-et-factures',
+                cookie: 'ACCOUNT_SESSID=' + token,
+                'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
+                accept: 'application/json, text/javascript, */*; q=0.01',
+                scheme: 'https',
+                path: '/account/mes-informations?details',
+                method: 'GET',
+                authority: 'www.iliad.it'
+            },
+            json: true
+        };
+        //table-details
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
 
-    function get_puk(data_store) {
+                var voix = $('div.table-details').find('div.voix');
+                var renvoi_d_appel = $('div.table-details').find('div.renvoi-d-appel');
+                var sms = $('div.table-details').find('div.sms');
+                var data = $('div.table-details').find('div.data');
+                var table = [];
+
+                data_store["iliad"]["title"] = {};
+
+                voix.each(function (i, result) {
+                    var title_voix = voix.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][0] = title_voix;
+
+                });
+                renvoi_d_appel.each(function (i, result) {
+                    var title_renvoi_d_appel = renvoi_d_appel.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][1] = title_renvoi_d_appel;
+                });
+                sms.each(function (i, result) {
+                    var title_sms = sms.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][2] = title_sms;
+
+                });
+                data.each(function (i, result) {
+                    var title_data = data.first().find('i').text().replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][3] = title_data;
+
+                });
+
+                $('div.table-details')
+                    .each(function (index, element) {
+                        table = table.concat([$(element).find('div.body').text()]);
+                    });
+
+                var voix_data = table[0].replace(/^\s+|\s+$/gm, '').split('\n');
+                var renvoi_d_appel_data = table[1].replace(/^\s+|\s+$/gm, '').split('\n');
+                var sms_data = table[2].replace(/^\s+|\s+$/gm, '').split('\n');
+                var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
+
+                if ($('div.no-conso').attr('style') == 'display:none;') {
+
+
+
+                    data_store["iliad"][0] = {};
+                    data_store["iliad"][1] = {};
+                    data_store["iliad"][2] = {};
+                    data_store["iliad"][3] = {};
+
+                    if (voix_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < voix_data.length / 7; x++) {
+                            data_store["iliad"][0][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4) {
+                                    data_store["iliad"][0][x][y] = voix_data[y + add] + ': ' + voix_data[y + add + 1]
+                                } else if (y == 5) { } else if (y == 6) {
+                                    data_store["iliad"][0][x][5] = voix_data[y + add]
+                                } else {
+                                    data_store["iliad"][0][x][y] = voix_data[y + add]
+                                }
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][0] = {};
+                        data_store["iliad"][0][0] = 'false';
+                    }
+                    if (renvoi_d_appel_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < renvoi_d_appel_data.length / 7; x++) {
+                            data_store["iliad"][1][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4)
+                                    data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add] + ': ' + renvoi_d_appel_data[y + add + 1]
+                                else if (y == 5) { } else if (y == 6)
+                                    data_store["iliad"][1][x][5] = renvoi_d_appel_data[y + add]
+                                else
+                                    data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add]
+
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][1] = {};
+                        data_store["iliad"][1][0] = 'false';
+                    }
+                    if (sms_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < sms_data.length / 7; x++) {
+                            data_store["iliad"][2][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4) {
+                                    data_store["iliad"][2][x][y] = sms_data[y + add] + ': ' + sms_data[y + add + 1]
+                                } else if (y == 5) { } else if (y == 6) {
+                                    data_store["iliad"][2][x][5] = sms_data[y + add]
+                                } else {
+                                    data_store["iliad"][2][x][y] = sms_data[y + add]
+                                }
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][2] = {};
+                        data_store["iliad"][2][0] = 'false';
+                    }
+                    if (data_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < data_data.length / 7; x++) {
+                            data_store["iliad"][3][x] = {}
+                            for (var y = 0; y < 7; y++) {
+
+
+                                if (y == 4) {
+                                    data_store["iliad"][3][x][y] = data_data[y + add] + ': ' + data_data[y + add + 1]
+                                }
+
+                                data_store["iliad"][3][x][y] = data_data[y + add]
+
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][3] = {};
+                        data_store["iliad"][3][0] = 'false';
+                    }
+                } else {
+                    data_store["iliad"] = $('div.no-conso').text();
+                }
+
+                res.send(data_store);
+            }
+        });
+    } else if (consumptiondetails == 'true' && token != undefined) {
+        var options = {
+            umethod: 'GET',
+            url: 'https://www.iliad.it/account/conso-et-factures',
+            qs: {
+                details: ''
+            },
+            headers: {
+                'Cache-Control': 'no-cache',
+                'x-requested-with': 'XMLHttpRequest',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.79 Safari/537.36',
+                referer: 'https://www.iliad.it/account/conso-et-factures',
+                cookie: 'ACCOUNT_SESSID=' + token,
+                'accept-language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6',
+                accept: 'application/json, text/javascript, */*; q=0.01',
+                scheme: 'https',
+                path: '/account/mes-informations?details',
+                method: 'GET',
+                authority: 'www.iliad.it'
+            },
+            json: true
+        };
+        //table-details
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+
+                var voix = $('div.table-details').find('div.voix');
+                var renvoi_d_appel = $('div.table-details').find('div.renvoi-d-appel');
+                var sms = $('div.table-details').find('div.sms');
+                var data = $('div.table-details').find('div.data');
+                var table = [];
+
+                data_store["iliad"]["title"] = {};
+
+                voix.each(function (i, result) {
+                    var title_voix = voix.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][0] = title_voix;
+
+                });
+                renvoi_d_appel.each(function (i, result) {
+                    var title_renvoi_d_appel = renvoi_d_appel.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][1] = title_renvoi_d_appel;
+                });
+                sms.each(function (i, result) {
+                    var title_sms = sms.text().split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][2] = title_sms;
+
+                });
+                data.each(function (i, result) {
+                    var title_data = data.first().find('i').text().replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"]["title"][3] = title_data;
+
+                });
+
+                $('div.table-details')
+                    .each(function (index, element) {
+                        table = table.concat([$(element).find('div.body').text()]);
+                    });
+
+                var voix_data = table[0].replace(/^\s+|\s+$/gm, '').split('\n');
+                var renvoi_d_appel_data = table[1].replace(/^\s+|\s+$/gm, '').split('\n');
+                var sms_data = table[2].replace(/^\s+|\s+$/gm, '').split('\n');
+                var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
+
+                if ($('div.no-conso').attr('style') == 'display:none;') {
+
+
+
+                    data_store["iliad"][0] = {};
+                    data_store["iliad"][1] = {};
+                    data_store["iliad"][2] = {};
+                    data_store["iliad"][3] = {};
+
+                    if (voix_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < voix_data.length / 7; x++) {
+                            data_store["iliad"][0][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4) {
+                                    data_store["iliad"][0][x][y] = voix_data[y + add] + ': ' + voix_data[y + add + 1]
+                                } else if (y == 5) { } else if (y == 6) {
+                                    data_store["iliad"][0][x][5] = voix_data[y + add]
+                                } else {
+                                    data_store["iliad"][0][x][y] = voix_data[y + add]
+                                }
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][0] = {};
+                        data_store["iliad"][0][0] = 'false';
+                    }
+                    if (renvoi_d_appel_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < renvoi_d_appel_data.length / 7; x++) {
+                            data_store["iliad"][1][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4)
+                                    data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add] + ': ' + renvoi_d_appel_data[y + add + 1]
+                                else if (y == 5) { } else if (y == 6)
+                                    data_store["iliad"][1][x][5] = renvoi_d_appel_data[y + add]
+                                else
+                                    data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add]
+
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][1] = {};
+                        data_store["iliad"][1][0] = 'false';
+                    }
+                    if (sms_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < sms_data.length / 7; x++) {
+                            data_store["iliad"][2][x] = {}
+                            for (var y = 0; y < 7; y++) {
+                                if (y == 4) {
+                                    data_store["iliad"][2][x][y] = sms_data[y + add] + ': ' + sms_data[y + add + 1]
+                                } else if (y == 5) { } else if (y == 6) {
+                                    data_store["iliad"][2][x][5] = sms_data[y + add]
+                                } else {
+                                    data_store["iliad"][2][x][y] = sms_data[y + add]
+                                }
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][2] = {};
+                        data_store["iliad"][2][0] = 'false';
+                    }
+                    if (data_data[0] != '') {
+                        var add = 0
+                        for (var x = 0; x < data_data.length / 7; x++) {
+                            data_store["iliad"][3][x] = {}
+                            for (var y = 0; y < 7; y++) {
+
+
+                                if (y == 4) {
+                                    data_store["iliad"][3][x][y] = data_data[y + add] + ': ' + data_data[y + add + 1]
+                                }
+
+                                data_store["iliad"][3][x][y] = data_data[y + add]
+
+                            }
+                            add = add + 7;
+                        }
+                    } else {
+                        data_store["iliad"][3] = {};
+                        data_store["iliad"][3][0] = 'false';
+                    }
+                } else {
+                    data_store["iliad"] = $('div.no-conso').text();
+                }
+
+                res.send(data_store);
+            }
+        });
+    } else if (phonecharge == 'true' && montant != undefined && cbtype != undefined && cbnumero != undefined && cbexpmois != undefined && cbexpannee != undefined && cbcrypto != undefined && token != undefined) {
+        formData = {
+            montant: montant,
+            'cb-type': cbtype,
+            'cb-numero': cbnumero,
+            'cb-exp-mois': cbexpmois,
+            'cb-exp-annee': cbexpannee,
+            'cb-crypto': cbcrypto
+        }
+        var options = {
+            url: 'https://www.iliad.it/account/rechargement',
+            method: 'POST',
+            headers: headers,
+            formData: formData
+        };
+        request(options, function (error, response, body) {
+            data_store["iliad"][0] = {}
+            if (!error && response.statusCode == 200) {
+                //flash-error
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+
+
+                    if ($(result).find('div.flash-error') != null)
+                        data_store["iliad"][0] = $(result).find('div.flash-error').text().replace(/^\s+|\s+$/gm, '').replace("Le montant de la transaction est incorrect.\n×", "Informazioni bancarie errate, transazione annullata.");
+                    else
+                        data_store["iliad"][0] = 'true';
+
+                })
+                res.send(data_store);
+
+            }
+        });
+    } else if (payinfocard == 'true' && token != undefined) {
+        var card = [];
+        var month = [];
+        var year = [];
+        var options = {
+            url: 'https://www.iliad.it/account/rechargement?montant=5',
+            method: 'GET',
+            headers: headers
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+
+                results.each(function (i, result) {
+                    $(result)
+                        .find('div.card-types')
+                        .find('img.creditCard')
+                        .each(function (index, element) {
+                            card = card.concat([$(element).attr('data-cc-value')]);
+                        })
+                    $(result)
+                        .find('select.mdc-select__input')
+                        .each(function (index, element) {
+                            if (index == 0)
+                                $(element).find('option')
+                                    .each(function (index, element) {
+                                        if ($(element).attr('value') != '')
+                                            month = month.concat([$(element).attr('value')]);
+                                    })
+                        })
+                    $(result)
+                        .find('select.mdc-select__input')
+                        .each(function (index, element) {
+                            if (index == 1)
+                                $(element).find('option')
+                                    .each(function (index, element) {
+                                        if ($(element).attr('value') != '')
+                                            year = year.concat([$(element).attr('value').replace("20", "")]);
+                                    })
+                        })
+                });
+                data_store["iliad"][0] = {}
+                data_store["iliad"][1] = {}
+                data_store["iliad"][0] = card;
+                data_store["iliad"][1] = year;
+
+
+
+            }
+        });
+    } else if (payinfoprice == 'true' && token != undefined) {
+        var price = [];
+        var options = {
+            url: 'https://www.iliad.it/account/rechargement',
+            method: 'GET',
+            headers: headers
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+                    $(result).find('select.mdc-select__input').find('option')
+                        .each(function (index, element) {
+                            if ($(element).attr('value') != '')
+                                price = price.concat([$(element).attr('value')]);
+                        })
+                    data_store["iliad"][0] = {}
+                    data_store["iliad"][0] = price;
+                    res.send(data_store);
+                });
+
+            }
+        });
+    } else if (getNumTell == 'true' && token != undefined) {
+        var options = {
+            url: 'https://www.iliad.it/account/',
+            method: 'GET',
+            headers: headers
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                const $ = cheerio.load(body);
+                var results = $('body');
+                results.each(function (i, result) {
+
+                    var nav = $(result).find('div.current-user').first().text().split('\n');
+                    var user_numtell = nav[3].replace(/^\s+|\s+$/gm, '');
+                    data_store["iliad"][0] = {};
+                    data_store["iliad"][0] = user_numtell;
+                    res.send(data_store);
+                });
+
+            }
+        });
+    } else if (alert == 'true') {
+        data_store["iliad"][0] = "L’app è stata creata in modo <b>NON</b> ufficiale, iliad S.P.A non è responsabile. L’app prende le informazioni dal sito, se una sezione/testo/oggetto non c’è sul sito non ci sarà nell’app. Ti ricordo inoltre che prima di creare una valutazione sul PlayStore di contattarci su Telegram con <b>@Fast0n</b> o <b>@Mattvoid</b> oppure per email all’indirizzo <b>theplayergame97@gmail.com</b>.<br/>Grazie per l’attenzione."
         res.send(data_store);
+
     }
 });
 const server = app.listen(process.env.PORT, function () { });
