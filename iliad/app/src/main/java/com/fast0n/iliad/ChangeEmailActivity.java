@@ -98,8 +98,9 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
                         btn_change_email.setEnabled(false);
                     } else {
-                        loading.setVisibility(View.INVISIBLE);
-                        cardView.setVisibility(View.VISIBLE);
+
+
+
                         edt_password.setInputType(0);
                         btn_change_email.setEnabled(true);
                         Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,

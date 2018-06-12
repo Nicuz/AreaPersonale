@@ -40,6 +40,7 @@ import com.fast0n.iliad.fragments.ConditionsFragment.ConditionsFragment;
 import com.fast0n.iliad.fragments.InfoFragments.InfoFragments;
 import com.fast0n.iliad.fragments.MasterCreditFragment;
 import com.fast0n.iliad.fragments.OptionsFragment.OptionsFragment;
+import com.fast0n.iliad.fragments.VoicemailFragment.VoicemailFragment;
 import com.fast0n.iliad.fragments.ServicesFragment.ServicesFragment;
 import com.fast0n.iliad.fragments.SimFragments;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -64,6 +65,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences.Editor editor;
     View headerView;
     private boolean backPressedToExitOnce = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +116,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             startActivity(mainActivity);
         }
 
+
         if (checkbox != null && checkbox.equals("true")) {
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
@@ -126,32 +129,35 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getObject(String url, final Menu nav_Menu) {
-        RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+
+        RequestQueue queue = Volley.newRequestQueue(HomeActivity.this);
+
+        CustomPriorityRequest customPriorityRequest = new CustomPriorityRequest(
+                Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
 
                             JSONObject json_raw = new JSONObject(response.toString());
                             String iliad = json_raw.getString("iliad");
-
                             JSONObject json = new JSONObject(iliad);
 
-                            String stringSim = json.getString("sim");
                             String stringVersion = json.getString("version");
-                            String user_name = json.getString("user_name");
-                            String user_id = json.getString("user_id");
-                            String user_numtell = json.getString("user_numtell");
-
                             if (BuildConfig.VERSION_CODE < Integer.parseInt(stringVersion)) {
                                 Intent intent = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
                                 intent.putExtra("errorAPI", "true");
                                 startActivity(intent);
 
                             }
+
+                            String stringSim = json.getString("sim");
+                            String user_name = json.getString("user_name");
+                            String user_id = json.getString("user_id");
+                            String user_numtell = json.getString("user_numtell");
+
+
 
                             try {
                                 if (stringSim.equals("false")) {
@@ -172,6 +178,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                     nav_Menu.findItem(R.id.nav_credit).setChecked(true);
                                     nav_Menu.findItem(R.id.nav_options).setVisible(true);
                                     nav_Menu.findItem(R.id.nav_services).setVisible(true);
+                                    nav_Menu.findItem(R.id.nav_voicemail).setVisible(true);
 
                                     FragmentManager fragmentManager = getSupportFragmentManager();
                                     FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -182,7 +189,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                             }
 
-                            TextView textView = headerView.findViewById(R.id.textView1);
+                            TextView textView = headerView.findViewById(R.id.textView);
                             TextView textView1 = headerView.findViewById(R.id.textView1);
                             TextView textView2 = headerView.findViewById(R.id.textView2);
 
@@ -191,31 +198,37 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             textView1.setText(user_id);
                             textView2.setText(user_numtell);
 
+                            editor.putString("telefono", user_numtell);
+                            editor.apply();
+
+
                             toggle.syncState();
                             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
                         } catch (JSONException ignored) {
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                settings = getSharedPreferences("sharedPreferences", 0);
-                editor = settings.edit();
-                editor.putString("userid", null);
-                editor.putString("password", null);
-                editor.apply();
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        settings = getSharedPreferences("sharedPreferences", 0);
+                        editor = settings.edit();
+                        editor.putString("userid", null);
+                        editor.putString("password", null);
+                        editor.apply();
 
-                Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
-                        .show();
-                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(mainActivity);
+                        Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                                .show();
+                        Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                        startActivity(mainActivity);
 
-            }
+                    }
+                });
 
-        });
+        customPriorityRequest.setPriority(Request.Priority.IMMEDIATE);
+        queue.add(customPriorityRequest);
 
-        queue.add(getRequest);
 
     }
 
@@ -310,6 +323,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             if (isOnline())
                 fragment = new InfoFragments();
+            else
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+
+        } else if (id == R.id.nav_voicemail) {
+
+            if (isOnline())
+                fragment = new VoicemailFragment();
             else
                 startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 

@@ -93,5 +93,9 @@
     <string name="edtCvv">CVV</string>
     <string name="edtExpiration">Data di scadenza</string>
     <string name="edtCard">Numero della carta</string>
+    <string name="missing">mancante</string>
+    <string name="wrong_credit_card">Carta di credito non valida</string>
+    <string name="nav_voicemail">Segreteria telefonica</string>
+
 
 </resources>

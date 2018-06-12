@@ -173,16 +173,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
                     byte[] encodeValue = Base64.encode(password.getBytes(), Base64.DEFAULT);
-
                     String npassword = new String(encodeValue);
-
-
                     intent.putExtra("password",npassword);
-
-
-
-
-
                     intent.putExtra("token", token);
 
                     if (checkBox.isChecked()) {

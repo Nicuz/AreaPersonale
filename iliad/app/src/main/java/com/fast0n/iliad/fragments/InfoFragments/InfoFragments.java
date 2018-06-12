@@ -93,10 +93,11 @@ public class InfoFragments extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
         cardView = view.findViewById(R.id.cardView);
-
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View arg1, int position) {
+
+
 
                         switch (position) {
                         case 1:
@@ -113,6 +114,7 @@ public class InfoFragments extends Fragment {
                             intent.putExtra("token", token);
                             startActivity(intent);
                         case 4:
+
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?puk=true&token="+ token, null,
                                         response -> {
@@ -124,12 +126,10 @@ public class InfoFragments extends Fragment {
                                                 JSONObject json = new JSONObject(iliad);
                                                 String string = json.getString(String.valueOf(0));
 
-
-                                                new MaterialStyledDialog.Builder(getContext())
-                                                        .setStyle(Style.HEADER_WITH_TITLE)
-                                                        .setTitle(string)
-                                                        .show();
-
+                                                    new MaterialStyledDialog.Builder(getContext())
+                                                            .setStyle(Style.HEADER_WITH_TITLE)
+                                                            .setTitle(string)
+                                                            .show();
 
 
                                             } catch (JSONException e) {
@@ -139,7 +139,7 @@ public class InfoFragments extends Fragment {
 
                                 // add it to the RequestQueue
                                 queue.add(getRequest);
-                                break;
+                            break;
                         default:
                             Toasty.warning(context, getString(R.string.coming_soon), Toast.LENGTH_SHORT, true).show();
                         }

@@ -1,5 +1,7 @@
 package com.fast0n.iliad;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -46,7 +48,6 @@ public class ChargeActivity extends AppCompatActivity {
     Button button;
     Spinner spinner;
     ActionBar actionBar;
-    String typeCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,22 +66,21 @@ public class ChargeActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-
-
+        // java adresses
         button = findViewById(R.id.button);
         creditCardView = findViewById(R.id.card);
         spinner = findViewById(R.id.spinner);
 
 
+        SharedPreferences settings = getSharedPreferences("sharedPreferences", 0);
+        String telefono = settings.getString("telefono", null);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.apply();
 
         final Bundle extras = getIntent().getExtras();
         assert extras != null;
         final String token = extras.getString("token");
         final String site_url = getString(R.string.site_url);
-
-
-
-
 
 
         RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
@@ -170,16 +170,15 @@ public class ChargeActivity extends AppCompatActivity {
                 creditCardView.setCardNumber(nCard.getText().toString().replaceAll("\\s+", ""));
                 String currentText = nCard.getText().toString();
                 if (currentText.isEmpty() || pattern.matcher(currentText).matches())
-                    return; // no need to modify
+                    return;
                 String numbersOnly = currentText.trim().replaceAll("[^\\d.]", "");
-                ; // remove everything but numbers
-                String formatted = "";
+                StringBuilder formatted = new StringBuilder();
                 for (int i = 0; i < numbersOnly.length(); i += 4)
                     if (i + 4 < numbersOnly.length())
-                        formatted += numbersOnly.substring(i, i + 4) + space;
+                        formatted.append(numbersOnly.substring(i, i + 4)).append(space);
                     else
-                        formatted += numbersOnly.substring(i);
-                nCard.setText(formatted);
+                        formatted.append(numbersOnly.substring(i));
+                nCard.setText(formatted.toString());
                 nCard.setSelection(nCard.getText().toString().length());
             }
 
@@ -189,23 +188,7 @@ public class ChargeActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                String ccNum = s.toString().replaceAll("\\s+","");
-                for(String p:listOfPattern){
-                    if(ccNum.matches(p)){
-                        if (p.equals("^4[0-9]{6,}$")){
-                            p = "visa";
-                            typeCard = p;
-                        }
-                        else if(p.equals("^5[1-5][0-9]{5,}$")){
-                            p = "mastercard";
-                            typeCard = p;
-                        }
-                        else{
-                            typeCard = "";
-                        }
-                        break;
-                    }
-                }
+
             }
         });
 
@@ -271,13 +254,44 @@ public class ChargeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (nCard.getText().toString().length() == 0 && ncvv.getText().toString().length() == 0 && nExpiration.getText().toString().length() == 0 )
-                    Toasty.warning(ChargeActivity.this, "Valore mancante controlla bene", Toast.LENGTH_SHORT).show();
+                String typecard = null;
+
+
+                String ccNum = nCard.getText().toString().replaceAll("\\s+","");
+                for(String p:listOfPattern){
+                    if(ccNum.matches(p)){
+                        if (p.equals("^4[0-9]{6,}$")){
+                            typecard = "visa";
+                        }
+                        else if(p.equals("^5[1-5][0-9]{5,}$")){
+                            typecard = "mastercard";
+                        }
+                        else{
+                            typecard = "";
+                        }
+                        break;
+                    }
+                }
+
+                String montant = spinner.getSelectedItem().toString();
+
+
+                if (montant.equals("Importo"))
+                    Toasty.warning(ChargeActivity.this, montant + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+                else if (nCard.getText().toString().length() == 0)
+                    Toasty.warning(ChargeActivity.this, getString(R.string.edtCard) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+                if (typecard == null)
+                    Toasty.warning(ChargeActivity.this, getString(R.string.wrong_credit_card), Toast.LENGTH_SHORT).show();
+                else if (nExpiration.getText().toString().length() == 0)
+                    Toasty.warning(ChargeActivity.this, getString(R.string.edtExpiration) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+                else if (ncvv.getText().toString().length() == 0)
+                    Toasty.warning(ChargeActivity.this, getString(R.string.edtCvv) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+
                 else{
 
                     RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
 
-                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?payinfocard=true&token="+token, null,
+                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?phonecharge=true&montant="+montant.replace("€","")+"&cbtype="+typecard+"&cbnumero="+nCard.getText().toString().replaceAll("\\s+","")+"&cbexpmois="+nExpiration.getText().toString().split("/")[0]+"&cbexpannee=20"+nExpiration.getText().toString().split("/")[1]+"&cbcrypto="+ncvv.getText().toString()+"&token="+token, null,
                             new Response.Listener<JSONObject>() {
 
                                 @Override
@@ -289,23 +303,19 @@ public class ChargeActivity extends AppCompatActivity {
                                         JSONObject json = new JSONObject(iliad);
 
                                         String price = json.getString("0");
-                                        JSONArray json_title = new JSONArray(price);
-
-                                        System.out.println(json_title.length());
-
-                                        for (int z = 0; z < json_title.length(); z++) {
-
-                                            String stringPrice = json_title.getString(z);
-
-                                            if (stringPrice.equals(typeCard)){
 
 
+                                            if (price.equals("true")){
+
+                                                Toasty.success(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(ChargeActivity.this, LoginActivity.class);
+                                                startActivity(intent);
 
                                             }
                                             else {
-                                                Toasty.warning(ChargeActivity.this, "Valore mancante controlla bene", Toast.LENGTH_SHORT).show();
+                                                Toasty.error(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
                                             }
-                                        }
+
 
                                     } catch (JSONException ignored) {
                                     }

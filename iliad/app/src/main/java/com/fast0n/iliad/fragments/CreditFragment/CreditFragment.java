@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.iliad.ChargeActivity;
 import com.fast0n.iliad.ConsumptionDetailsActivity.ConsumptionDetailsActivity;
+import com.fast0n.iliad.CustomPriorityRequest;
 import com.fast0n.iliad.LoginActivity;
 import com.fast0n.iliad.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -119,49 +120,64 @@ public class CreditFragment extends Fragment {
         recyclerView.setOnRefreshListener(() -> startActivity(new Intent(context, LoginActivity.class)));
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
 
-                        JSONObject json_raw = new JSONObject(response.toString());
-                        String iliad = json_raw.getString("iliad");
+        CustomPriorityRequest customPriorityRequest = new CustomPriorityRequest(
+                Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
 
-                        JSONObject json = new JSONObject(iliad);
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
 
-                        String string1 = json.getString("0");
-                        JSONObject json_strings1 = new JSONObject(string1);
-                        String stringCredit = json_strings1.getString("0");
-                        credit.setText(stringCredit);
+                            JSONObject json = new JSONObject(iliad);
 
-                        for (int j = 1; j < json.length(); j++) {
+                            String string1 = json.getString("0");
+                            JSONObject json_strings1 = new JSONObject(string1);
+                            String stringCredit = json_strings1.getString("0");
+                            credit.setText(stringCredit);
 
-                            String string = json.getString(String.valueOf(j));
-                            JSONObject json_strings = new JSONObject(string);
+                            for (int j = 1; j < json.length(); j++) {
 
-                            String c = json_strings.getString("0");
-                            String b = json_strings.getString("1");
-                            String a = json_strings.getString("2");
-                            String d = json_strings.getString("3");
+                                String string = json.getString(String.valueOf(j));
+                                JSONObject json_strings = new JSONObject(string);
 
-                            creditList.add(new DataCreditFragments(a, b, c, d));
+                                String c = json_strings.getString("0");
+                                String b = json_strings.getString("1");
+                                String a = json_strings.getString("2");
+                                String d = json_strings.getString("3");
 
+                                creditList.add(new DataCreditFragments(a, b, c, d));
+
+                            }
+
+                            CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
+                            recyclerView.setAdapter(ca);
+                            cardView.setVisibility(View.VISIBLE);
+                            button.setVisibility(View.VISIBLE);
+                            button1.setVisibility(View.VISIBLE);
+                            loading.setVisibility(View.INVISIBLE);
+
+
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
-
-                        CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
-                        recyclerView.setAdapter(ca);
-                        cardView.setVisibility(View.VISIBLE);
-                        button.setVisibility(View.VISIBLE);
-                        button1.setVisibility(View.VISIBLE);
-                        loading.setVisibility(View.INVISIBLE);
-
-
-                    } catch (JSONException e) {
-                        startActivity(new Intent(context, LoginActivity.class));
                     }
-                }, error -> startActivity(new Intent(context, LoginActivity.class)));
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-        // add it to the RequestQueue
-        queue.add(getRequest);
+                    }
+                });
+
+        customPriorityRequest.setPriority(Request.Priority.IMMEDIATE);
+        queue.add(customPriorityRequest);
+
+
+
 
     }
 }

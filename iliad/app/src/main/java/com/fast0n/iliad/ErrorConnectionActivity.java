@@ -27,9 +27,9 @@ public class ErrorConnectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_error_connection);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        button = findViewById(R.id.textView1);
+        button = findViewById(R.id.button);
         textView = findViewById(R.id.textView1);
-        textView1 = findViewById(R.id.textView1);
+        textView1 = findViewById(R.id.textView);
 
         try {
             Bundle extras = getIntent().getExtras();
