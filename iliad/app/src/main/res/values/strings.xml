@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">iliad</string>
+    <string name="app_name">Area Personale</string>
 
 
     <string name="btn_login">Accedi</string>
@@ -64,12 +64,11 @@
     <string name="source_code">Codice Sorgente</string>
     <string name="author">Autore</string>
     <string name="content">L\'app è stata creata in modo non ufficiale ILIAD SPA. non è responsabile in alcun modo</string>
-    <string name="donate">Dona</string>
+    <string name="donate">Offrici una birra</string>
     <string name="follow">Seguimi su instagram</string>
     <string name="old_version_title">Versione obsoleta</string>
     <string name="old_version">Aggiorna l\'applicazione e riprova…</string>
     <string name="update">Aggiorna</string>
-
 
     <string name="yes">Si</string>
     <string name="no">No</string>
@@ -77,18 +76,13 @@
     <string name="press_back">Premere ancora una volta per uscire</string>
 
     <string name="site_url">https://iliad-api.glitch.me/</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
     <string name="loading">Caricamento…</string>
-    <string name="title_activity_consumption_details">ConsumptionDetailsActivity</string>
     <string name="consumptiondetail">Dettaglio consumo</string>
     <string name="consumptionroamingdetail">Dettaglio consumo estero</string>
     <string name="stay_connected">Resta connesso</string>
     <string name="nav_contactus">Contattaci</string>
     <string name="warning">Attenzione</string>
     <string name="accept">Dichiaro di aver letto</string>
-    <string name="title_activity_change_email">ChangeEmail</string>
-    <string name="title_activity_charge">ChargeActivity</string>
     <string name="chargeNumber">Ricarica il tuo numero</string>
     <string name="edtCvv">CVV</string>
     <string name="edtExpiration">Data di scadenza</string>
