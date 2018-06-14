@@ -4,10 +4,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 
 app.get('/', function (req, res) {
-  
-
-  
-  
+    
     var userid = req.query.userid;
     var psw = req.query.password;
     const password = Buffer.from(psw + '', 'base64').toString('utf8');
@@ -81,12 +78,10 @@ app.get('/', function (req, res) {
                     data_store["iliad"]["user_numtell"] = {};
                     data_store["iliad"]["sim"] = {};
 
-                    data_store["iliad"]["version"] = "1";
+                    data_store["iliad"]["version"] = "2";
                     data_store["iliad"]["user_name"] = nav[1].replace(/^\s+|\s+$/gm, '');
                     data_store["iliad"]["user_id"] = nav[2].replace(/^\s+|\s+$/gm, '');
                     data_store["iliad"]["user_numtell"] = nav[3].replace(/^\s+|\s+$/gm, '');
-                    
-                    console.log(check)
 
                     if (check == 'SIM attivata') {
                         data_store["iliad"]["sim"] = 'true';
@@ -94,7 +89,6 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["sim"] = 'false';
                     }
                     res.send(data_store);
-                    console.log(data_store);
                     return;
                 });
             };
@@ -108,94 +102,94 @@ app.get('/', function (req, res) {
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
 
-                    const $ = cheerio.load(body);
-                    var results = $('body');
+                const $ = cheerio.load(body);
+                var results = $('body');
+
+                var array = [];
+                var array1 = [];
+
+                results.each(function (i, result) {
+
+                    data_store["iliad"]["validation"] = {};
+                    data_store["iliad"]["shipping"] = {};
+                    data_store["iliad"]["sim"] = {};
 
                     var array = [];
-                    var array1 = [];
+                    var array2 = [];
+                    var array3 = [];
+                    $(result)
+                        .find('h2.title')
+                        .each(function (index, element) {
+                            array = array.concat([$(element).text()]);
+                        });
+                    $(result)
+                        .find('div.grid-l')
+                        .find('div.step__text')
+                        .each(function (index, element) {
+                            array2 = array2.concat([$(element).find('h4.step__text__title').text()]);
+                        });
+                    $(result)
+                        .find('div.grid-l')
+                        .find('div.step__text')
+                        .each(function (index, element) {
+                            array3 = array3.concat([$(element).find('a').text()]);
+                        });
 
-                    results.each(function (i, result) {
+                    var title = $(result).find('div.form-activation').text().split('   ').join('').split('\n')
+                    var orderdate = $(result).find('div.step__text').first().text().split('\n')
+                    var tracking = $(result).find('a.red').attr('href')
+                    var activation = $(result).find('p.explain').text().replace(/^\s+|\s+$/gm, '').split('  ').join(' ').split('\n')
+                    var check = $(result).find('div.step__text').find('p.green').text();
+                    var order_shipped = $(result).find('div.step__text').find('p').html()
 
-                        data_store["iliad"]["validation"] = {};
-                        data_store["iliad"]["shipping"] = {};
-                        data_store["iliad"]["sim"] = {};
+                    activation = activation[0];
+                    title = title[1];
 
-                        var array = [];
-                        var array2 = [];
-                        var array3 = [];
-                        $(result)
-                            .find('h2.title')
-                            .each(function (index, element) {
-                                array = array.concat([$(element).text()]);
-                            });
-                        $(result)
-                            .find('div.grid-l')
-                            .find('div.step__text')
-                            .each(function (index, element) {
-                                array2 = array2.concat([$(element).find('h4.step__text__title').text()]);
-                            });
-                        $(result)
-                            .find('div.grid-l')
-                            .find('div.step__text')
-                            .each(function (index, element) {
-                                array3 = array3.concat([$(element).find('a').text()]);
-                            });
-
-                        var title = $(result).find('div.form-activation').text().split('   ').join('').split('\n')
-                        var orderdate = $(result).find('div.step__text').first().text().split('\n')
-                        var tracking = $(result).find('a.red').attr('href')
-                        var activation = $(result).find('p.explain').text().replace(/^\s+|\s+$/gm, '').split('  ').join(' ').split('\n')
-                        var check = $(result).find('div.step__text').find('p.green').text();
-                        var order_shipped = $(result).find('div.step__text').find('p').html()
-
-                        activation = activation[0];
-                        title = title[1];
-                      
-                        var offer = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
-                        var order_date = orderdate[2].replace(/^\s+|\s+$/gm, '')
-                        var date = orderdate[3].replace(/^\s+|\s+$/gm, '')
-                        var tracking_text = array3[2]
-                        var validation = array2[0]
-                        var preparazione = array2[1]
-                        var spedizione = array2[2]
+                    var offer = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                    var order_date = orderdate[2].replace(/^\s+|\s+$/gm, '')
+                    var date = orderdate[3].replace(/^\s+|\s+$/gm, '')
+                    var tracking_text = array3[2]
+                    var validation = array2[0]
+                    var preparazione = array2[1]
+                    var spedizione = array2[2]
 
 
-                        data_store["iliad"]["shipping"][0] = spedizione;
-                        if (order_shipped != null)
-                            data_store["iliad"]["shipping"][1] = order_shipped;
-                        else
-                            data_store["iliad"]["shipping"][1] = 'Non disponibile';
-                        data_store["iliad"]["shipping"][2] = tracking_text;
-                        if (tracking != undefined)
-                            data_store["iliad"]["shipping"][3] = tracking;
-                        else
-                            data_store["iliad"]["shipping"][3] = 'Non disponibile';
-                        if (title != undefined)
-                            data_store["iliad"]["sim"][0] = title;
-                        else
-                            data_store["iliad"]["sim"][0] = 'Non disponibile';
-                        if (activation != undefined)
-                            data_store["iliad"]["sim"][1] = activation;
-                        else
-                            data_store["iliad"]["sim"][1] = 'Non disponibile';
+                    data_store["iliad"]["shipping"][0] = spedizione;
+                    if (order_shipped != null)
+                        data_store["iliad"]["shipping"][1] = order_shipped;
+                    else
+                        data_store["iliad"]["shipping"][1] = 'Non disponibile';
+                    data_store["iliad"]["shipping"][2] = tracking_text;
+                    if (tracking != undefined)
+                        data_store["iliad"]["shipping"][3] = tracking;
+                    else
+                        data_store["iliad"]["shipping"][3] = 'Non disponibile';
+                    if (title != undefined)
+                        data_store["iliad"]["sim"][0] = title;
+                    else
+                        data_store["iliad"]["sim"][0] = 'Non disponibile';
+                    if (activation != undefined)
+                        data_store["iliad"]["sim"][1] = activation;
+                    else
+                        data_store["iliad"]["sim"][1] = 'Non disponibile';
 
-                        if (check == 'SIM attivata') {
-                            data_store["iliad"]["sim"][2] = 'true';
-                        } else {
-                            data_store["iliad"]["sim"][2] = 'false';
-                        }
+                    if (check == 'SIM attivata') {
+                        data_store["iliad"]["sim"][2] = 'true';
+                    } else {
+                        data_store["iliad"]["sim"][2] = 'false';
+                    }
 
-                        data_store["iliad"]["sim"][3] = offer;
-                        data_store["iliad"]["validation"][0] = validation;
-                        data_store["iliad"]["validation"][1] = order_date;
-                        data_store["iliad"]["validation"][2] = date;
+                    data_store["iliad"]["sim"][3] = offer;
+                    data_store["iliad"]["validation"][0] = validation;
+                    data_store["iliad"]["validation"][1] = order_date;
+                    data_store["iliad"]["validation"][2] = date;
 
-                        res.send(data_store)
-                        return;
+                    res.send(data_store)
+                    return;
 
-                    });
+                });
 
-                
+
             }
         });
     } else if (credit == 'true' && token != undefined) {
@@ -210,70 +204,74 @@ app.get('/', function (req, res) {
                 var results = $('body');
                 var array = [];
                 var array2 = [];
-                    results.each(function (i, result) {
+                results.each(function (i, result) {
 
-                        $(result)
-                            .find('div.conso__content')
-                            .each(function (index, element) {
-                                array = array.concat([$(element).find('div.conso__text').text()]);
-                            });
-                        $(result)
-                            .find('div.conso__icon')
-                            .each(function (index, element) {
-                                array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
-                            });
+                    $(result)
+                        .find('div.conso__content')
+                        .each(function (index, element) {
+                            array = array.concat([$(element).find('div.conso__text').text()]);
+                        });
+                    $(result)
+                        .find('div.conso__icon')
+                        .each(function (index, element) {
+                            array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
+                        });
 
-                        var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                    var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
-                        var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
+                    var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
-                        var consumi_voce = array[0].split('\n')[2].replace(/^\s+|\s+$/gm, '')
-                        var sms = array[1].split('\n')[0].replace(/^\s+|\s+$/gm, '')
-                        var sms_extra = array[1].split('\n')[1].replace(/^\s+|\s+$/gm, '')
-                        var data = array[2].split('\n')[1].replace(/^\s+|\s+$/gm, '')
-                        var data_consumi = array[2].split('\n')[2].replace(/^\s+|\s+$/gm, '')
-                        var mms = array[3].split('\n')[1].replace(/^\s+|\s+$/gm, '')
-                        var mms_consumi = array[3].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                    var chiamate = array[0].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                    var consumi_voce = array[0].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                    var sms = array[1].split('\n')[0].replace(/^\s+|\s+$/gm, '')
+                    var sms_extra = array[1].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                    var data = array[2].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                    var data_consumi = array[2].split('\n')[2].replace(/^\s+|\s+$/gm, '')
+                    var mms = array[3].split('\n')[1].replace(/^\s+|\s+$/gm, '')
+                    var mms_consumi = array[3].split('\n')[2].replace(/^\s+|\s+$/gm, '')
 
 
-                        data_store["iliad"][0] = {};
-                        data_store["iliad"][1] = {};
-                        data_store["iliad"][2] = {};
-                        data_store["iliad"][3] = {};
-                        data_store["iliad"][4] = {};
+                    data_store["iliad"][0] = {};
+                    data_store["iliad"][1] = {};
+                    data_store["iliad"][2] = {};
+                    data_store["iliad"][3] = {};
+                    data_store["iliad"][4] = {};
 
-                        data_store["iliad"][0][0] = title;
+                    data_store["iliad"][0][0] = title;
+                    //ricarica button
+                    data_store["iliad"][0][1] = 'false';
+                    //info consumi button
+                    data_store["iliad"][0][2] = 'true';
 
-                        data_store["iliad"][1][0] = chiamate;
-                        data_store["iliad"][1][1] = consumi_voce;
-                        data_store["iliad"][1][2] = chiamate_title;
-                        data_store["iliad"][1][3] = "http://android12.altervista.org/res/ic_call.png";
+                    data_store["iliad"][1][0] = chiamate;
+                    data_store["iliad"][1][1] = consumi_voce;
+                    data_store["iliad"][1][2] = chiamate_title;
+                    data_store["iliad"][1][3] = "http://android12.altervista.org/res/ic_call.png";
 
-                        data_store["iliad"][2][0] = sms;
-                        data_store["iliad"][2][1] = sms_extra;
-                        data_store["iliad"][2][2] = sms_title;
-                        data_store["iliad"][2][3] = "http://android12.altervista.org/res/ic_email.png";
+                    data_store["iliad"][2][0] = sms;
+                    data_store["iliad"][2][1] = sms_extra;
+                    data_store["iliad"][2][2] = sms_title;
+                    data_store["iliad"][2][3] = "http://android12.altervista.org/res/ic_email.png";
 
-                        data_store["iliad"][3][0] = data;
-                        data_store["iliad"][3][1] = data_consumi;
-                        data_store["iliad"][3][2] = data_title;
-                        data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_gb.png";
+                    data_store["iliad"][3][0] = data;
+                    data_store["iliad"][3][1] = data_consumi;
+                    data_store["iliad"][3][2] = data_title;
+                    data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_gb.png";
 
-                        data_store["iliad"][4][0] = mms;
-                        data_store["iliad"][4][1] = mms_consumi;
-                        data_store["iliad"][4][2] = mms_tittle;
-                        data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_mms.png";
+                    data_store["iliad"][4][0] = mms;
+                    data_store["iliad"][4][1] = mms_consumi;
+                    data_store["iliad"][4][2] = mms_tittle;
+                    data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_mms.png";
 
-                        res.send(data_store);
-                      return;
-                    });
+                    res.send(data_store);
+                    return;
+                });
             }
         });
-    }else if (creditestero == 'true' && token != undefined) {
+    } else if (creditestero == 'true' && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/consumi-e-credito',
             method: 'POST',
@@ -285,70 +283,74 @@ app.get('/', function (req, res) {
                 var results = $('body');
                 var array = [];
                 var array2 = [];
-                    results.each(function (i, result) {
+                results.each(function (i, result) {
 
-                        $(result)
-                            .find('div.conso__content')
-                            .each(function (index, element) {
-                                array = array.concat([$(element).find('div.conso__text').text()]);
-                            });
-                        $(result)
-                            .find('div.conso__icon')
-                            .each(function (index, element) {
-                                array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
-                            });
+                    $(result)
+                        .find('div.conso__content')
+                        .each(function (index, element) {
+                            array = array.concat([$(element).find('div.conso__text').text()]);
+                        });
+                    $(result)
+                        .find('div.conso__icon')
+                        .each(function (index, element) {
+                            array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
+                        });
 
-                        var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                    var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
-                        var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var data_title = array2[2].split('\n')[5].replace(/^\s+|\s+$/gm, '');
+                    var mms_tittle = array2[3].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
-                        var chiamate = array[4].split('\n')[1].replace(/^\s+|\s+$/gm, '');
-                        var consumi_voce = array[4].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var sms = array[5].split('\n')[0].replace(/^\s+|\s+$/gm, '');
-                        var sms_extra = array[5].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var data = array[6].split('\n')[1].replace(/^\s+|\s+$/gm, '');
-                        var data_consumi = array[6].split('\n')[2].replace(/^\s+|\s+$/gm, '');
-                        var mms = array[7].split('\n')[1].replace(/^\s+|\s+$/gm, '');
-                        var mms_consumi = array[7].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var chiamate = array[4].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                    var consumi_voce = array[4].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var sms = array[5].split('\n')[0].replace(/^\s+|\s+$/gm, '');
+                    var sms_extra = array[5].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var data = array[6].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                    var data_consumi = array[6].split('\n')[2].replace(/^\s+|\s+$/gm, '');
+                    var mms = array[7].split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                    var mms_consumi = array[7].split('\n')[2].replace(/^\s+|\s+$/gm, '');
 
-                        data_store["iliad"][0] = {};
-                        data_store["iliad"][1] = {};
-                        data_store["iliad"][2] = {};
-                        data_store["iliad"][3] = {};
-                        data_store["iliad"][4] = {};
+                    data_store["iliad"][0] = {};
+                    data_store["iliad"][1] = {};
+                    data_store["iliad"][2] = {};
+                    data_store["iliad"][3] = {};
+                    data_store["iliad"][4] = {};
 
-                        data_store["iliad"][0][0] = title;
+                    data_store["iliad"][0][0] = title;
+                    //ricarica button
+                    data_store["iliad"][0][1] = 'false';
+                    //info consumi button
+                    data_store["iliad"][0][2] = 'true';
 
-                        data_store["iliad"][1][0] = chiamate;
-                        data_store["iliad"][1][1] = consumi_voce;
-                        data_store["iliad"][1][2] = chiamate_title;
-                        data_store["iliad"][1][3] = "http://android12.altervista.org/res/ic_call.png";
+                    data_store["iliad"][1][0] = chiamate;
+                    data_store["iliad"][1][1] = consumi_voce;
+                    data_store["iliad"][1][2] = chiamate_title;
+                    data_store["iliad"][1][3] = "http://android12.altervista.org/res/ic_call.png";
 
-                        data_store["iliad"][2][0] = sms;
-                        data_store["iliad"][2][1] = sms_extra;
-                        data_store["iliad"][2][2] = sms_title;
-                        data_store["iliad"][2][3] = "http://android12.altervista.org/res/ic_email.png";
+                    data_store["iliad"][2][0] = sms;
+                    data_store["iliad"][2][1] = sms_extra;
+                    data_store["iliad"][2][2] = sms_title;
+                    data_store["iliad"][2][3] = "http://android12.altervista.org/res/ic_email.png";
 
-                        data_store["iliad"][3][0] = data;
-                        data_store["iliad"][3][1] = data_consumi;
-                        data_store["iliad"][3][2] = data_title;
-                        data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_gb.png";
+                    data_store["iliad"][3][0] = data;
+                    data_store["iliad"][3][1] = data_consumi;
+                    data_store["iliad"][3][2] = data_title;
+                    data_store["iliad"][3][3] = "http://android12.altervista.org/res/ic_gb.png";
 
-                        data_store["iliad"][4][0] = mms;
-                        data_store["iliad"][4][1] = mms_consumi;
-                        data_store["iliad"][4][2] = mms_tittle;
-                        data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_mms.png";
+                    data_store["iliad"][4][0] = mms;
+                    data_store["iliad"][4][1] = mms_consumi;
+                    data_store["iliad"][4][2] = mms_tittle;
+                    data_store["iliad"][4][3] = "http://android12.altervista.org/res/ic_mms.png";
 
 
-                        res.send(data_store)
-                      return;
-                    });
+                    res.send(data_store)
+                    return;
+                });
             }
         });
-    }  else if (email != undefined && email_confirm != undefined && password != undefined && token != undefined) {
+    } else if (email != undefined && email_confirm != undefined && password != undefined && token != undefined) {
         var formData = {
             email: email,
             'email-confirm': email_confirm,
@@ -777,72 +779,72 @@ app.get('/', function (req, res) {
                 var renvoi_d_appel = $('div.table-details').find('div.renvoi-d-appel');
                 var sms = $('div.table-details').find('div.sms');
                 var data = $('div.table-details').find('div.data');
-              
-                
+
+
                 var table = [];
 
                 data_store["iliad"]["title"] = {};
 
-                if(voix != ''){
+                if (voix != '') {
                     voix.each(function (i, result) {
                         data_store["iliad"]["title"][0] = voix.text().replace(/^\s+|\s+$/gm, '');
                     });
-                }else{
+                } else {
                     data_store["iliad"]["title"][0] = '';
                 }
-                if(renvoi_d_appel != ''){
+                if (renvoi_d_appel != '') {
                     renvoi_d_appel.each(function (i, result) {
                         data_store["iliad"]["title"][1] = renvoi_d_appel.text().replace(/^\s+|\s+$/gm, '');
-                });
-                }else{
+                    });
+                } else {
                     data_store["iliad"]["title"][1] = '';
                 }
-                if(sms != ''){
+                if (sms != '') {
                     sms.each(function (i, result) {
                         data_store["iliad"]["title"][2] = sms.text().replace(/^\s+|\s+$/gm, '');
                     });
-                }else{
+                } else {
                     data_store["iliad"]["title"][2] = '';
                 }
-                if(data != ''){
+                if (data != '') {
                     data.each(function (i, result) {
                         data_store["iliad"]["title"][3] = data.first().find('i').text().replace(/^\s+|\s+$/gm, '');
                     });
-                } else{
+                } else {
                     data_store["iliad"]["title"][3] = '';
                 }
-                
+
                 $('div.table-details')
                     .each(function (index, element) {
                         table = table.concat([$(element).find('div.body').text()]);
                     });
-                  
-                if (table[0] != undefined){
+
+                if (table[0] != undefined) {
                     var voix_data = table[0].replace(/^\s+|\s+$/gm, '').split('\n');
                 }
-                else{
+                else {
                     var voix_data = undefined;
                 }
-                if (table[1] != undefined){
+                if (table[1] != undefined) {
                     var renvoi_d_appel_data = table[1].replace(/^\s+|\s+$/gm, '').split('\n');
                 }
-                else{
+                else {
                     var renvoi_d_appel_data = undefined;
                 }
-                if (table[2] != undefined){
+                if (table[2] != undefined) {
                     var sms_data = table[2].replace(/^\s+|\s+$/gm, '').split('\n');
                 }
-                else{
+                else {
                     var sms_data = undefined;
                 }
-                if (table[3] != undefined){
-                  var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
+                if (table[3] != undefined) {
+                    var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
                 }
-                else{
+                else {
                     var data_data = undefined;
                 }
-                
-                
+
+
 
                 if ($('div.no-conso').attr('style') == 'display:none;') {
 
@@ -999,7 +1001,7 @@ app.get('/', function (req, res) {
                 var renvoi_d_appel_data = table[1].replace(/^\s+|\s+$/gm, '').split('\n');
                 var sms_data = table[2].replace(/^\s+|\s+$/gm, '').split('\n');
                 var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
-                
+
 
                 if ($('div.no-conso').attr('style') == 'display:none;') {
 
@@ -1119,10 +1121,10 @@ app.get('/', function (req, res) {
 
 
                     if ($(result).find('div.flash-error') != null)
-                      data_store["iliad"][0] = $(result).find('div.flash-error').text().replace(/^\s+|\s+$/gm, '').replace("Le montant de la transaction est incorrect.\n×","Informazioni bancarie errate, transazione annullata.");
+                        data_store["iliad"][0] = $(result).find('div.flash-error').text().replace(/^\s+|\s+$/gm, '').replace("Le montant de la transaction est incorrect.\n×", "Informazioni bancarie errate, transazione annullata.");
                     else
-                      data_store["iliad"][0] = 'true';
-                      
+                        data_store["iliad"][0] = 'true';
+
                 })
                 res.send(data_store);
 
@@ -1141,7 +1143,7 @@ app.get('/', function (req, res) {
             if (!error && response.statusCode == 200) {
                 const $ = cheerio.load(body);
                 var results = $('body');
-              
+
                 results.each(function (i, result) {
                     $(result)
                         .find('div.card-types')
@@ -1196,9 +1198,9 @@ app.get('/', function (req, res) {
                             if ($(element).attr('value') != '')
                                 price = price.concat([$(element).attr('value')]);
                         })
-                data_store["iliad"][0] = {}
-                data_store["iliad"][0] = price;
-                res.send(data_store);
+                    data_store["iliad"][0] = {}
+                    data_store["iliad"][0] = price;
+                    res.send(data_store);
                 });
 
             }
@@ -1215,7 +1217,7 @@ app.get('/', function (req, res) {
                 const $ = cheerio.load(body);
                 var results = $('body');
                 results.each(function (i, result) {
-                    if($(result).find('p.text-center').text().replace(/^\s+|\s+$/gm, '') == ''){
+                    if ($(result).find('p.text-center').text().replace(/^\s+|\s+$/gm, '') == '') {
 
                         $(result)
                             .find('div.msg')
@@ -1231,11 +1233,11 @@ app.get('/', function (req, res) {
                                 data_store["iliad"][index][1] = $(element).find('div.msg__details__date').text().replace(/^\s+|\s+$/gm, '').replace('\n', ' ').replace('(', '(<span style="color:#cc0000">').replace(')', '</span>)');
                                 data_store["iliad"][index][2] = $(element).find('source').attr('src').split('=')[1];
                                 //data_store["iliad"][index][2] = 'https://www.iliad.it' + $(element).find('source').attr('src');
-                        })
+                            })
                     }
-                    else{
-                      data_store["iliad"][0] = {}
-                      data_store["iliad"][0][0] = $(result).find('p.text-center').text().replace(/^\s+|\s+$/gm, '')
+                    else {
+                        data_store["iliad"][0] = {}
+                        data_store["iliad"][0][0] = $(result).find('p.text-center').text().replace(/^\s+|\s+$/gm, '')
                     }
                     res.send(data_store);
                 });
@@ -1263,7 +1265,7 @@ app.get('/', function (req, res) {
 
             }
         });
-    }  else if (deleteaudio == 'true' && idaudio != undefined && token != undefined) {
+    } else if (deleteaudio == 'true' && idaudio != undefined && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/segreteria-telefonica/messaggio_vocale?id=' + idaudio + '&action=delete',
             method: 'GET',
@@ -1284,17 +1286,17 @@ app.get('/', function (req, res) {
             if (!error && response.statusCode == 200) {
                 data_store["iliad"][0] = {};
                 data_store["iliad"][1] = {};
-                
+
                 data_store["iliad"][0] = body[0]["result"]["success"];
                 data_store["iliad"][1] = body[0]["result"]["msg"];
-                
-                
+
+
                 res.send(data_store);
             }
         });
-    } 
-  
-  else if (idaudio != undefined && token != undefined) {
+    }
+
+    else if (idaudio != undefined && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/segreteria-telefonica/messaggio_vocale?id=' + idaudio,
             method: 'GET',
@@ -1304,11 +1306,11 @@ app.get('/', function (req, res) {
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
 
-                    res.send(body);
+                res.send(body);
             }
         });
     }
-  else if (alert == 'true') {
+    else if (alert == 'true') {
         data_store["iliad"][0] = "<b>Se stai utilizzando iliad UNOFFICIAL è stata rimossa dal PlayStore, scarica la nuova app Area personale, per i nuovi aggiornamenti.</b><br /> L’app è stata creata in modo <b>NON</b> ufficiale, iliad S.P.A non è responsabile. L’app prende le informazioni dal sito, se una sezione/testo/oggetto non c’è sul sito non ci sarà nell’app. Ti ricordo inoltre che prima di creare una valutazione sul PlayStore di contattarci su Telegram con <b>@Fast0n</b> o <b>@Mattvoid</b> oppure per email all’indirizzo <b>theplayergame97@gmail.com</b>.<br/>Grazie per l’attenzione."
         res.send(data_store);
 
