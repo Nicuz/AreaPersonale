@@ -51,11 +51,15 @@ public class AboutFragment extends Fragment {
         DataAboutFragments.add(new DataAboutFragment(getString(R.string.donate), R.drawable.ic_credit));
         DataAboutFragments.add(new DataAboutFragment(getString(R.string.author) + "<br><small>Massimiliano Montaleone</small>",
                 R.drawable.ic_user));
-        DataAboutFragments.add(new DataAboutFragment(getString(R.string.follow) +  "<br><small>@Fast0n</small>", R.drawable.ic_instagram));
+        DataAboutFragments.add(new DataAboutFragment(getString(R.string.follow) + "<br><small>@Fast0n</small>", R.drawable.ic_instagram));
 
         DataAboutFragments.add(new DataAboutFragment(getString(R.string.author) + "<br><small>Matteo Monteleone</small>",
                 R.drawable.ic_user));
-        DataAboutFragments.add(new DataAboutFragment(getString(R.string.follow) +  "<br><small>@matte_monteleone</small>", R.drawable.ic_instagram));
+        DataAboutFragments.add(new DataAboutFragment(getString(R.string.follow) + "<br><small>@matte_monteleone</small>", R.drawable.ic_instagram));
+
+        DataAboutFragments.add(new DataAboutFragment(getString(R.string.author) + "<br><small>Domenico Majorana</small>",
+                R.drawable.ic_user));
+        DataAboutFragments.add(new DataAboutFragment(getString(R.string.follow) + "<br><small>@nicuz06</small>", R.drawable.ic_instagram));
 
         DataAboutFragments.add(new DataAboutFragment(getString(R.string.content), R.drawable.ic_warning));
 
@@ -81,17 +85,22 @@ public class AboutFragment extends Fragment {
                     case 4:
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/fast0n/")));
                         break;
-
                     case 5:
-
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
-    break;
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
+                        break;
 
                     case 6:
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/matte_monteleone/")));
                         break;
-
                     case 7:
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nicuz/")));
+                        break;
+
+                    case 8:
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/nicuz06/")));
+                        break;
+
+                    case 9:
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Fast0n/iliad/blob/master/LICENSE")));
                         break;
 

@@ -46,16 +46,13 @@ public class CreditRoamingFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        CardView cardView;
         final Button button,button1;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
-        cardView = view.findViewById(R.id.cardView);
         button = view.findViewById(R.id.button);
         button1 = view.findViewById(R.id.button1);
 
-        cardView.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
         button.setVisibility(View.INVISIBLE);
         button1.setVisibility(View.INVISIBLE);
@@ -96,8 +93,6 @@ public class CreditRoamingFragment extends Fragment {
         final ProgressBar loading;
         final PullToRefreshRecyclerView recyclerView;
         final List<DataCreditRoamingFragments> creditEsteroList = new ArrayList<>();
-        final CardView cardView;
-        final TextView credit;
         final Button button, button1;
 
         // java adresses
@@ -106,8 +101,6 @@ public class CreditRoamingFragment extends Fragment {
         CubeGrid cubeGrid = new CubeGrid();
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
-        cardView = view.findViewById(R.id.cardView);
-        credit = view.findViewById(R.id.creditText);
         button1 = view.findViewById(R.id.button1);
         button = view.findViewById(R.id.button);
 
@@ -137,7 +130,6 @@ public class CreditRoamingFragment extends Fragment {
 
                             String string1 = json.getString("0");
                             JSONObject json_strings1 = new JSONObject(string1);
-                            String stringCredit = json_strings1.getString("0");
                             String btn = json_strings1.getString("1");
                             String btn1 = json_strings1.getString("2");
 
@@ -152,7 +144,6 @@ public class CreditRoamingFragment extends Fragment {
                                 button1.setVisibility(View.INVISIBLE);
 
 
-                            credit.setText(stringCredit);
 
                             for (int j = 1; j < json.length(); j++) {
 
@@ -169,7 +160,6 @@ public class CreditRoamingFragment extends Fragment {
 
                             CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
                             recyclerView.setAdapter(ca);
-                            cardView.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException e) {

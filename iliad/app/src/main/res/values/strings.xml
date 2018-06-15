@@ -90,6 +90,7 @@
     <string name="missing">mancante</string>
     <string name="wrong_credit_card">Carta di credito non valida</string>
     <string name="nav_voicemail">Segreteria telefonica</string>
+    <string name="add_access">Inserisci le credenziali di accesso</string>
 
 
 </resources>

@@ -31,7 +31,6 @@ public class CustomAdapterCredit extends RecyclerView.Adapter<CustomAdapterCredi
         holder.textView2.setText(c.title);
         holder.textView3.setText(c.description);
         Glide.with(context).load(c.url).into(holder.icon_info);
-        holder.textView.setText(c.iconText);
 
     }
 
@@ -43,18 +42,17 @@ public class CustomAdapterCredit extends RecyclerView.Adapter<CustomAdapterCredi
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_info, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_credit_roaming, parent, false);
         return new MyViewHolder(v);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView, textView2, textView3;
+        TextView textView2, textView3;
         ImageView icon_info;
 
         MyViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView1);
             textView2 = view.findViewById(R.id.textView2);
             textView3 = view.findViewById(R.id.textView3);
             icon_info = view.findViewById(R.id.icon_info);
