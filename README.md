@@ -2,21 +2,26 @@
 <a href="https://paypal.me/fast0n" title="Donate"><img src="https://img.shields.io/badge/Donate-PayPal-009cde.svg?style=flat-square"></a>
 [![Build Status](https://travis-ci.org/Fast0n/iliad.svg?branch=master)](https://travis-ci.org/Fast0n/iliad)
 
-Una web app/client non ufficiale di iliad
+Area Personale è un'app non ufficiale di Iliad che utilizza delle API non ufficiali create ad hoc.
 
-Caratteristiche:
+<p align="center"><a href="https://play.google.com/store/apps/details?id=com.fast0n.ipersonalarea" target="_blank"><img src='img/AreaPersonale_cover.png' alt='Area Personale' /></a></p>
 
-Login, attivazione sim, cambio password, cambio email, visualizzazione costi, visualizzazione offerte
+## Funzionalità
+L'app prende le informazioni dal sito, di conseguenza se una sezione/testo/oggetto non è presente sul sito non lo sarà nemmeno nell'app.
 
-## Screenshots
-<a><img src='img/1.png' height='300' alt='icon'/></a>
-<a><img src='img/2.png' height='300' alt='icon'/></a>
-<a><img src='img/3.png' height='300' alt='icon'/></a>
-<a><img src='img/4.png' height='300' alt='icon'/></a>
-<a><img src='img/5.png' height='300' alt='icon'/></a>
+Di seguito le feature implementate:
+* Login
+* attivazione SIM
+* controllo del tracking di spedizione
+* cambio password
+* cambio email
+* ricarica credito
+* visualizzazione costi e dettagli
+* visualizzazione offerte
 
+<hr>
 
-This is an unofficial api and android app developed to learn. Iliad S.A. is not responsible in any way.
+This is an unofficial API and Android app developed for learning purposes. Iliad Italia S.p.A. is not responsible in any way.
 
 This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it.
 
