@@ -1,1 +1,1 @@
-include 'app', ':subProject:toggle'
+include 'app'

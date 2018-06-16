@@ -3,8 +3,8 @@ package com.fast0n.ipersonalarea.fragments.OptionsFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,8 +21,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.LoginActivity;
 import com.fast0n.ipersonalarea.R;
-import com.github.angads25.toggle.LabeledSwitch;
-import com.github.angads25.toggle.interfaces.OnToggledListener;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 
 import org.json.JSONException;
@@ -32,8 +29,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import es.dmoral.toasty.Toasty;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,16 +46,16 @@ public class OptionsFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        CardView cardView;
+        ConstraintLayout linearLayout;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
         CubeGrid cubeGrid = new CubeGrid();
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
 
-        cardView.setVisibility(View.INVISIBLE);
+        linearLayout.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -80,7 +75,7 @@ public class OptionsFragment extends Fragment {
         final ProgressBar loading;
         final RecyclerView recyclerView;
         final List<DataOptionsFragments> infoList = new ArrayList<>();
-        final CardView cardView;
+        final ConstraintLayout linearLayout;
         final TextView credit;
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -90,7 +85,7 @@ public class OptionsFragment extends Fragment {
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
         credit = view.findViewById(R.id.optionsText);
 
         recyclerView.setHasFixedSize(true);
@@ -131,7 +126,7 @@ public class OptionsFragment extends Fragment {
 
                             CustomAdapterOptions ca = new CustomAdapterOptions(context, infoList, token);
                             recyclerView.setAdapter(ca);
-                            cardView.setVisibility(View.VISIBLE);
+                            linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException e) {
@@ -139,12 +134,12 @@ public class OptionsFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(getActivity(), LoginActivity.class));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(getActivity(), LoginActivity.class));
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

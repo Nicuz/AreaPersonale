@@ -1,6 +1,5 @@
 package com.fast0n.ipersonalarea;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -43,13 +41,21 @@ public class ChangeEmailActivity extends AppCompatActivity {
     ProgressBar loading;
     CardView cardView;
 
+    public static boolean isEmail(String email) {
+        String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
+        CharSequence inputString = email;
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputString);
+        return matcher.matches();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_email);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_email_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -84,12 +90,12 @@ public class ChangeEmailActivity extends AppCompatActivity {
                 String ppassword = new String(decodeValue1);
 
 
-                if (edt_password.getText().toString().equals(ppassword.replace("\n","").replace("    ",""))
+                if (edt_password.getText().toString().equals(ppassword.replace("\n", "").replace("    ", ""))
                         && edt_password.getText().toString().length() != 0
                         && edt_email.getText().toString().length() != 0) {
                     if (isEmail(edt_email.getText().toString())) {
                         String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
-                                + edt_email.getText().toString() + "&password=" + password.replaceAll("\\s+","") + "&token=" + token;
+                                + edt_email.getText().toString() + "&password=" + password.replaceAll("\\s+", "") + "&token=" + token;
 
                         loading.setVisibility(View.VISIBLE);
                         cardView.setVisibility(View.INVISIBLE);
@@ -98,7 +104,6 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
                         btn_change_email.setEnabled(false);
                     } else {
-
 
 
                         edt_password.setInputType(0);
@@ -113,14 +118,6 @@ public class ChangeEmailActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    public static boolean isEmail(String email) {
-        String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
-        CharSequence inputString = email;
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputString);
-        return matcher.matches();
     }
 
     private void changeMail(String url) {
@@ -155,11 +152,11 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-                    }
-                });
+            }
+        });
 
         queue.add(getRequest);
 
@@ -169,13 +166,13 @@ public class ChangeEmailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-        case android.R.id.home:
+            case android.R.id.home:
 
-            super.onBackPressed();
+                super.onBackPressed();
 
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

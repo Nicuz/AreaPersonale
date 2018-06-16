@@ -1,14 +1,10 @@
 package com.fast0n.ipersonalarea.fragments.VoicemailFragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -25,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.R;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,11 +49,10 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
         DataVoicemailFragments c = conditionList.get(position);
 
 
-
         holder.textView.setText(c.num_tell);
         holder.textView1.setText(Html.fromHtml(c.date));
 
-        if (c.date.equals("")){
+        if (c.date.equals("")) {
             holder.button.setVisibility(View.INVISIBLE);
             holder.button1.setVisibility(View.INVISIBLE);
         }
@@ -68,8 +62,7 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
             public void onClick(View v) {
                 final String site_url = context.getString(R.string.site_url);
 
-                String url = site_url + "?deleteaudio=true&idaudio="+c.id+"&token="+c.token;
-
+                String url = site_url + "?deleteaudio=true&idaudio=" + c.id + "&token=" + c.token;
 
 
                 RequestQueue queue = Volley.newRequestQueue(context);
@@ -85,14 +78,15 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
                                     String iliad = json_raw.getString("iliad");
 
                                     JSONObject json = new JSONObject(iliad);
-                                    String string_json = json.getString("0");
                                     String string_json1 = json.getString("1");
-
-
 
 
                                     Toasty.success(context, string_json1, Toast.LENGTH_LONG,
                                             true).show();
+                                    int newPosition = holder.getAdapterPosition();
+                                    conditionList.remove(newPosition);
+                                    notifyItemRemoved(newPosition);
+                                    notifyItemRangeChanged(newPosition, conditionList.size());
 
                                 } catch (JSONException ignored) {
                                 }
@@ -113,6 +107,38 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
         holder.button1.setOnClickListener(new View.OnClickListener() {
 
 
+            @Override
+            public void onClick(View v) {
+
+
+                if (!playPause) {
+                    holder.button1.setBackgroundResource(R.drawable.ic_pause);
+
+
+                    if (initialStage) {
+
+                        final String site_url = context.getString(R.string.site_url);
+                        new Player().execute(site_url + "?idaudio=" + c.id + "&token=" + c.token);
+                    } else {
+                        if (!mediaPlayer.isPlaying())
+                            mediaPlayer.start();
+                    }
+
+                    playPause = true;
+
+                } else {
+                    holder.button1.setBackgroundResource(R.drawable.ic_play);
+
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+
+                    }
+
+
+                    playPause = false;
+                }
+
+            }
 
             class Player extends AsyncTask<String, Void, Boolean> {
                 @Override
@@ -159,50 +185,10 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
                 }
             }
 
-            @Override
-            public void onClick(View v) {
-
-
-                if (!playPause) {
-                    holder.button1.setBackgroundResource(R.drawable.ic_pause);
-
-
-
-
-
-                    if (initialStage) {
-
-                        final String site_url = context.getString(R.string.site_url);
-                        new Player().execute(site_url + "?idaudio="+c.id+"&token="+c.token);
-                    } else {
-                        if (!mediaPlayer.isPlaying())
-                            mediaPlayer.start();
-                    }
-
-                    playPause = true;
-
-                } else {
-                    holder.button1.setBackgroundResource(R.drawable.ic_play);
-
-                    if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.pause();
-
-                    }
-
-
-
-                    playPause = false;
-                }
-
-            }
-
         });
 
 
-
     }
-
-
 
 
     @Override

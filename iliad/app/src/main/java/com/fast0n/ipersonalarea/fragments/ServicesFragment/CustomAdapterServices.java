@@ -1,12 +1,12 @@
 package com.fast0n.ipersonalarea.fragments.ServicesFragment;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.R;
-import com.github.angads25.toggle.LabeledSwitch;
-import com.github.angads25.toggle.interfaces.OnToggledListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,8 +28,8 @@ import es.dmoral.toasty.Toasty;
 public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterServices.MyViewHolder> {
 
     Context context;
-    private List<DataServicesFragments> ServicesList;
     String token;
+    private List<DataServicesFragments> ServicesList;
 
     CustomAdapterServices(Context context, List<DataServicesFragments> ServicesList, String token) {
         this.context = context;
@@ -44,40 +42,28 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
         final DataServicesFragments c = ServicesList.get(position);
         holder.textView.setText(c.textView);
 
-        if (c.toggle.equals("false")) {
-            holder.toggle.setOn(false);
-            holder.toggle.setColorOn((ContextCompat.getColor(context, R.color.colorPrimary)));
-            holder.toggle.setLabelOff(c.toggle.replace("false", "Non attivo"));
-            holder.toggle.setLabelOn(context.getString(R.string.toggle_enable));
-        } else {
-            holder.toggle.setOn(true);
-            holder.toggle.setColorOn(Color.parseColor("#0d8200"));
-            holder.toggle.setLabelOn(c.toggle.replace("true", "Attivo"));
-            holder.toggle.setLabelOff(context.getString(R.string.toggle_disable));
-        }
 
-        holder.toggle.setOnToggledListener(new OnToggledListener() {
+        if (c.toggle.equals("false"))
+            holder.toggle.setChecked(false);
+        else
+            holder.toggle.setChecked(true);
+
+        holder.toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onSwitched(LabeledSwitch labeledSwitch, boolean isOn) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 final String site_url = context.getString(R.string.site_url);
 
-                if (!isOn) {
-                    holder.toggle.setColorOn((ContextCompat.getColor(context, R.color.colorPrimary)));
-                    holder.toggle.setLabelOn(context.getString(R.string.toggle_enable));
+                if (!isChecked) {
 
                     String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
                             + "&activate=0";
-                    request_options_services(url, holder.textView.getText() + " " + holder.toggle.getLabelOff());
-                }
-
-                else if (isOn) {
-                    holder.toggle.setColorOn(Color.parseColor("#0d8200"));
-                    holder.toggle.setLabelOff(context.getString(R.string.toggle_disable));
+                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("false", "disattivato"));
+                } else if (isChecked) {
 
                     String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
                             + "&activate=1";
-                    request_options_services(url, holder.textView.getText() + " " + holder.toggle.getLabelOn());
+                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("true", "attivo"));
                 }
 
             }
@@ -108,11 +94,11 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
 
                             }
                         }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-                            }
-                        });
+                    }
+                });
 
                 queue.add(getRequest);
 
@@ -135,7 +121,7 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView;
-        LabeledSwitch toggle;
+        Switch toggle;
 
         MyViewHolder(View view) {
             super(view);

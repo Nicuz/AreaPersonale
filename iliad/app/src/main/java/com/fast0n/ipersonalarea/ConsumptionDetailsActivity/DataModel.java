@@ -3,23 +3,22 @@ package com.fast0n.ipersonalarea.ConsumptionDetailsActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
-
 import com.fast0n.ipersonalarea.R;
+import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 public class DataModel extends ChildViewHolder {
 
-    private TextView a,b,c,d,e,f;
+    private TextView a, b, c, d, e, f;
 
     public DataModel(View itemView) {
         super(itemView);
 
-        a =  itemView.findViewById(R.id.a);
-        b =  itemView.findViewById(R.id.b);
-        c =  itemView.findViewById(R.id.c);
-        d =  itemView.findViewById(R.id.d);
-        e =  itemView.findViewById(R.id.e);
-        f =  itemView.findViewById(R.id.f);
+        a = itemView.findViewById(R.id.a);
+        b = itemView.findViewById(R.id.b);
+        c = itemView.findViewById(R.id.c);
+        d = itemView.findViewById(R.id.d);
+        e = itemView.findViewById(R.id.e);
+        f = itemView.findViewById(R.id.f);
 
     }
 

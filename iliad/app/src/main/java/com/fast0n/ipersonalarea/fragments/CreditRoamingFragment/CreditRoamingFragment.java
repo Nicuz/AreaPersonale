@@ -6,14 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -46,7 +44,7 @@ public class CreditRoamingFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        final Button button,button1;
+        final Button button, button1;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
@@ -105,7 +103,7 @@ public class CreditRoamingFragment extends Fragment {
         button = view.findViewById(R.id.button);
 
         recyclerView.setSwipeEnable(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context,  LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
 
         recyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -144,7 +142,6 @@ public class CreditRoamingFragment extends Fragment {
                                 button1.setVisibility(View.INVISIBLE);
 
 
-
                             for (int j = 1; j < json.length(); j++) {
 
                                 String string = json.getString(String.valueOf(j));
@@ -167,12 +164,12 @@ public class CreditRoamingFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(context, LoginActivity.class));
 
-                    }
-                });
+            }
+        });
 
         queue.add(getRequest);
 

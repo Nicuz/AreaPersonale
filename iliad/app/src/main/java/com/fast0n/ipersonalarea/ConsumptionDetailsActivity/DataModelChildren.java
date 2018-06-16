@@ -3,10 +3,9 @@ package com.fast0n.ipersonalarea.ConsumptionDetailsActivity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.fast0n.ipersonalarea.R;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
-
-import com.fast0n.ipersonalarea.R;
 
 public class DataModelChildren extends GroupViewHolder {
 
@@ -20,12 +19,12 @@ public class DataModelChildren extends GroupViewHolder {
 
     @Override
     public void expand() {
-        osName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0);
+        osName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0);
     }
 
     @Override
     public void collapse() {
-        osName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0);
+        osName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0);
     }
 
     public void setGroupName(ExpandableGroup group) {

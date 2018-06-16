@@ -45,7 +45,7 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(R.string.consumptiondetail);
+        mTitle.setText(R.string.app_name);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
@@ -58,9 +58,11 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
         assert extras != null;
         final String token = extras.getString("token", null);
         final String site_url = getString(R.string.site_url);
+        TextView offer;
 
 
         // java adresses
+        offer = findViewById(R.id.offer);
         recyclerView = findViewById(R.id.recycler_view);
         model = new ArrayList<>();
         loading = findViewById(R.id.progressBar);
@@ -68,6 +70,8 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         loading.setIndeterminateDrawable(cubeGrid);
         loading.setVisibility(View.VISIBLE);
+
+        offer.setText(getString(R.string.consumptiondetail));
 
         String url = site_url + "?consumptiondetails=true&token=" + token;
         getConsumption(url);

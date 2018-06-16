@@ -40,9 +40,9 @@ import com.fast0n.ipersonalarea.fragments.ConditionsFragment.ConditionsFragment;
 import com.fast0n.ipersonalarea.fragments.InfoFragments.InfoFragments;
 import com.fast0n.ipersonalarea.fragments.MasterCreditFragment;
 import com.fast0n.ipersonalarea.fragments.OptionsFragment.OptionsFragment;
-import com.fast0n.ipersonalarea.fragments.VoicemailFragment.VoicemailFragment;
 import com.fast0n.ipersonalarea.fragments.ServicesFragment.ServicesFragment;
 import com.fast0n.ipersonalarea.fragments.SimFragments;
+import com.fast0n.ipersonalarea.fragments.VoicemailFragment.VoicemailFragment;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -73,7 +73,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -104,7 +104,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (isOnline()) {
             String site_url = getString(R.string.site_url);
-            String url = site_url + "?userid=" + userid + "&password=" + password.replaceAll("\\s+","") + "&token=" + token;
+            String url = site_url + "?userid=" + userid + "&password=" + password.replaceAll("\\s+", "") + "&token=" + token;
             getObject(url, nav_Menu);
             settings = getSharedPreferences("sharedPreferences", 0);
             editor = settings.edit();
@@ -156,7 +156,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             String user_name = json.getString("user_name");
                             String user_id = json.getString("user_id");
                             String user_numtell = json.getString("user_numtell");
-
 
 
                             try {
@@ -212,17 +211,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        settings = getSharedPreferences("sharedPreferences", 0);
-                        editor = settings.edit();
-                        editor.putString("userid", null);
-                        editor.putString("password", null);
-                        editor.apply();
 
-                        Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
-                                .show();
-                        Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                        startActivity(mainActivity);
 
+                        try {
+                            int error_code = error.networkResponse.statusCode;
+
+                            if (error_code == 503) {
+                                settings = getSharedPreferences("sharedPreferences", 0);
+                                editor = settings.edit();
+                                editor.putString("userid", null);
+                                editor.putString("password", null);
+                                editor.apply();
+
+                                Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                                        .show();
+                                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                                startActivity(mainActivity);
+                            } else {
+
+                            }
+                        } catch (Exception ignored) {
+                            getObject(url, nav_Menu);
+                        }
                     }
                 });
 
@@ -399,8 +409,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             });
 
             queue.add(getRequest);
-
-
 
 
         } else if (id == R.id.nav_logout) {

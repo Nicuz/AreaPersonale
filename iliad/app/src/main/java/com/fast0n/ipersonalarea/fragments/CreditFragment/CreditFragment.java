@@ -6,20 +6,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.ChargeActivity;
 import com.fast0n.ipersonalarea.ConsumptionDetailsActivity.ConsumptionDetailsActivity;
@@ -48,7 +45,7 @@ public class CreditFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        final Button button,button1;
+        final Button button, button1;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
@@ -62,8 +59,6 @@ public class CreditFragment extends Fragment {
         button.setVisibility(View.INVISIBLE);
         button1.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
-
-
 
 
         SharedPreferences settings = context.getSharedPreferences("sharedPreferences", 0);
@@ -107,9 +102,8 @@ public class CreditFragment extends Fragment {
         button = view.findViewById(R.id.button);
 
 
-
         recyclerView.setSwipeEnable(true);
-        LinearLayoutManager llm = new LinearLayoutManager(context,  LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
 
         recyclerView.setOnRefreshListener(() -> startActivity(new Intent(context, LoginActivity.class)));
@@ -178,8 +172,6 @@ public class CreditFragment extends Fragment {
 
         customPriorityRequest.setPriority(Request.Priority.IMMEDIATE);
         queue.add(customPriorityRequest);
-
-
 
 
     }

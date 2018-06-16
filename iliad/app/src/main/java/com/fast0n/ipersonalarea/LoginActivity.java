@@ -7,12 +7,10 @@ import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -36,7 +34,6 @@ import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
@@ -55,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(toolbar.getTitle());
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -66,10 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         edt_password = findViewById(R.id.edt_password);
         checkBox = findViewById(R.id.checkBox);
 
-        if (checkBox.isChecked()){
+        if (checkBox.isChecked()) {
             checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
-        }
-        else{
+        } else {
             checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
         }
 
@@ -77,10 +73,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (checkBox.isChecked()){
+                if (checkBox.isChecked()) {
                     checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
-                }
-                else{
+                } else {
                     checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
                 }
 
@@ -95,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         editor = settings.edit();
         editor.apply();
 
-        if (alert == null){
+        if (alert == null) {
 
             RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
 
@@ -141,8 +136,6 @@ public class LoginActivity extends AppCompatActivity {
             queue.add(getRequest);
 
 
-
-
         }
 
 
@@ -171,10 +164,9 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra("userid", userid);
 
 
-
                     byte[] encodeValue = Base64.encode(password.getBytes(), Base64.DEFAULT);
                     String npassword = new String(encodeValue);
-                    intent.putExtra("password",npassword);
+                    intent.putExtra("password", npassword);
                     intent.putExtra("token", token);
 
                     if (checkBox.isChecked()) {
@@ -204,7 +196,6 @@ public class LoginActivity extends AppCompatActivity {
         finishAffinity();
 
     }
-
 
 
 }

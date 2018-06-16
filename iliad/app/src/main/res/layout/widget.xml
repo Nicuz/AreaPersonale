@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_click"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/round_rect_shape"
-    android:id="@+id/widget_click">
+    android:background="@drawable/round_rect_shape">
 
 
     <LinearLayout
@@ -48,9 +47,9 @@
 
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="50dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginBottom="1dp"
         android:layout_marginLeft="2dp"
         android:layout_marginTop="1dp"
@@ -60,11 +59,11 @@
         android:paddingTop="5dp">
 
         <ImageView
-            android:layout_marginTop="5dp"
             android:id="@+id/img2"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:src="@drawable/ic_error_outline_white_48dp" />
 
@@ -107,9 +106,9 @@
 
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="55dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp"
         android:background="@drawable/border_2"
@@ -118,11 +117,11 @@
         android:paddingTop="5dp">
 
         <ImageView
-            android:layout_marginTop="5dp"
             android:id="@+id/img4"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:src="@drawable/ic_error_outline_white_48dp" />
 
@@ -165,9 +164,9 @@
 
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="55dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginBottom="1dp"
         android:layout_marginLeft="1dp"
         android:layout_marginTop="1dp"
@@ -177,11 +176,11 @@
         android:paddingTop="5dp">
 
         <ImageView
-            android:layout_marginTop="5dp"
             android:id="@+id/img6"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:src="@drawable/ic_error_outline_white_48dp" />
 
@@ -223,23 +222,23 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_gravity="center"
         android:layout_width="50dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
         android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
         android:background="@drawable/border_2"
         android:orientation="vertical"
         android:paddingBottom="5dp"
         android:paddingTop="5dp">
 
         <ImageView
-            android:layout_marginTop="5dp"
             android:id="@+id/img8"
             android:layout_width="wrap_content"
             android:layout_height="15dp"
             android:layout_gravity="center"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:src="@drawable/ic_error_outline_white_48dp" />
 
@@ -281,12 +280,12 @@
     </LinearLayout>
 
     <ImageButton
-        android:layout_gravity="bottom"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_info_outline_white_48dp"
         android:id="@+id/refresh"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_info_outline_white_48dp" />
 
 </LinearLayout>

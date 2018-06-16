@@ -22,7 +22,7 @@ public class CustomPriorityRequest extends JsonObjectRequest {
         return priority;
     }
 
-    public void setPriority(Priority p){
+    public void setPriority(Priority p) {
         priority = p;
     }
 }

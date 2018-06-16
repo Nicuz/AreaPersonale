@@ -25,7 +25,6 @@ public class CustomAdapterConditions extends RecyclerView.Adapter<CustomAdapterC
 
         holder.textView.setText(c.textView);
         holder.textView1.setText(c.textView1);
-        holder.url.setText(c.url);
 
     }
 
@@ -49,7 +48,6 @@ public class CustomAdapterConditions extends RecyclerView.Adapter<CustomAdapterC
             super(view);
             textView = view.findViewById(R.id.title);
             textView1 = view.findViewById(R.id.date);
-            url = view.findViewById(R.id.url);
 
         }
     }

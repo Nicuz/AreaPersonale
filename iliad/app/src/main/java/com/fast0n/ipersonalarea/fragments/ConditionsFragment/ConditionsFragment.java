@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,16 +46,16 @@ public class ConditionsFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        CardView cardView;
+        ConstraintLayout linearLayout;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
         CubeGrid cubeGrid = new CubeGrid();
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         loading.setIndeterminateDrawable(cubeGrid);
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
 
-        cardView.setVisibility(View.INVISIBLE);
+        linearLayout.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -74,31 +75,19 @@ public class ConditionsFragment extends Fragment {
         final ProgressBar loading;
         final RecyclerView recyclerView;
         final List<DataConditionsFragments> conditionList = new ArrayList<>();
-        final CardView cardView;
+        final ConstraintLayout linearLayout;
 
         // java adresses
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
 
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
-                    public void onClickItem(View arg1, int position) {
-                        TextView getUrl = arg1.findViewById(R.id.url);
-                        String url = getUrl.getText().toString();
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(url));
-                        startActivity(i);
-                    }
 
-                    public void onLongClickItem(View v, int position) {
-                    }
-                }));
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -123,24 +112,37 @@ public class ConditionsFragment extends Fragment {
                                 String a = json_strings.getString("0");
                                 String b = json_strings.getString("1");
                                 String c = json_strings.getString("2");
+
+                                recyclerView.addOnItemTouchListener(
+                                        new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
+                                            public void onClickItem(View arg1, int position) {
+                                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                                i.setData(Uri.parse(c));
+                                                startActivity(i);
+                                            }
+
+                                            public void onLongClickItem(View v, int position) {
+                                            }
+                                        }));
+
                                 conditionList.add(new DataConditionsFragments(a, b, c));
                             }
 
                             CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
                             recyclerView.setAdapter(ca);
-                            cardView.setVisibility(View.VISIBLE);
+                            linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
                         } catch (JSONException e) {
                             startActivity(new Intent(context, LoginActivity.class));
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(context, LoginActivity.class));
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

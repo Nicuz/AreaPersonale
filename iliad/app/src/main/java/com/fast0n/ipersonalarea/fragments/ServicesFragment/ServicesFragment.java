@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,13 +43,13 @@ public class ServicesFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        CardView cardView;
+        ConstraintLayout linearLayout;
 
         // java adresses
         loading = view.findViewById(R.id.progressBar);
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
 
-        cardView.setVisibility(View.INVISIBLE);
+        linearLayout.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -69,7 +69,7 @@ public class ServicesFragment extends Fragment {
         final ProgressBar loading;
         final RecyclerView recyclerView;
         final List<DataServicesFragments> infoList = new ArrayList<>();
-        final CardView cardView;
+        final ConstraintLayout linearLayout;
         final TextView credit;
 
         // java adresses
@@ -78,7 +78,7 @@ public class ServicesFragment extends Fragment {
         CubeGrid cubeGrid = new CubeGrid();
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
-        cardView = view.findViewById(R.id.cardView);
+        linearLayout = view.findViewById(R.id.linearLayout);
         credit = view.findViewById(R.id.creditText);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -124,7 +124,7 @@ public class ServicesFragment extends Fragment {
 
                             CustomAdapterServices ca = new CustomAdapterServices(context, infoList, token);
                             recyclerView.setAdapter(ca);
-                            cardView.setVisibility(View.VISIBLE);
+                            linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException e) {
@@ -132,12 +132,12 @@ public class ServicesFragment extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(context, LoginActivity.class));
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

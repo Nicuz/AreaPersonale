@@ -45,7 +45,7 @@ public class SimFragments extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_sim, container, false);
 
         final ProgressBar loading;
-        final CardView cardView, cardView1, cardView2, cardView3;
+        final CardView  cardView1, cardView2, cardView3;
         final Button btn_activatesim;
         final EditText edt_iccid;
         final Context context;
@@ -60,12 +60,10 @@ public class SimFragments extends Fragment {
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         btn_activatesim = view.findViewById(R.id.btn_activatesim);
         edt_iccid = view.findViewById(R.id.edt_iccid);
-        cardView = view.findViewById(R.id.cardView);
         cardView1 = view.findViewById(R.id.cardView1);
         cardView2 = view.findViewById(R.id.cardView2);
         cardView3 = view.findViewById(R.id.cardView3);
 
-        cardView.setVisibility(View.GONE);
         cardView1.setVisibility(View.GONE);
         cardView2.setVisibility(View.GONE);
         cardView3.setVisibility(View.GONE);
@@ -140,12 +138,12 @@ public class SimFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(context, LoginActivity.class));
 
-                    }
-                });
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);
@@ -155,7 +153,7 @@ public class SimFragments extends Fragment {
     private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final CardView cardView, cardView1, cardView2, cardView3;
+        final CardView  cardView1, cardView2, cardView3;
         final TextView tvvalidation, tvorder_date, tvdate, tvtracking, tvshipping, tvorder_shipped, tvactivation,
                 tvtitle_activation, tvoffer;
         final EditText edt_iccid;
@@ -173,7 +171,6 @@ public class SimFragments extends Fragment {
         tvoffer = view.findViewById(R.id.offer);
         edt_iccid = view.findViewById(R.id.edt_iccid);
         btn_activatesim = view.findViewById(R.id.btn_activatesim);
-        cardView = view.findViewById(R.id.cardView);
         cardView1 = view.findViewById(R.id.cardView1);
         cardView2 = view.findViewById(R.id.cardView2);
         cardView3 = view.findViewById(R.id.cardView3);
@@ -235,7 +232,6 @@ public class SimFragments extends Fragment {
                             }
 
 
-
                             cardView3.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -246,7 +242,6 @@ public class SimFragments extends Fragment {
                                 }
                             });
 
-                            cardView.setVisibility(View.VISIBLE);
                             cardView1.setVisibility(View.VISIBLE);
                             cardView2.setVisibility(View.VISIBLE);
                             cardView3.setVisibility(View.VISIBLE);
@@ -256,11 +251,11 @@ public class SimFragments extends Fragment {
                         }
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
-                    }
-                });
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                startActivity(new Intent(context, LoginActivity.class));
+            }
+        });
 
         // add it to the RequestQueue
         queue.add(getRequest);

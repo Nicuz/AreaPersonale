@@ -1,4 +1,5 @@
-package com.fast0n.ipersonalarea.fragments.OptionsFragment;
+package com.fast0n.ipersonalarea.fragments.VoicemailFragment;
+
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -26,13 +27,13 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
-public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOptions.MyViewHolder> {
+public class CustomAdapterCustomization extends RecyclerView.Adapter<CustomAdapterCustomization.MyViewHolder> {
 
     Context context;
     String token;
-    private List<DataOptionsFragments> optionsList;
+    private List<DataCustomizationFragments> optionsList;
 
-    CustomAdapterOptions(Context context, List<DataOptionsFragments> optionsList, String token) {
+    CustomAdapterCustomization(Context context, List<DataCustomizationFragments> optionsList, String token) {
         this.context = context;
         this.optionsList = optionsList;
         this.token = token;
@@ -40,7 +41,7 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-        final DataOptionsFragments c = optionsList.get(position);
+        final DataCustomizationFragments c = optionsList.get(position);
         holder.textView.setText(c.textView);
 
 
@@ -49,10 +50,6 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
         else
             holder.toggle.setChecked(true);
 
-        if (position == 0)
-            holder.toggle.setEnabled(false);
-
-
         holder.toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,11 +57,11 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
                 final String site_url = context.getString(R.string.site_url);
 
                 if (!isChecked) {
-                    String url = site_url + "?change_options=true&update=" + c.name + "&token=" + token + "&activate=0";
+                    String url = site_url + "?changevoicemailoptions=true&update=" + c.name + "&token=" + token + "&activate=0";
                     request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("false", "disattivato"));
                 } else if (isChecked) {
 
-                    String url = site_url + "?change_options=true&update=" + c.name + "&token=" + token + "&activate=1";
+                    String url = site_url + "?changevoicemailoptions=true&update=" + c.name + "&token=" + token + "&activate=1";
                     request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("true", "attivo"));
                 }
             }

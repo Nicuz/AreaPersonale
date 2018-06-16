@@ -36,7 +36,7 @@ public class CustomAdapterInfo extends RecyclerView.Adapter<CustomAdapterInfo.My
         holder.textView3.setText(c.textView3);
         holder.textView4.setText(c.textView4);
         Glide.with(context).load(c.url).into(holder.icon_info);
-        holder.textView.setText(c.textView);
+         Glide.with(context).load(c.url1).into(holder.icon);
 
     }
 
@@ -53,16 +53,17 @@ public class CustomAdapterInfo extends RecyclerView.Adapter<CustomAdapterInfo.My
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView, textView2, textView3, textView4;
-        ImageView icon_info;
+        TextView textView2, textView3, textView4;
+        ImageView icon_info, icon;
 
         MyViewHolder(View view) {
             super(view);
-            textView = view.findViewById(R.id.textView1);
             textView2 = view.findViewById(R.id.textView2);
             textView3 = view.findViewById(R.id.textView3);
             textView4 = view.findViewById(R.id.textView4);
             icon_info = view.findViewById(R.id.icon_info);
+            icon = view.findViewById(R.id.icon);
+
         }
     }
 }

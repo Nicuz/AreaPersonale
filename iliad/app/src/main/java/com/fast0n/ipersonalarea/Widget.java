@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.Base64;
 import android.widget.RemoteViews;
 
 import com.android.volley.Request;
@@ -28,6 +27,7 @@ public class Widget extends AppWidgetProvider {
 
 
     String token = GenerateToken.randomString(20);
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
@@ -126,8 +126,6 @@ public class Widget extends AppWidgetProvider {
                     .load("http://android12.altervista.org/res/widget/ic_update.png").apply(options).into(button);
 
 
-
-
             SharedPreferences settings = context.getSharedPreferences("sharedPreferences", 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.apply();
@@ -136,12 +134,10 @@ public class Widget extends AppWidgetProvider {
             String password = settings.getString("password", null);
 
 
-
-            String url = (site_url + "?userid=" + userid + "&password=" + password + "&token=" + token).replaceAll("\\s+","");
+            String url = (site_url + "?userid=" + userid + "&password=" + password + "&token=" + token).replaceAll("\\s+", "");
             RequestQueue login = Volley.newRequestQueue(context);
             JsonObjectRequest getRequestLogin = new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> {
-
 
 
                         Intent intent1 = new Intent(context, Widget.class);
@@ -154,7 +150,7 @@ public class Widget extends AppWidgetProvider {
 
 
 
-
+/*
 
                         String url1 = site_url + "?credit=true&token=" + token;
                         RequestQueue creditqueue = Volley.newRequestQueue(context);
@@ -204,7 +200,7 @@ public class Widget extends AppWidgetProvider {
 
 
 
-
+*/
 
                         String url2 = site_url + "?creditestero=true&token=" + token;
                         RequestQueue creditesteroqueue = Volley.newRequestQueue(context);
@@ -220,7 +216,7 @@ public class Widget extends AppWidgetProvider {
                                         String stringCall = json.getString("1");
                                         JSONObject json_Call = new JSONObject(stringCall);
                                         String call = json_Call.getString("0");
-                                        views.setTextViewText(R.id.textView7, call.replace("Chiamate: ",""));
+                                        views.setTextViewText(R.id.textView7, call.replace("Chiamate: ", ""));
 
                                         String stringSms = json.getString("2");
                                         JSONObject json_Sms = new JSONObject(stringSms);
@@ -230,7 +226,7 @@ public class Widget extends AppWidgetProvider {
                                         String stringGb = json.getString("3");
                                         JSONObject json_Gb = new JSONObject(stringGb);
                                         String gb = json_Gb.getString("0");
-                                        views.setTextViewText(R.id.textView9, gb.replace("/","/ \n"));
+                                        views.setTextViewText(R.id.textView9, gb.replace("/", "/ \n"));
 
                                         String stringMms = json.getString("4");
                                         JSONObject json_Mms = new JSONObject(stringMms);
@@ -238,9 +234,7 @@ public class Widget extends AppWidgetProvider {
                                         views.setTextViewText(R.id.textView10, mms);
 
 
-
                                         appWidgetManager.updateAppWidget(appWidgetId, views);
-
 
 
                                     } catch (JSONException ignored) {
@@ -287,7 +281,6 @@ public class Widget extends AppWidgetProvider {
                         creditesteroqueue.add(getRequestCreditEstero);
 
 
-
                         String url3 = site_url + "?getNumTell=true&token=" + token;
                         RequestQueue queue2 = Volley.newRequestQueue(context);
                         JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url3, null,
@@ -299,9 +292,7 @@ public class Widget extends AppWidgetProvider {
                                         JSONObject json = new JSONObject(iliad);
 
                                         String stringNum = json.getString("0");
-                                        views.setTextViewText(R.id.textView2, stringNum.replace("Numero: ",""));
-
-
+                                        views.setTextViewText(R.id.textView2, stringNum.replace("Numero: ", ""));
 
 
                                     } catch (JSONException ignored) {
@@ -346,22 +337,10 @@ public class Widget extends AppWidgetProvider {
                         queue2.add(getRequest2);
 
 
-
-
-
-
-                    }, error1 -> {});
+                    }, error1 -> {
+            });
 
             login.add(getRequestLogin);
-
-
-
-
-
-
-
-
-
 
 
             Intent intent1 = new Intent(context, Widget.class);
@@ -379,7 +358,6 @@ public class Widget extends AppWidgetProvider {
         }
 
     }
-
 
 
 }

@@ -11,7 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fast0n.ipersonalarea.ChangeEmailActivity;
 import com.fast0n.ipersonalarea.LoginActivity;
 import com.fast0n.ipersonalarea.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -29,6 +37,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import es.dmoral.toasty.Toasty;
 
 public class VoicemailFragment extends Fragment {
 
@@ -45,8 +57,7 @@ public class VoicemailFragment extends Fragment {
         final ProgressBar loading;
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        CardView cardView;
-
+        CardView cardView1;
 
 
         // java adresses
@@ -54,9 +65,11 @@ public class VoicemailFragment extends Fragment {
         CubeGrid cubeGrid = new CubeGrid();
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
         loading.setIndeterminateDrawable(cubeGrid);
-        cardView = view.findViewById(R.id.cardView);
+        cardView1 = view.findViewById(R.id.cardView1);
 
-        cardView.setVisibility(View.INVISIBLE);
+        cardView1.setVisibility(View.INVISIBLE);
+
+
         loading.setVisibility(View.VISIBLE);
 
         final Bundle extras = getActivity().getIntent().getExtras();
@@ -64,29 +77,129 @@ public class VoicemailFragment extends Fragment {
         final String token = extras.getString("token");
 
         final String site_url = getString(R.string.site_url);
-        String url = site_url + "?voicemail=true&token="+token;
+        String url = site_url + "?voicemail=true&token=" + token;
+        String url1 = site_url + "?voicemailoptions=true&token=" + token;
+        String url2 = site_url + "?voicemailreport=true&token=" + token;
 
-        getObject(url, context, view, token);
+
+        getObject(url,url1, url2, context, view, token);
 
         return view;
     }
 
-    private void getObject(String url, Context context, View view, String token) {
+    private void getObject(String url,String url1, String url2, Context context, View view, String token) {
 
         final ProgressBar loading;
-        final RecyclerView recyclerView;
+        final RecyclerView recyclerView, recyclerView1, recyclerView2, recyclerView3;
         final List<DataVoicemailFragments> infomail = new ArrayList<>();
-        final CardView cardView;
+        final List<DataCustomizationFragments> infoList = new ArrayList<>();
+        final List<DataNotificationFragments> infoList1 = new ArrayList<>();
+        CardView cardView1;
+        EditText editText;
+        Spinner spinner;
+        ImageButton button;
+
+        TextView textvoicemail, customization, notification;
 
         // java adresses
+        button = view.findViewById(R.id.button);
+        cardView1 = view.findViewById(R.id.cardView1);
+        editText = view.findViewById(R.id.editText);
+        textvoicemail = view.findViewById(R.id.textView);
+        customization = view.findViewById(R.id.textView1);
+        notification = view.findViewById(R.id.textView2);
         recyclerView = view.findViewById(R.id.recycler_view);
-        loading = view.findViewById(R.id.progressBar);
-        cardView = view.findViewById(R.id.cardView);
+        recyclerView1 = view.findViewById(R.id.recycler_view1);
+        recyclerView2 = view.findViewById(R.id.recycler_view2);
+        recyclerView3 = view.findViewById(R.id.recycler_view3);
+        spinner = view.findViewById(R.id.spinner);
 
-        recyclerView.setHasFixedSize(true);
+
+
+        String list[] = {"Notifica inviata via email","File audio inviato in allegato"};
+
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context,   android.R.layout.simple_spinner_item, list);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEmail(editText.getText().toString())) {
+                    String montant = spinner.getSelectedItem().toString();
+
+                    RequestQueue queue = Volley.newRequestQueue(context);
+                    final String site_url = getString(R.string.site_url);
+
+                    System.out.println(site_url + "?email=" +  editText.getText().toString() + "&action=add&type="+  montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment") +token);
+
+                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?email=" +  editText.getText().toString() + "&action=add&type="+  montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment")+"&token=" +token , null,
+                            new Response.Listener<JSONObject>() {
+
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+
+                                        JSONObject json_raw = new JSONObject(response.toString());
+                                        String iliad = json_raw.getString("iliad");
+
+                                        JSONObject json = new JSONObject(iliad);
+
+                                    } catch (JSONException ignored) {
+                                    }
+
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+
+                    queue.add(getRequest);
+
+                }
+                else{
+                    Toasty.warning(context, getString(R.string.email_wrong), Toast.LENGTH_LONG,
+                            true).show();
+                }
+            }
+
+            public boolean isEmail(String email) {
+                String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
+                CharSequence inputString = email;
+                Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(inputString);
+                return matcher.matches();
+            }
+        });
+
+        loading = view.findViewById(R.id.progressBar);
+
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(llm);
+
+        LinearLayoutManager llm1 = new LinearLayoutManager(context);
+        llm1.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView1.setHasFixedSize(true);
+        recyclerView1.setLayoutManager(llm1);
+
+        LinearLayoutManager llm2 = new LinearLayoutManager(context);
+        llm2.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView2.setHasFixedSize(true);
+        recyclerView2.setLayoutManager(llm2);
+
+        LinearLayoutManager llm3 = new LinearLayoutManager(context);
+        llm3.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView3.setHasFixedSize(true);
+        recyclerView3.setLayoutManager(llm3);
+
+
+
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -100,7 +213,12 @@ public class VoicemailFragment extends Fragment {
                             String iliad = json_raw.getString("iliad");
                             JSONObject json = new JSONObject(iliad);
 
-                            for (int i = 0; i < json.length(); i++) {
+                            String string1 = json.getString("0");
+                            JSONObject json_strings1 = new JSONObject(string1);
+                            String stringCredit = json_strings1.getString("0");
+                            textvoicemail.setText(stringCredit);
+
+                            for (int i = 1; i < json.length(); i++) {
 
                                 String string = json.getString(String.valueOf(i));
                                 JSONObject json_strings = new JSONObject(string);
@@ -109,23 +227,18 @@ public class VoicemailFragment extends Fragment {
                                 try {
                                     String b = json_strings.getString("1");
                                     String c = json_strings.getString("2");
-
-
-                                       infomail.add(new DataVoicemailFragments(a, b, c, token));
-                                } catch (Exception ignored){
+                                    infomail.add(new DataVoicemailFragments(a, b, c, token));
+                                } catch (Exception ignored) {
                                     infomail.add(new DataVoicemailFragments(a, "", "0", token));
                                 }
 
 
-
-
-
-
                             }
-                            CustomAdapterVoicemail ca = new CustomAdapterVoicemail( infomail, context);
+                            CustomAdapterVoicemail ca = new CustomAdapterVoicemail(infomail, context);
                             recyclerView.setAdapter(ca);
-                            cardView.setVisibility(View.VISIBLE);
-                            loading.setVisibility(View.INVISIBLE);
+                            textvoicemail.setVisibility(View.VISIBLE);
+
+
 
                         } catch (JSONException e) {
                             startActivity(new Intent(context, LoginActivity.class));
@@ -140,6 +253,128 @@ public class VoicemailFragment extends Fragment {
         });
 
         queue.add(getRequest);
+
+
+
+        RequestQueue queue1 = Volley.newRequestQueue(context);
+        JsonObjectRequest getRequest1 = new JsonObjectRequest(Request.Method.GET, url1, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
+
+                            JSONObject json = new JSONObject(iliad);
+
+                            String string1 = json.getString("0");
+                            JSONObject json_strings1 = new JSONObject(string1);
+                            String stringCredit = json_strings1.getString("0");
+                            customization.setText(stringCredit);
+
+                            for (int i = 1; i < json.length(); i++) {
+
+                                String string = json.getString(String.valueOf(i));
+                                JSONObject json_strings = new JSONObject(string);
+
+                                String a = json_strings.getString("0");
+                                String b = json_strings.getString("2");
+                                String c = json_strings.getString("3");
+                                infoList.add(new DataCustomizationFragments(a, b, c, i));
+                                customization.setVisibility(View.VISIBLE);
+
+                            }
+
+                            CustomAdapterCustomization ca = new CustomAdapterCustomization(context, infoList, token);
+                            recyclerView1.setAdapter(ca);
+                            notification.setVisibility(View.VISIBLE);
+
+
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue1.add(getRequest1);
+
+
+
+
+
+            RequestQueue queue2 = Volley.newRequestQueue(context);
+            JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null,
+                    new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject json_raw = new JSONObject(response.toString());
+                                String iliad = json_raw.getString("iliad");
+
+
+                                try {
+                                    JSONObject json = new JSONObject(iliad);
+
+                                    String string1 = json.getString("0");
+                                    JSONObject json_strings1 = new JSONObject(string1);
+                                    String stringCredit = json_strings1.getString("0");
+                                    notification.setText(stringCredit);
+
+
+                                    for (int i = 1; i < json.length(); i++) {
+
+                                        String string = json.getString(String.valueOf(i));
+                                        JSONObject json_strings = new JSONObject(string);
+
+
+                                        String a = json_strings.getString("0");
+                                        String d = json_strings.getString("3");
+
+                                        try {
+                                            String b = json_strings.getString("1");
+                                            String c = json_strings.getString("2");
+                                            infoList1.add(new DataNotificationFragments(a, b, c, d));
+                                        } catch (Exception ignored) {
+                                            infoList1.add(new DataNotificationFragments(a, "", "0", d));
+                                        }
+
+
+                                    }
+
+                                    CustomAdapterNotification ca = new CustomAdapterNotification(context, infoList1, token);
+                                    recyclerView2.setAdapter(ca);
+                                    loading.setVisibility(View.INVISIBLE);
+                                    cardView1.setVisibility(View.VISIBLE);
+                                }
+                                catch (Exception ignored){}
+
+                            } catch (JSONException e) {
+                                startActivity(new Intent(context, LoginActivity.class));
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            queue2.add(getRequest2);
+
+
+
+
+
+
     }
 
 }

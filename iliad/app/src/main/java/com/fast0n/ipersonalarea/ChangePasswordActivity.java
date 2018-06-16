@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -20,8 +19,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.java.GenerateToken;
@@ -48,7 +45,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_password_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -84,28 +81,26 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 String ppassword = new String(decodeValue1);
 
 
-                if (edt_password.getText().toString().equals(ppassword.replaceAll("\\s+",""))
+                if (edt_password.getText().toString().equals(ppassword.replaceAll("\\s+", ""))
                         && edt_password.getText().toString().length() != 0
                         && edt_newpassword.getText().toString().length() != 0) {
 
-                    byte[] decodeValue = Base64.encode( edt_password.getText().toString().getBytes(), Base64.DEFAULT);
+                    byte[] decodeValue = Base64.encode(edt_password.getText().toString().getBytes(), Base64.DEFAULT);
                     String oldpassword = new String(decodeValue);
 
 
-                    byte[] encodeValue1 = Base64.encode( edt_newpassword.getText().toString().getBytes(), Base64.DEFAULT);
+                    byte[] encodeValue1 = Base64.encode(edt_newpassword.getText().toString().getBytes(), Base64.DEFAULT);
                     String newpassword = new String(encodeValue1);
 
 
-
-                    String url = site_url + "?new_password=" +newpassword.replaceAll("\\s+","")
-                            + "&new_password_confirm=" +newpassword.replaceAll("\\s+","") + "&password=" + oldpassword.replaceAll("\\s+","")
+                    String url = site_url + "?new_password=" + newpassword.replaceAll("\\s+", "")
+                            + "&new_password_confirm=" + newpassword.replaceAll("\\s+", "") + "&password=" + oldpassword.replaceAll("\\s+", "")
                             + "&token=" + token;
-
 
 
                     loading.setVisibility(View.VISIBLE);
                     cardView.setVisibility(View.INVISIBLE);
-                    changePassword(url, newpassword.replaceAll("\\s+",""));
+                    changePassword(url, newpassword.replaceAll("\\s+", ""));
                     btn_password.setEnabled(false);
                 } else {
                     loading.setVisibility(View.INVISIBLE);
@@ -139,20 +134,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
                             SharedPreferences prefs = getSharedPreferences("sharedPreferences", 0);
                             String userid = prefs.getString("userid", null);
 
-                                    String token = GenerateToken.randomString(20);
+                            String token = GenerateToken.randomString(20);
 
-                                    Intent intent = new Intent(ChangePasswordActivity.this, HomeActivity.class);
-                                    intent.putExtra("userid", userid);
-                                    intent.putExtra("password",password);
-                                    intent.putExtra("token", token);
-                                    intent.putExtra("checkbox", "true");
-                                    startActivity(intent);
-                                    Toasty.success(ChangePasswordActivity.this, getString(R.string.password_change_success),
-                                            Toast.LENGTH_LONG, true).show();
-
-
-
-
+                            Intent intent = new Intent(ChangePasswordActivity.this, HomeActivity.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("password", password);
+                            intent.putExtra("token", token);
+                            intent.putExtra("checkbox", "true");
+                            startActivity(intent);
+                            Toasty.success(ChangePasswordActivity.this, getString(R.string.password_change_success),
+                                    Toast.LENGTH_LONG, true).show();
 
 
                         }
@@ -170,13 +161,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-        case android.R.id.home:
+            case android.R.id.home:
 
-            super.onBackPressed();
+                super.onBackPressed();
 
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

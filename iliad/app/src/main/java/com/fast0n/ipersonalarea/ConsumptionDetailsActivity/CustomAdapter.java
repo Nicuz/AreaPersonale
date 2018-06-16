@@ -5,12 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fast0n.ipersonalarea.R;
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
-
-import com.fast0n.ipersonalarea.R;
 
 public class CustomAdapter extends ExpandableRecyclerViewAdapter<DataModelChildren, DataModel> {
 

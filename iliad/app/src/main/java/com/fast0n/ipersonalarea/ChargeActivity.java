@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -55,7 +52,7 @@ public class ChargeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_charge);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.chargeNumber);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -85,7 +82,7 @@ public class ChargeActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
 
-        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?payinfoprice=true&&token="+token, null,
+        JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?payinfoprice=true&&token=" + token, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -115,7 +112,7 @@ public class ChargeActivity extends AppCompatActivity {
                                 }
                             };
                             spinner.setAdapter(dataAdapter);
-                            spinner.setSelection(list.size()-1);
+                            spinner.setSelection(list.size() - 1);
 
                         } catch (JSONException ignored) {
                         }
@@ -131,17 +128,13 @@ public class ChargeActivity extends AppCompatActivity {
         queue.add(getRequest);
 
 
-
-
-
         creditCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (touch){
+                if (touch) {
                     creditCardView.showBack();
                     touch = false;
-                }
-                else{
+                } else {
                     creditCardView.showFront();
                     touch = true;
                 }
@@ -149,8 +142,7 @@ public class ChargeActivity extends AppCompatActivity {
         });
 
 
-
-        final ArrayList<String> listOfPattern= new ArrayList<>();
+        final ArrayList<String> listOfPattern = new ArrayList<>();
 
         String ptVisa = "^4[0-9]{6,}$";
         listOfPattern.add(ptVisa);
@@ -195,7 +187,8 @@ public class ChargeActivity extends AppCompatActivity {
 
         ncvv.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -212,9 +205,9 @@ public class ChargeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
-
 
 
         nExpiration.addTextChangedListener(new TextWatcher() {
@@ -248,8 +241,6 @@ public class ChargeActivity extends AppCompatActivity {
         });
 
 
-
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,16 +248,14 @@ public class ChargeActivity extends AppCompatActivity {
                 String typecard = null;
 
 
-                String ccNum = nCard.getText().toString().replaceAll("\\s+","");
-                for(String p:listOfPattern){
-                    if(ccNum.matches(p)){
-                        if (p.equals("^4[0-9]{6,}$")){
+                String ccNum = nCard.getText().toString().replaceAll("\\s+", "");
+                for (String p : listOfPattern) {
+                    if (ccNum.matches(p)) {
+                        if (p.equals("^4[0-9]{6,}$")) {
                             typecard = "visa";
-                        }
-                        else if(p.equals("^5[1-5][0-9]{5,}$")){
+                        } else if (p.equals("^5[1-5][0-9]{5,}$")) {
                             typecard = "mastercard";
-                        }
-                        else{
+                        } else {
                             typecard = "";
                         }
                         break;
@@ -287,11 +276,11 @@ public class ChargeActivity extends AppCompatActivity {
                 else if (ncvv.getText().toString().length() == 0)
                     Toasty.warning(ChargeActivity.this, getString(R.string.edtCvv) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
 
-                else{
+                else {
 
                     RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
 
-                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?phonecharge=true&montant="+montant.replace("€","")+"&cbtype="+typecard+"&cbnumero="+nCard.getText().toString().replaceAll("\\s+","")+"&cbexpmois="+nExpiration.getText().toString().split("/")[0]+"&cbexpannee=20"+nExpiration.getText().toString().split("/")[1]+"&cbcrypto="+ncvv.getText().toString()+"&token="+token, null,
+                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?phonecharge=true&montant=" + montant.replace("€", "") + "&cbtype=" + typecard + "&cbnumero=" + nCard.getText().toString().replaceAll("\\s+", "") + "&cbexpmois=" + nExpiration.getText().toString().split("/")[0] + "&cbexpannee=20" + nExpiration.getText().toString().split("/")[1] + "&cbcrypto=" + ncvv.getText().toString() + "&token=" + token, null,
                             new Response.Listener<JSONObject>() {
 
                                 @Override
@@ -305,16 +294,15 @@ public class ChargeActivity extends AppCompatActivity {
                                         String price = json.getString("0");
 
 
-                                            if (price.equals("true")){
+                                        if (price.equals("true")) {
 
-                                                Toasty.success(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(ChargeActivity.this, LoginActivity.class);
-                                                startActivity(intent);
+                                            Toasty.success(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(ChargeActivity.this, LoginActivity.class);
+                                            startActivity(intent);
 
-                                            }
-                                            else {
-                                                Toasty.error(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
-                                            }
+                                        } else {
+                                            Toasty.error(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
+                                        }
 
 
                                     } catch (JSONException ignored) {
@@ -335,7 +323,6 @@ public class ChargeActivity extends AppCompatActivity {
         });
 
     }
-
 
 
     @Override

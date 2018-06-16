@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,8 +8,8 @@
     android:background="@color/colorPrimary">
 
 
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -70,47 +69,48 @@
                     android:layout_height="wrap_content"
                     android:theme="@style/TextLabel">
 
-                <EditText
-                    android:id="@+id/edt_id"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="16dp"
-                    android:autofillHints="username"
-                    android:textColor="@color/colorPrimary"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:ems="10"
-                    android:hint="@string/edt_id"
-                    android:inputType="number"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.503"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <EditText
+                        android:id="@+id/edt_id"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:autofillHints="username"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:ems="10"
+                        android:hint="@string/edt_id"
+                        android:inputType="number"
+                        android:textColor="@color/colorPrimary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.503"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/TextLabel">
+                    android:theme="@style/TextLabel"
+                    app:passwordToggleEnabled="true">
 
-                <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
-                    android:id="@+id/edt_password"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:autofillHints="password"
-                    android:ems="10"
-                    android:hint="@string/edt_password"
-                    android:inputType="textPassword"
-                    android:textColor="@color/colorPrimary"
-                    android:backgroundTint="@color/colorPrimary"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edt_id" />
+                    <EditText
+                        android:id="@+id/edt_password"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:autofillHints="password"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:ems="10"
+                        android:hint="@string/edt_password"
+                        android:inputType="textPassword"
+                        android:textColor="@color/colorPrimary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/edt_id" />
 
                 </android.support.design.widget.TextInputLayout>
 
