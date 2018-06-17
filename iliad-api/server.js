@@ -4,7 +4,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 
 app.get('/', function (req, res) {
-    
+
     var userid = req.query.userid;
     var psw = req.query.password;
     const password = Buffer.from(psw + '', 'base64').toString('utf8');
@@ -66,31 +66,35 @@ app.get('/', function (req, res) {
         };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                const $ = cheerio.load(body);
-                var results = $('body');
-                results.each(function (i, result) {
-                    var nav = $(result).find('div.current-user').first().text().split('\n');
-                    var check = $(result).find('div.step__text').find('p.green').text();
-                    data_store["iliad"] = {};
-                    data_store["iliad"]["version"] = {};
-                    data_store["iliad"]["user_name"] = {};
-                    data_store["iliad"]["user_id"] = {};
-                    data_store["iliad"]["user_numtell"] = {};
-                    data_store["iliad"]["sim"] = {};
+                try {
+                    const $ = cheerio.load(body);
+                    var results = $('body');
+                    results.each(function (i, result) {
+                        var nav = $(result).find('div.current-user').first().text().split('\n');
+                        var check = $(result).find('div.step__text').find('p.green').text();
+                        data_store["iliad"] = {};
+                        data_store["iliad"]["version"] = {};
+                        data_store["iliad"]["user_name"] = {};
+                        data_store["iliad"]["user_id"] = {};
+                        data_store["iliad"]["user_numtell"] = {};
+                        data_store["iliad"]["sim"] = {};
 
-                    data_store["iliad"]["version"] = "2";
-                    data_store["iliad"]["user_name"] = nav[1].replace(/^\s+|\s+$/gm, '');
-                    data_store["iliad"]["user_id"] = nav[2].replace(/^\s+|\s+$/gm, '');
-                    data_store["iliad"]["user_numtell"] = nav[3].replace(/^\s+|\s+$/gm, '');
+                        data_store["iliad"]["version"] = "8";
+                        data_store["iliad"]["user_name"] = nav[1].replace(/^\s+|\s+$/gm, '');
+                        data_store["iliad"]["user_id"] = nav[2].replace(/^\s+|\s+$/gm, '');
+                        data_store["iliad"]["user_numtell"] = nav[3].replace(/^\s+|\s+$/gm, '');
 
-                    if (check == 'SIM attivata') {
-                        data_store["iliad"]["sim"] = 'true';
-                    } else {
-                        data_store["iliad"]["sim"] = 'false';
-                    }
-                    res.send(data_store);
-                    return;
-                });
+                        if (check == 'SIM attivata') {
+                            data_store["iliad"]["sim"] = 'true';
+                        } else {
+                            data_store["iliad"]["sim"] = 'false';
+                        }
+                        res.send(data_store);
+                        return;
+                    });
+                } catch (exeption) {
+                    res.send(503)
+                }
             };
         });
     } else if (activation_sim == 'true' && token != undefined) {
@@ -721,7 +725,7 @@ app.get('/', function (req, res) {
                         data_store["iliad"][1][2] = price_doc;
                         res.send(data_store);
                     });
-                } catch (Exeption) { }
+                } catch (Exeption) {}
             }
         });
     } else if (change_options == 'true' && update != undefined && token != undefined) {
@@ -821,26 +825,22 @@ app.get('/', function (req, res) {
 
                 if (table[0] != undefined) {
                     var voix_data = table[0].replace(/^\s+|\s+$/gm, '').split('\n');
-                }
-                else {
+                } else {
                     var voix_data = undefined;
                 }
                 if (table[1] != undefined) {
                     var renvoi_d_appel_data = table[1].replace(/^\s+|\s+$/gm, '').split('\n');
-                }
-                else {
+                } else {
                     var renvoi_d_appel_data = undefined;
                 }
                 if (table[2] != undefined) {
                     var sms_data = table[2].replace(/^\s+|\s+$/gm, '').split('\n');
-                }
-                else {
+                } else {
                     var sms_data = undefined;
                 }
                 if (table[3] != undefined) {
                     var data_data = table[3].replace(/^\s+|\s+$/gm, '').split('\n');
-                }
-                else {
+                } else {
                     var data_data = undefined;
                 }
 
@@ -862,7 +862,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 8; y++) {
                                 if (y == 4) {
                                     data_store["iliad"][0][x][y] = voix_data[y + add] + ': ' + voix_data[y + add + 1]
-                                } else if (y == 5) { } else if (y == 6) {
+                                } else if (y == 5) {} else if (y == 6) {
                                     data_store["iliad"][0][x][5] = voix_data[y + add]
                                 } else {
                                     data_store["iliad"][0][x][y] = voix_data[y + add]
@@ -881,7 +881,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 8; y++) {
                                 if (y == 4)
                                     data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add] + ': ' + renvoi_d_appel_data[y + add + 1]
-                                else if (y == 5) { } else if (y == 6)
+                                else if (y == 5) {} else if (y == 6)
                                     data_store["iliad"][1][x][5] = renvoi_d_appel_data[y + add]
                                 else
                                     data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add]
@@ -900,7 +900,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 8; y++) {
                                 if (y == 4) {
                                     data_store["iliad"][2][x][y] = sms_data[y + add] + ': ' + sms_data[y + add + 1]
-                                } else if (y == 5) { } else if (y == 6) {
+                                } else if (y == 5) {} else if (y == 6) {
                                     data_store["iliad"][2][x][5] = sms_data[y + add]
                                 } else {
                                     data_store["iliad"][2][x][y] = sms_data[y + add]
@@ -1019,7 +1019,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 7; y++) {
                                 if (y == 4) {
                                     data_store["iliad"][0][x][y] = voix_data[y + add] + ': ' + voix_data[y + add + 1]
-                                } else if (y == 5) { } else if (y == 6) {
+                                } else if (y == 5) {} else if (y == 6) {
                                     data_store["iliad"][0][x][5] = voix_data[y + add]
                                 } else {
                                     data_store["iliad"][0][x][y] = voix_data[y + add]
@@ -1038,7 +1038,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 7; y++) {
                                 if (y == 4)
                                     data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add] + ': ' + renvoi_d_appel_data[y + add + 1]
-                                else if (y == 5) { } else if (y == 6)
+                                else if (y == 5) {} else if (y == 6)
                                     data_store["iliad"][1][x][5] = renvoi_d_appel_data[y + add]
                                 else
                                     data_store["iliad"][1][x][y] = renvoi_d_appel_data[y + add]
@@ -1057,7 +1057,7 @@ app.get('/', function (req, res) {
                             for (var y = 0; y < 7; y++) {
                                 if (y == 4) {
                                     data_store["iliad"][2][x][y] = sms_data[y + add] + ': ' + sms_data[y + add + 1]
-                                } else if (y == 5) { } else if (y == 6) {
+                                } else if (y == 5) {} else if (y == 6) {
                                     data_store["iliad"][2][x][5] = sms_data[y + add]
                                 } else {
                                     data_store["iliad"][2][x][y] = sms_data[y + add]
@@ -1156,20 +1156,20 @@ app.get('/', function (req, res) {
                         .each(function (index, element) {
                             if (index == 0)
                                 $(element).find('option')
-                                    .each(function (index, element) {
-                                        if ($(element).attr('value') != '')
-                                            month = month.concat([$(element).attr('value')]);
-                                    })
+                                .each(function (index, element) {
+                                    if ($(element).attr('value') != '')
+                                        month = month.concat([$(element).attr('value')]);
+                                })
                         })
                     $(result)
                         .find('select.mdc-select__input')
                         .each(function (index, element) {
                             if (index == 1)
                                 $(element).find('option')
-                                    .each(function (index, element) {
-                                        if ($(element).attr('value') != '')
-                                            year = year.concat([$(element).attr('value').replace("20", "")]);
-                                    })
+                                .each(function (index, element) {
+                                    if ($(element).attr('value') != '')
+                                        year = year.concat([$(element).attr('value').replace("20", "")]);
+                                })
                         })
                 });
                 data_store["iliad"][0] = {}
@@ -1234,8 +1234,7 @@ app.get('/', function (req, res) {
                                 data_store["iliad"][index][2] = $(element).find('source').attr('src').split('=')[1];
                                 //data_store["iliad"][index][2] = 'https://www.iliad.it' + $(element).find('source').attr('src');
                             })
-                    }
-                    else {
+                    } else {
                         data_store["iliad"][0] = {}
                         data_store["iliad"][0][0] = $(result).find('p.text-center').text().replace(/^\s+|\s+$/gm, '')
                     }
@@ -1294,9 +1293,7 @@ app.get('/', function (req, res) {
                 res.send(data_store);
             }
         });
-    }
-
-    else if (idaudio != undefined && token != undefined) {
+    } else if (idaudio != undefined && token != undefined) {
         var options = {
             url: 'https://www.iliad.it/account/segreteria-telefonica/messaggio_vocale?id=' + idaudio,
             method: 'GET',
@@ -1309,11 +1306,10 @@ app.get('/', function (req, res) {
                 res.send(body);
             }
         });
-    }
-    else if (alert == 'true') {
+    } else if (alert == 'true') {
         data_store["iliad"][0] = "<b>Se stai utilizzando iliad UNOFFICIAL è stata rimossa dal PlayStore, scarica la nuova app Area personale, per i nuovi aggiornamenti.</b><br /> L’app è stata creata in modo <b>NON</b> ufficiale, iliad S.P.A non è responsabile. L’app prende le informazioni dal sito, se una sezione/testo/oggetto non c’è sul sito non ci sarà nell’app. Ti ricordo inoltre che prima di creare una valutazione sul PlayStore di contattarci su Telegram con <b>@Fast0n</b> o <b>@Mattvoid</b> oppure per email all’indirizzo <b>theplayergame97@gmail.com</b>.<br/>Grazie per l’attenzione."
         res.send(data_store);
 
     }
 });
-const server = app.listen(process.env.PORT, function () { });
+const server = app.listen(process.env.PORT || 1331, function () {});
