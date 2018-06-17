@@ -55,7 +55,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_email);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_email_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);

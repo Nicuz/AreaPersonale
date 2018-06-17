@@ -10,7 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:screenOrientation="portrait"
+        android:screenOrientation="sensorPortrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:windowSoftInputMode="adjustPan">
@@ -57,8 +57,6 @@
         <activity
             android:name=".ChargeActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-
-
 
         <!-- [START firebase_iid_service] -->
         <service android:name=".java.MyFirebaseInstanceIDService">

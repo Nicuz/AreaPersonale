@@ -52,7 +52,7 @@ public class ChargeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_charge);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.chargeNumber);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
