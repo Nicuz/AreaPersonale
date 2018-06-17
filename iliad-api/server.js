@@ -79,7 +79,7 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["user_numtell"] = {};
                         data_store["iliad"]["sim"] = {};
 
-                        data_store["iliad"]["version"] = "2";
+                        data_store["iliad"]["version"] = "7";
                         data_store["iliad"]["user_name"] = nav[1].replace(/^\s+|\s+$/gm, '');
                         data_store["iliad"]["user_id"] = nav[2].replace(/^\s+|\s+$/gm, '');
                         data_store["iliad"]["user_numtell"] = nav[3].replace(/^\s+|\s+$/gm, '');
@@ -221,7 +221,14 @@ app.get('/', function (req, res) {
                             array2 = array2.concat([$(element).find('div.wrapper-align').text()]);
                         });
 
-                    var title = $(result).find('h2').text().split('\n')[1].replace(/^\s+|\s+$/gm, '');
+                  
+                    var title = $(result).find('h2').find('b.red').text().replace(/^\s+|\s+$/gm, '');
+                    var title2;
+                    $(result).find('div.table-montant').find('div.label').each(function (index, element){
+                        if (index == 1)
+                            title2 = $(element).text().replace(/^\s+|\s+$/gm, '')
+                    })
+                    
 
                     var chiamate_title = array2[0].split('\n')[2].replace(/^\s+|\s+$/gm, '');
                     var sms_title = array2[1].split('\n')[2].replace(/^\s+|\s+$/gm, '');
@@ -244,7 +251,7 @@ app.get('/', function (req, res) {
                     data_store["iliad"][3] = {};
                     data_store["iliad"][4] = {};
 
-                    data_store["iliad"][0][0] = title;
+                    data_store["iliad"][0][0] = title + '&' + title2;
                     //ricarica button
                     data_store["iliad"][0][1] = 'false';
                     //info consumi button
