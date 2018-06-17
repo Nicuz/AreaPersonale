@@ -79,7 +79,7 @@ app.get('/', function (req, res) {
                         data_store["iliad"]["user_numtell"] = {};
                         data_store["iliad"]["sim"] = {};
 
-                        data_store["iliad"]["version"] = "8";
+                        data_store["iliad"]["version"] = "2";
                         data_store["iliad"]["user_name"] = nav[1].replace(/^\s+|\s+$/gm, '');
                         data_store["iliad"]["user_id"] = nav[2].replace(/^\s+|\s+$/gm, '');
                         data_store["iliad"]["user_numtell"] = nav[3].replace(/^\s+|\s+$/gm, '');
@@ -361,7 +361,7 @@ app.get('/', function (req, res) {
             password: password
         }
         var options = {
-            url: 'https://www.iliad.it/account/mes-informations/email',
+            url: 'https://www.iliad.it/account/i-miei-dati-personali/email',
             method: 'POST',
             headers: headers,
             formData: formData
@@ -381,7 +381,7 @@ app.get('/', function (req, res) {
             'password-new-confirm': Buffer.from(new_password_confirm + '', 'base64').toString('utf8'),
         }
         var options = {
-            url: 'https://www.iliad.it/account/mes-informations/password',
+            url: 'https://www.iliad.it/account/i-miei-dati-personali/password',
             method: 'POST',
             headers: headers,
             formData: formData
