@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.ChangeEmailActivity;
@@ -194,15 +192,7 @@ public class InfoFragments extends Fragment {
                     } catch (JSONException e) {
                         startActivity(new Intent(context, LoginActivity.class));
                     }
-                }, error -> {
-                    try {
-
-                    } catch (Exception e) {
-                        startActivity(new Intent(context, LoginActivity.class));
-
-                    }
-
-                });
+                }, error -> startActivity(new Intent(context, LoginActivity.class)));
 
         // add it to the RequestQueue
         queue.add(getRequest);

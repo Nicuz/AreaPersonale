@@ -21,8 +21,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.LoginActivity;
@@ -155,7 +153,7 @@ public class VoicemailFragment extends Fragment {
             }
 
             boolean isEmail(String email) {
-                String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
+                String expression = "^[\\w.]+@([\\w]+\\.)+[A-Z]{2,7}$";
                 CharSequence inputString = email;
                 Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(inputString);

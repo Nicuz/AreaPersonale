@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +19,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.cooltechworks.creditcarddesign.CreditCardView;
@@ -146,7 +143,7 @@ public class ChargeActivity extends AppCompatActivity {
 
         nCard.addTextChangedListener(new TextWatcher() {
             private final String space = " "; // you can change this to whatever you want
-            private final Pattern pattern = Pattern.compile("^(\\d{4}" + space + "{1}){0,3}\\d{1,4}$"); // check whether we need to modify or not
+            private final Pattern pattern = Pattern.compile("^(\\d{4}" + space + "){0,3}\\d{1,4}$"); // check whether we need to modify or not
 
             @Override
             public void onTextChanged(CharSequence s, int st, int be, int count) {
@@ -203,7 +200,7 @@ public class ChargeActivity extends AppCompatActivity {
 
         nExpiration.addTextChangedListener(new TextWatcher() {
             private final String space = "/"; // you can change this to whatever you want
-            private final Pattern pattern = Pattern.compile("^(\\d{2}" + space + "{1}){0,1}\\d{1,2}$"); // check whether we need to modify or not
+            private final Pattern pattern = Pattern.compile("^(\\d{2}" + space + ")?\\d{1,2}$"); // check whether we need to modify or not
 
             @Override
             public void onTextChanged(CharSequence s, int st, int be, int count) {

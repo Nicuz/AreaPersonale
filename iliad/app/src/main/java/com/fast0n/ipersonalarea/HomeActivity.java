@@ -1,7 +1,6 @@
 package com.fast0n.ipersonalarea;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -27,12 +26,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fast0n.ipersonalarea.fragments.AboutFragment.AboutFragment;
@@ -250,7 +245,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (backPressedToExitOnce) {
-                new Handler().postDelayed(() -> finishAffinity(), 500);
+                new Handler().postDelayed(this::finishAffinity, 500);
 
             } else {
                 this.backPressedToExitOnce = true;
