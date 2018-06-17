@@ -22,4 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  window.sr = ScrollReveal();
+  // sr.reveal('.reveal');
+  sr.reveal('.reveal', { duration: 750 });
+
 });
