@@ -45,7 +45,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         TextView mTitle = toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText(R.string.change_password_title);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
