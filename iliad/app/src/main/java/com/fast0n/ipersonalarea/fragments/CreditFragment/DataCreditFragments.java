@@ -4,8 +4,8 @@ class DataCreditFragments {
 
     public final String title;
     public final String description;
-    private final String iconText;
     public final String url;
+    private final String iconText;
 
     DataCreditFragments(String iconText, String description, String title, String url) {
         this.title = title;

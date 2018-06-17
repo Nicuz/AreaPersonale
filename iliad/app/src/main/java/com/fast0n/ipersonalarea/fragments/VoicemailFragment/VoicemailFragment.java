@@ -142,7 +142,7 @@ public class VoicemailFragment extends Fragment {
 
                             }, error -> {
 
-                            });
+                    });
 
                     queue.add(getRequest);
 
@@ -225,7 +225,7 @@ public class VoicemailFragment extends Fragment {
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
 
@@ -268,7 +268,7 @@ public class VoicemailFragment extends Fragment {
 
                 }, error -> {
 
-                });
+        });
 
         queue1.add(getRequest1);
 
@@ -323,7 +323,7 @@ public class VoicemailFragment extends Fragment {
 
                 }, error -> {
 
-                });
+        });
 
         queue2.add(getRequest2);
 

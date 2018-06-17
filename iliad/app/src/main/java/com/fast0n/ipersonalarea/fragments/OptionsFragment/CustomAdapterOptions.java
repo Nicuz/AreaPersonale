@@ -41,30 +41,19 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
         final DataOptionsFragments c = optionsList.get(position);
         holder.textView.setText(c.textView);
 
-
-        if (c.toggle.equals("false"))
-            holder.toggle.setChecked(false);
-        else
-            holder.toggle.setChecked(true);
+        holder.toggle.setChecked(!c.toggle.equals("false"));
 
         if (position == 0)
             holder.toggle.setEnabled(false);
-
 
         holder.toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 final String site_url = context.getString(R.string.site_url);
-
-                if (!isChecked) {
-                    String url = site_url + "?change_options=true&update=" + c.name + "&token=" + token + "&activate=0";
-                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("false", "disattivato"));
-                } else if (isChecked) {
-
-                    String url = site_url + "?change_options=true&update=" + c.name + "&token=" + token + "&activate=1";
-                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("true", "attivo"));
-                }
+                String url = site_url + "?change_options=true&update=" + c.name + "&token=" + token
+                        + "&activate=" + (isChecked ? 1 : 0);
+                request_options_services(url, holder.textView.getText() + " " + (isChecked ? "attivo" : "disattivato"));
             }
 
             private void request_options_services(String url, String labelOn) {
@@ -90,7 +79,7 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
 
                         }, error -> {
 
-                        });
+                });
 
                 queue.add(getRequest);
 
@@ -106,8 +95,9 @@ public class CustomAdapterOptions extends RecyclerView.Adapter<CustomAdapterOpti
         return optionsList.size();
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_options_services, parent, false);
         return new MyViewHolder(v);
     }

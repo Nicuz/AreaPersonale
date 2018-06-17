@@ -15,7 +15,7 @@ class CustomAdapter extends ExpandableRecyclerViewAdapter<DataModelChildren, Dat
 
     private final Activity activity;
 
-    public CustomAdapter(Activity activity, List<? extends ExpandableGroup> groups) {
+    CustomAdapter(Activity activity, List<? extends ExpandableGroup> groups) {
         super(groups);
         this.activity = activity;
     }

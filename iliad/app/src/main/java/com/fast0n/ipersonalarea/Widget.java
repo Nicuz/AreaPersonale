@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.android.volley.Request;
@@ -46,7 +47,7 @@ public class Widget extends AppWidgetProvider {
 
             AppWidgetTarget img = new AppWidgetTarget(context, R.id.img, views, appWidgetId) {
                 @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
                     super.onResourceReady(resource, transition);
                 }
             };
@@ -56,7 +57,7 @@ public class Widget extends AppWidgetProvider {
 
             AppWidgetTarget img2 = new AppWidgetTarget(context, R.id.img2, views, appWidgetId) {
                 @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
                     super.onResourceReady(resource, transition);
                 }
             };
@@ -66,7 +67,7 @@ public class Widget extends AppWidgetProvider {
 
             AppWidgetTarget img3 = new AppWidgetTarget(context, R.id.img3, views, appWidgetId) {
                 @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
                     super.onResourceReady(resource, transition);
                 }
             };
@@ -81,7 +82,7 @@ public class Widget extends AppWidgetProvider {
             String password = settings.getString("password", null);
 
 
-            if (password.length() == 0) {
+            if (password != null && password.length() == 0) {
                 views.setViewVisibility(R.id.login, VISIBLE);
             } else {
                 views.setViewVisibility(R.id.linearLayout, VISIBLE);

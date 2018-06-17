@@ -17,7 +17,6 @@ import es.dmoral.toasty.Toasty;
 
 public class ErrorConnectionActivity extends AppCompatActivity {
 
-    private Button button;
     private TextView textView;
     private TextView textView1;
 
@@ -27,7 +26,7 @@ public class ErrorConnectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_error_connection);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 
-        button = findViewById(R.id.button);
+        Button button = findViewById(R.id.button);
         textView = findViewById(R.id.textView1);
         textView1 = findViewById(R.id.textView);
 

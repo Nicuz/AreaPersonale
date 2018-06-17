@@ -53,8 +53,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawer;
-    private Menu nav_Menu;
-    private NavigationView navigationView;
     private ProgressBar loading;
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
@@ -79,11 +77,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         CubeGrid cubeGrid = new CubeGrid();
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.getHeaderView(0);
-        nav_Menu = navigationView.getMenu();
+        Menu nav_Menu = navigationView.getMenu();
 
         toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
@@ -217,8 +215,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                     .show();
                             Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(mainActivity);
-                        } else {
-
                         }
                     } catch (Exception ignored) {
                         getObject(url, nav_Menu);

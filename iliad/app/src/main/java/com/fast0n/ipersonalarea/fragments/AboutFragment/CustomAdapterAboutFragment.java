@@ -1,6 +1,7 @@
 package com.fast0n.ipersonalarea.fragments.AboutFragment;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,6 @@ class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> impleme
 
     CustomAdapterAboutFragment(ArrayList<DataAboutFragment> data, Context context) {
         super(context, R.layout.fragment_about, data);
-        ArrayList<DataAboutFragment> dataSet = data;
-        Context mContext = context;
-
     }
 
     @Override
@@ -28,14 +26,14 @@ class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> impleme
 
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         DataAboutFragment DataAboutFragment = getItem(position);
         ViewHolder viewHolder;
 
         if (convertView == null) {
-
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.row_about, parent, false);

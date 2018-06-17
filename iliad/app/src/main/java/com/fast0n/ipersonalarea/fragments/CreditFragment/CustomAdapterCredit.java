@@ -25,7 +25,7 @@ public class CustomAdapterCredit extends RecyclerView.Adapter<CustomAdapterCredi
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         DataCreditFragments c = creditList.get(position);
 
         holder.textView2.setText(c.title);

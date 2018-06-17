@@ -22,7 +22,6 @@ import java.util.Objects;
 
 public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
 
-    private ActionBar actionBar;
     Button requests;
 
     @Override
@@ -37,7 +36,7 @@ public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -73,7 +72,7 @@ public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
 

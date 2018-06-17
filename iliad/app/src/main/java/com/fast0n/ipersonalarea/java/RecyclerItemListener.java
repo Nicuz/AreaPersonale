@@ -11,7 +11,6 @@ public class RecyclerItemListener implements RecyclerView.OnItemTouchListener {
     private final GestureDetector gd;
 
     public RecyclerItemListener(Context ctx, final RecyclerView recycler_view, final RecyclerTouchListener listener) {
-        RecyclerTouchListener listener1 = listener;
         gd = new GestureDetector(ctx, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public void onLongPress(MotionEvent e) {
@@ -49,8 +48,8 @@ public class RecyclerItemListener implements RecyclerView.OnItemTouchListener {
     }
 
     public interface RecyclerTouchListener {
-        public void onClickItem(View v, int position);
+        void onClickItem(View v, int position);
 
-        public void onLongClickItem(View v, int position);
+        void onLongClickItem(View v, int position);
     }
 }

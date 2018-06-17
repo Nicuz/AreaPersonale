@@ -27,14 +27,13 @@ import java.util.Objects;
 
 public class ConsumptionDetailsActivity extends AppCompatActivity {
 
-    private ActionBar actionBar;
     private RecyclerView recyclerView;
     private ArrayList<Model> model;
     private CustomAdapter adapter;
     private ProgressBar loading;
-    private ArrayList<ModelChildren> iphones;
-    private ArrayList<ModelChildren> nexus;
-    private ArrayList<ModelChildren> windows;
+    private ArrayList<ModelChildren> iphones = new ArrayList<>();
+    private ArrayList<ModelChildren> nexus = new ArrayList<>();
+    private ArrayList<ModelChildren> windows = new ArrayList<>();
 
 
     @Override
@@ -49,7 +48,7 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -98,15 +97,11 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
                         String title = json.getString("title");
                         JSONObject json_title = new JSONObject(title);
 
+                        ArrayList[] ciao = new ArrayList[]{iphones, nexus, windows};
                         for (int z = 0; z < json_title.length(); z++) {
                             String x = json_title.getString(String.valueOf(z));
 
-
                             try {
-
-                                ArrayList[] ciao = new ArrayList[]{iphones, nexus, windows};
-                                ciao[z] = new ArrayList<>();
-
                                 String string = json.getString(String.valueOf(z));
                                 JSONObject json_strings = new JSONObject(string);
 
@@ -115,21 +110,14 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
                                     String string_one = json_strings.getString(String.valueOf(j));
                                     JSONObject json_strings_one = new JSONObject(string_one);
 
-                                    for (int i = 0; i < json_strings_one.length(); i++) {
+                                    String a = json_strings_one.getString(String.valueOf(0));
+                                    String b = json_strings_one.getString(String.valueOf(1));
+                                    String c = json_strings_one.getString(String.valueOf(2));
+                                    String d = json_strings_one.getString(String.valueOf(3));
+                                    String e = json_strings_one.getString(String.valueOf(4));
+                                    String f = json_strings_one.getString(String.valueOf(5));
 
-                                        String a = json_strings_one.getString(String.valueOf(0));
-                                        String b = json_strings_one.getString(String.valueOf(1));
-                                        String c = json_strings_one.getString(String.valueOf(2));
-                                        String d = json_strings_one.getString(String.valueOf(3));
-                                        String e = json_strings_one.getString(String.valueOf(4));
-                                        String f = json_strings_one.getString(String.valueOf(5));
-
-
-                                        ciao[z].add(new ModelChildren(a, b, c, d, e, f));
-                                        break;
-                                    }
-
-
+                                    ciao[z].add(new ModelChildren(a, b, c, d, e, f));
                                 }
                                 model.add(new Model(x, ciao[z]));
                                 loading.setVisibility(View.INVISIBLE);
@@ -138,20 +126,17 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
                             }
                         }
 
-
                         adapter = new CustomAdapter(ConsumptionDetailsActivity.this, model);
                         recyclerView.setAdapter(adapter);
-
 
                     } catch (JSONException ignored) {
                     }
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
-
     }
 
     @Override

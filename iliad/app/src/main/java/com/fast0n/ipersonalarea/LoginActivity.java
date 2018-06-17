@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                     }, error -> {
-                    });
+            });
             queue.add(getRequest);
 
 

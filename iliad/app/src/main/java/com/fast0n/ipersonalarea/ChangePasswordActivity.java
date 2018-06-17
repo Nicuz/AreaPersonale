@@ -36,7 +36,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private EditText edt_newpassword;
     private EditText edt_password;
     private Button btn_password;
-    private ActionBar actionBar;
     private ProgressBar loading;
     private CardView cardView;
 
@@ -52,7 +51,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);

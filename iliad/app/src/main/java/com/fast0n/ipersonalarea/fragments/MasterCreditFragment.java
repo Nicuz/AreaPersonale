@@ -3,6 +3,7 @@ package com.fast0n.ipersonalarea.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +38,7 @@ public class MasterCreditFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final Context context;
         context = Objects.requireNonNull(getActivity()).getApplicationContext();
@@ -79,7 +80,7 @@ public class MasterCreditFragment extends Fragment {
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
 

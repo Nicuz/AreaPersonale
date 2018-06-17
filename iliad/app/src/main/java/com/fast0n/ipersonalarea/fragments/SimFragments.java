@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -39,7 +40,7 @@ public class SimFragments extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_sim, container, false);
 
         final ProgressBar loading;
@@ -209,9 +210,8 @@ public class SimFragments extends Fragment {
 
 
                         cardView3.setOnClickListener(v -> {
-                            String url1 = tracking_url;
                             Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(url1));
+                            i.setData(Uri.parse(tracking_url));
                             startActivity(i);
                         });
 

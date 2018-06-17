@@ -1,6 +1,7 @@
 package com.fast0n.ipersonalarea.fragments.ServicesFragment;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final DataServicesFragments c = ServicesList.get(position);
         holder.textView.setText(c.textView);
 
@@ -53,15 +54,14 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
                 final String site_url = context.getString(R.string.site_url);
 
                 if (!isChecked) {
-
                     String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
                             + "&activate=0";
-                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("false", "disattivato"));
-                } else if (isChecked) {
+                    request_options_services(url, holder.textView.getText() + " " + "disattivato");
+                } else {
 
                     String url = site_url + "?change_services=true&update=" + c.name + "&token=" + token
                             + "&activate=1";
-                    request_options_services(url, holder.textView.getText() + " " + String.valueOf(isChecked).replace("true", "attivo"));
+                    request_options_services(url, holder.textView.getText() + " " + "attivo");
                 }
 
             }
@@ -89,7 +89,7 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
 
                         }, error -> {
 
-                        });
+                });
 
                 queue.add(getRequest);
 

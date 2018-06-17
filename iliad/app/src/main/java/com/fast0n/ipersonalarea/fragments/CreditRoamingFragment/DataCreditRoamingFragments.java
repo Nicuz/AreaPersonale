@@ -4,8 +4,8 @@ class DataCreditRoamingFragments {
 
     public final String title;
     public final String description;
-    private final String iconText;
     public final String url;
+    private final String iconText;
 
     DataCreditRoamingFragments(String iconText, String description, String title, String url) {
         this.title = title;

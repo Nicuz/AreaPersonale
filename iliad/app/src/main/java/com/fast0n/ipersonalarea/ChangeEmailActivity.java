@@ -36,15 +36,13 @@ public class ChangeEmailActivity extends AppCompatActivity {
     private EditText edt_email;
     private EditText edt_password;
     private Button btn_change_email;
-    private ActionBar actionBar;
     private ProgressBar loading;
     private CardView cardView;
 
     private static boolean isEmail(String email) {
         String expression = "^[\\w.]+@([\\w]+\\.)+[A-Z]{2,7}$";
-        CharSequence inputString = email;
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputString);
+        Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 
@@ -60,7 +58,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -145,7 +143,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
 

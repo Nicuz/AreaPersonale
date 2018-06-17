@@ -41,9 +41,7 @@ public class ChargeActivity extends AppCompatActivity {
     private EditText ncvv;
     private CreditCardView creditCardView;
     private Boolean touch = true;
-    private Button button;
     private Spinner spinner;
-    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +55,13 @@ public class ChargeActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         // set row icon in the toolbar
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
         // java adresses
-        button = findViewById(R.id.button);
+        Button button = findViewById(R.id.button);
         creditCardView = findViewById(R.id.card);
         spinner = findViewById(R.id.spinner);
 
@@ -114,7 +112,7 @@ public class ChargeActivity extends AppCompatActivity {
 
                 }, error -> {
 
-                });
+        });
 
         queue.add(getRequest);
 

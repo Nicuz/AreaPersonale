@@ -87,7 +87,7 @@ public class CustomAdapterCustomization extends RecyclerView.Adapter<CustomAdapt
 
                         }, error -> {
 
-                        });
+                });
 
                 queue.add(getRequest);
 
