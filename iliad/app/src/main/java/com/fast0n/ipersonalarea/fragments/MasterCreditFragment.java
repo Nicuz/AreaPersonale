@@ -62,33 +62,26 @@ public class MasterCreditFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String string1 = json.getString("0");
+                        JSONObject json_strings1 = new JSONObject(string1);
+                        String stringCredit = json_strings1.getString("0");
 
-                            JSONObject json = new JSONObject(iliad);
-                            String string1 = json.getString("0");
-                            JSONObject json_strings1 = new JSONObject(string1);
-                            String stringCredit = json_strings1.getString("0");
+                        credit.setText(stringCredit.split("&")[0]);
+                        description.setText(stringCredit.split("&")[1]);
 
-                            credit.setText(stringCredit.split("&")[0]);
-                            description.setText(stringCredit.split("&")[1]);
-
-                        } catch (JSONException ignored) {
-                        }
-
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 

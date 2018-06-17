@@ -9,7 +9,7 @@ import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 public class DataModelChildren extends GroupViewHolder {
 
-    private TextView osName;
+    private final TextView osName;
 
     public DataModelChildren(View itemView) {
         super(itemView);

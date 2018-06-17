@@ -82,23 +82,14 @@ public class SimFragments extends Fragment {
         editor = settings.edit();
         editor.apply();
 
-        btn_activatesim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (edt_iccid.getText().toString().length() == 19)
-                    activateSim(site_url + "?iccid=" + edt_iccid.getText().toString() + "&token=" + token, context);
-                else
-                    Toasty.error(context, getString(R.string.error_iccid), Toast.LENGTH_SHORT).show();
-            }
+        btn_activatesim.setOnClickListener(v -> {
+            if (edt_iccid.getText().toString().length() == 19)
+                activateSim(site_url + "?iccid=" + edt_iccid.getText().toString() + "&token=" + token, context);
+            else
+                Toasty.error(context, getString(R.string.error_iccid), Toast.LENGTH_SHORT).show();
         });
 
-        edt_iccid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateKeyboardStatusText(KeyboardVisibilityEvent.isKeyboardVisible(getActivity()), view);
-
-            }
-        });
+        edt_iccid.setOnClickListener(v -> updateKeyboardStatusText(KeyboardVisibilityEvent.isKeyboardVisible(getActivity()), view));
 
         return view;
     }
@@ -108,42 +99,32 @@ public class SimFragments extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String stringSim = json.getString("sim");
 
-                            JSONObject json = new JSONObject(iliad);
-                            String stringSim = json.getString("sim");
+                        JSONObject json_sim = new JSONObject(stringSim);
+                        String toast = json_sim.getString("0");
+                        String sim_state = json_sim.getString("1");
 
-                            JSONObject json_sim = new JSONObject(stringSim);
-                            String toast = json_sim.getString("0");
-                            String sim_state = json_sim.getString("1");
+                        if (sim_state.equals("false"))
+                            Toasty.warning(context, toast, Toast.LENGTH_LONG, true).show();
 
-                            if (sim_state.equals("false"))
-                                Toasty.warning(context, toast, Toast.LENGTH_LONG, true).show();
+                        else {
+                            Toasty.success(context, toast, Toast.LENGTH_LONG, true).show();
+                            Intent intent = new Intent(context, LoginActivity.class);
+                            startActivity(intent);
 
-                            else {
-                                Toasty.success(context, toast, Toast.LENGTH_LONG, true).show();
-                                Intent intent = new Intent(context, LoginActivity.class);
-                                startActivity(intent);
-
-                            }
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
                         }
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                startActivity(new Intent(context, LoginActivity.class));
-
-            }
-        });
+                }, error -> startActivity(new Intent(context, LoginActivity.class)));
 
         // add it to the RequestQueue
         queue.add(getRequest);
@@ -181,81 +162,69 @@ public class SimFragments extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String stringValidation = json.getString("validation");
+                        String stringShipping = json.getString("shipping");
+                        String stringSim = json.getString("sim");
 
-                            JSONObject json = new JSONObject(iliad);
-                            String stringValidation = json.getString("validation");
-                            String stringShipping = json.getString("shipping");
-                            String stringSim = json.getString("sim");
+                        JSONObject json_validation = new JSONObject(stringValidation);
+                        String validation = json_validation.getString("0");
+                        String order_date = json_validation.getString("1");
+                        String date = json_validation.getString("2");
 
-                            JSONObject json_validation = new JSONObject(stringValidation);
-                            String validation = json_validation.getString("0");
-                            String order_date = json_validation.getString("1");
-                            String date = json_validation.getString("2");
+                        tvvalidation.setText(validation);
+                        tvorder_date.setText(order_date);
+                        tvdate.setText(date);
 
-                            tvvalidation.setText(validation);
-                            tvorder_date.setText(order_date);
-                            tvdate.setText(date);
+                        JSONObject json_shipping = new JSONObject(stringShipping);
+                        String shipping = json_shipping.getString("0");
+                        String order_shipped = json_shipping.getString("1");
+                        String tracking = json_shipping.getString("2");
+                        final String tracking_url = json_shipping.getString("3");
 
-                            JSONObject json_shipping = new JSONObject(stringShipping);
-                            String shipping = json_shipping.getString("0");
-                            String order_shipped = json_shipping.getString("1");
-                            String tracking = json_shipping.getString("2");
-                            final String tracking_url = json_shipping.getString("3");
+                        tvshipping.setText(shipping);
+                        tvorder_shipped.setText(order_shipped);
+                        tvtracking.setText(tracking);
 
-                            tvshipping.setText(shipping);
-                            tvorder_shipped.setText(order_shipped);
-                            tvtracking.setText(tracking);
+                        JSONObject json_sim = new JSONObject(stringSim);
+                        String activation = json_sim.getString("0");
+                        String title_activation = json_sim.getString("1");
+                        String response_sim = json_sim.getString("2");
+                        String offer = json_sim.getString("3");
 
-                            JSONObject json_sim = new JSONObject(stringSim);
-                            String activation = json_sim.getString("0");
-                            String title_activation = json_sim.getString("1");
-                            String response_sim = json_sim.getString("2");
-                            String offer = json_sim.getString("3");
-
-                            tvoffer.setText(offer);
-                            tvactivation.setText(activation);
-                            tvtitle_activation.setText(title_activation);
+                        tvoffer.setText(offer);
+                        tvactivation.setText(activation);
+                        tvtitle_activation.setText(title_activation);
 
 
-                            if (response_sim.equals("true")) {
-                                tvtitle_activation.setTextColor(getResources().getColor(R.color.colorPrimary));
-                                edt_iccid.setVisibility(View.GONE);
-                                btn_activatesim.setVisibility(View.GONE);
-                            }
-
-
-                            cardView3.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String url = tracking_url;
-                                    Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse(url));
-                                    startActivity(i);
-                                }
-                            });
-
-                            cardView1.setVisibility(View.VISIBLE);
-                            cardView2.setVisibility(View.VISIBLE);
-                            cardView3.setVisibility(View.VISIBLE);
-                            loading.setVisibility(View.INVISIBLE);
-
-                        } catch (JSONException ignored) {
+                        if (response_sim.equals("true")) {
+                            tvtitle_activation.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            edt_iccid.setVisibility(View.GONE);
+                            btn_activatesim.setVisibility(View.GONE);
                         }
+
+
+                        cardView3.setOnClickListener(v -> {
+                            String url1 = tracking_url;
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url1));
+                            startActivity(i);
+                        });
+
+                        cardView1.setVisibility(View.VISIBLE);
+                        cardView2.setVisibility(View.VISIBLE);
+                        cardView3.setVisibility(View.VISIBLE);
+                        loading.setVisibility(View.INVISIBLE);
+
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                startActivity(new Intent(context, LoginActivity.class));
-            }
-        });
+                }, error -> startActivity(new Intent(context, LoginActivity.class)));
 
         // add it to the RequestQueue
         queue.add(getRequest);

@@ -8,11 +8,10 @@ import android.view.View;
 
 public class RecyclerItemListener implements RecyclerView.OnItemTouchListener {
 
-    private RecyclerTouchListener listener;
-    private GestureDetector gd;
+    private final GestureDetector gd;
 
     public RecyclerItemListener(Context ctx, final RecyclerView recycler_view, final RecyclerTouchListener listener) {
-        this.listener = listener;
+        RecyclerTouchListener listener1 = listener;
         gd = new GestureDetector(ctx, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public void onLongPress(MotionEvent e) {

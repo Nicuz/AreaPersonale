@@ -1,11 +1,11 @@
 package com.fast0n.ipersonalarea.fragments.CreditFragment;
 
-public class DataCreditFragments {
+class DataCreditFragments {
 
-    public String title;
-    public String description;
-    public String iconText;
-    public String url;
+    public final String title;
+    public final String description;
+    private final String iconText;
+    public final String url;
 
     DataCreditFragments(String iconText, String description, String title, String url) {
         this.title = title;

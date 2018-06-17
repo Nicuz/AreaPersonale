@@ -13,15 +13,12 @@ import com.fast0n.ipersonalarea.R;
 
 import java.util.ArrayList;
 
-public class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> implements View.OnClickListener {
-
-    private ArrayList<DataAboutFragment> dataSet;
-    private Context mContext;
+class CustomAdapterAboutFragment extends ArrayAdapter<DataAboutFragment> implements View.OnClickListener {
 
     CustomAdapterAboutFragment(ArrayList<DataAboutFragment> data, Context context) {
         super(context, R.layout.fragment_about, data);
-        this.dataSet = data;
-        this.mContext = context;
+        ArrayList<DataAboutFragment> dataSet = data;
+        Context mContext = context;
 
     }
 

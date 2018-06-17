@@ -5,7 +5,7 @@ import java.util.Random;
 public class GenerateToken {
 
     private static final String DATA = "0123456789abcdefghijklmnopqrstuvwxyz";
-    private static Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
 
     public static String randomString(int len) {
         StringBuilder sb = new StringBuilder(len);

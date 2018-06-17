@@ -1,11 +1,11 @@
 package com.fast0n.ipersonalarea.fragments.VoicemailFragment;
 
-public class DataNotificationFragments {
+class DataNotificationFragments {
 
-    public String textView;
-    public String textView1;
-    public String textView2;
-    public String textView3;
+    public final String textView;
+    public final String textView1;
+    public final String textView2;
+    public final String textView3;
 
 
     DataNotificationFragments(String textView, String textView1, String textView2, String textView3) {

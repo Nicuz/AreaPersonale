@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
 
-    ActionBar actionBar;
+    private ActionBar actionBar;
     Button requests;
 
     @Override
@@ -63,26 +63,19 @@ public class ConsumptionRoamingDetailActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(ConsumptionRoamingDetailActivity.this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
 
-                        } catch (JSONException ignored) {
-                        }
-
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 

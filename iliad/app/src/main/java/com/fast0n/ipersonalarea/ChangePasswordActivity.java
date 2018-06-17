@@ -33,11 +33,12 @@ import es.dmoral.toasty.Toasty;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    EditText edt_newpassword, edt_password;
-    Button btn_password;
-    ActionBar actionBar;
-    ProgressBar loading;
-    CardView cardView;
+    private EditText edt_newpassword;
+    private EditText edt_password;
+    private Button btn_password;
+    private ActionBar actionBar;
+    private ProgressBar loading;
+    private CardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,43 +73,40 @@ public class ChangePasswordActivity extends AppCompatActivity {
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
 
-        btn_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btn_password.setOnClickListener(v -> {
 
 
-                byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
-                String ppassword = new String(decodeValue1);
+            byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
+            String ppassword = new String(decodeValue1);
 
 
-                if (edt_password.getText().toString().equals(ppassword.replaceAll("\\s+", ""))
-                        && edt_password.getText().toString().length() != 0
-                        && edt_newpassword.getText().toString().length() != 0) {
+            if (edt_password.getText().toString().equals(ppassword.replaceAll("\\s+", ""))
+                    && edt_password.getText().toString().length() != 0
+                    && edt_newpassword.getText().toString().length() != 0) {
 
-                    byte[] decodeValue = Base64.encode(edt_password.getText().toString().getBytes(), Base64.DEFAULT);
-                    String oldpassword = new String(decodeValue);
-
-
-                    byte[] encodeValue1 = Base64.encode(edt_newpassword.getText().toString().getBytes(), Base64.DEFAULT);
-                    String newpassword = new String(encodeValue1);
+                byte[] decodeValue = Base64.encode(edt_password.getText().toString().getBytes(), Base64.DEFAULT);
+                String oldpassword = new String(decodeValue);
 
 
-                    String url = site_url + "?new_password=" + newpassword.replaceAll("\\s+", "")
-                            + "&new_password_confirm=" + newpassword.replaceAll("\\s+", "") + "&password=" + oldpassword.replaceAll("\\s+", "")
-                            + "&token=" + token;
+                byte[] encodeValue1 = Base64.encode(edt_newpassword.getText().toString().getBytes(), Base64.DEFAULT);
+                String newpassword = new String(encodeValue1);
 
 
-                    loading.setVisibility(View.VISIBLE);
-                    cardView.setVisibility(View.INVISIBLE);
-                    changePassword(url, newpassword.replaceAll("\\s+", ""));
-                    btn_password.setEnabled(false);
-                } else {
-                    loading.setVisibility(View.INVISIBLE);
-                    cardView.setVisibility(View.VISIBLE);
-                    btn_password.setEnabled(true);
-                    Toasty.warning(ChangePasswordActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
-                            true).show();
-                }
+                String url = site_url + "?new_password=" + newpassword.replaceAll("\\s+", "")
+                        + "&new_password_confirm=" + newpassword.replaceAll("\\s+", "") + "&password=" + oldpassword.replaceAll("\\s+", "")
+                        + "&token=" + token;
+
+
+                loading.setVisibility(View.VISIBLE);
+                cardView.setVisibility(View.INVISIBLE);
+                changePassword(url, newpassword.replaceAll("\\s+", ""));
+                btn_password.setEnabled(false);
+            } else {
+                loading.setVisibility(View.INVISIBLE);
+                cardView.setVisibility(View.VISIBLE);
+                btn_password.setEnabled(true);
+                Toasty.warning(ChangePasswordActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
+                        true).show();
             }
         });
 

@@ -39,12 +39,14 @@ import es.dmoral.toasty.Toasty;
 
 public class ChargeActivity extends AppCompatActivity {
 
-    EditText nCard, nExpiration, ncvv;
-    CreditCardView creditCardView;
-    Boolean touch = true;
-    Button button;
-    Spinner spinner;
-    ActionBar actionBar;
+    private EditText nCard;
+    private EditText nExpiration;
+    private EditText ncvv;
+    private CreditCardView creditCardView;
+    private Boolean touch = true;
+    private Button button;
+    private Spinner spinner;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,61 +84,51 @@ public class ChargeActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?payinfoprice=true&&token=" + token, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String price = json.getString("0");
+                        JSONArray json_title = new JSONArray(price);
 
-                            JSONObject json = new JSONObject(iliad);
-                            String price = json.getString("0");
-                            JSONArray json_title = new JSONArray(price);
+                        final List<String> list = new ArrayList<>();
 
-                            final List<String> list = new ArrayList<>();
+                        for (int z = 0; z < json_title.length(); z++) {
 
-                            for (int z = 0; z < json_title.length(); z++) {
-
-                                String stringPrice = json_title.getString(z);
-                                list.add(stringPrice + "€");
-                            }
-                            list.add("Importo");
-                            final int listsize = list.size() - 1;
-                            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(ChargeActivity.this, R.layout.spinner_item, list) {
-                                @Override
-                                public int getCount() {
-                                    return (listsize);
-                                }
-                            };
-                            spinner.setAdapter(dataAdapter);
-                            spinner.setSelection(list.size() - 1);
-
-                        } catch (JSONException ignored) {
+                            String stringPrice = json_title.getString(z);
+                            list.add(stringPrice + "€");
                         }
+                        list.add("Importo");
+                        final int listsize = list.size() - 1;
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(ChargeActivity.this, R.layout.spinner_item, list) {
+                            @Override
+                            public int getCount() {
+                                return (listsize);
+                            }
+                        };
+                        spinner.setAdapter(dataAdapter);
+                        spinner.setSelection(list.size() - 1);
 
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 
 
-        creditCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (touch) {
-                    creditCardView.showBack();
-                    touch = false;
-                } else {
-                    creditCardView.showFront();
-                    touch = true;
-                }
+        creditCardView.setOnClickListener(v -> {
+            if (touch) {
+                creditCardView.showBack();
+                touch = false;
+            } else {
+                creditCardView.showFront();
+                touch = true;
             }
         });
 
@@ -240,84 +232,78 @@ public class ChargeActivity extends AppCompatActivity {
         });
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button.setOnClickListener(v -> {
 
-                String typecard = null;
+            String typecard = null;
 
 
-                String ccNum = nCard.getText().toString().replaceAll("\\s+", "");
-                for (String p : listOfPattern) {
-                    if (ccNum.matches(p)) {
-                        if (p.equals("^4[0-9]{6,}$")) {
+            String ccNum = nCard.getText().toString().replaceAll("\\s+", "");
+            for (String p : listOfPattern) {
+                if (ccNum.matches(p)) {
+                    switch (p) {
+                        case "^4[0-9]{6,}$":
                             typecard = "visa";
-                        } else if (p.equals("^5[1-5][0-9]{5,}$")) {
+                            break;
+                        case "^5[1-5][0-9]{5,}$":
                             typecard = "mastercard";
-                        } else {
+                            break;
+                        default:
                             typecard = "";
-                        }
-                        break;
+                            break;
                     }
+                    break;
                 }
+            }
 
-                String montant = spinner.getSelectedItem().toString();
-
-
-                if (montant.equals("Importo"))
-                    Toasty.warning(ChargeActivity.this, montant + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
-                else if (nCard.getText().toString().length() == 0)
-                    Toasty.warning(ChargeActivity.this, getString(R.string.edtCard) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
-                if (typecard == null)
-                    Toasty.warning(ChargeActivity.this, getString(R.string.wrong_credit_card), Toast.LENGTH_SHORT).show();
-                else if (nExpiration.getText().toString().length() == 0)
-                    Toasty.warning(ChargeActivity.this, getString(R.string.edtExpiration) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
-                else if (ncvv.getText().toString().length() == 0)
-                    Toasty.warning(ChargeActivity.this, getString(R.string.edtCvv) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
-
-                else {
-
-                    RequestQueue queue = Volley.newRequestQueue(ChargeActivity.this);
-
-                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?phonecharge=true&montant=" + montant.replace("€", "") + "&cbtype=" + typecard + "&cbnumero=" + nCard.getText().toString().replaceAll("\\s+", "") + "&cbexpmois=" + nExpiration.getText().toString().split("/")[0] + "&cbexpannee=20" + nExpiration.getText().toString().split("/")[1] + "&cbcrypto=" + ncvv.getText().toString() + "&token=" + token, null,
-                            new Response.Listener<JSONObject>() {
-
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-
-                                        JSONObject json_raw = new JSONObject(response.toString());
-                                        String iliad = json_raw.getString("iliad");
-                                        JSONObject json = new JSONObject(iliad);
-
-                                        String price = json.getString("0");
+            String montant = spinner.getSelectedItem().toString();
 
 
-                                        if (price.equals("true")) {
+            if (montant.equals("Importo"))
+                Toasty.warning(ChargeActivity.this, montant + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+            else if (nCard.getText().toString().length() == 0)
+                Toasty.warning(ChargeActivity.this, getString(R.string.edtCard) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+            if (typecard == null)
+                Toasty.warning(ChargeActivity.this, getString(R.string.wrong_credit_card), Toast.LENGTH_SHORT).show();
+            else if (nExpiration.getText().toString().length() == 0)
+                Toasty.warning(ChargeActivity.this, getString(R.string.edtExpiration) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
+            else if (ncvv.getText().toString().length() == 0)
+                Toasty.warning(ChargeActivity.this, getString(R.string.edtCvv) + " " + getString(R.string.missing), Toast.LENGTH_SHORT).show();
 
-                                            Toasty.success(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(ChargeActivity.this, LoginActivity.class);
-                                            startActivity(intent);
+            else {
 
-                                        } else {
-                                            Toasty.error(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
-                                        }
+                RequestQueue queue1 = Volley.newRequestQueue(ChargeActivity.this);
+
+                JsonObjectRequest getRequest1 = new JsonObjectRequest(Request.Method.GET, site_url + "?phonecharge=true&montant=" + montant.replace("€", "") + "&cbtype=" + typecard + "&cbnumero=" + nCard.getText().toString().replaceAll("\\s+", "") + "&cbexpmois=" + nExpiration.getText().toString().split("/")[0] + "&cbexpannee=20" + nExpiration.getText().toString().split("/")[1] + "&cbcrypto=" + ncvv.getText().toString() + "&token=" + token, null,
+                        response -> {
+                            try {
+
+                                JSONObject json_raw = new JSONObject(response.toString());
+                                String iliad = json_raw.getString("iliad");
+                                JSONObject json = new JSONObject(iliad);
+
+                                String price = json.getString("0");
 
 
-                                    } catch (JSONException ignored) {
-                                    }
+                                if (price.equals("true")) {
 
+                                    Toasty.success(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ChargeActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+
+                                } else {
+                                    Toasty.error(ChargeActivity.this, price, Toast.LENGTH_SHORT).show();
                                 }
-                            }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
 
-                        }
-                    });
 
-                    queue.add(getRequest);
+                            } catch (JSONException ignored) {
+                            }
 
-                }
+                        }, error -> {
+
+                });
+
+                queue1.add(getRequest1);
+
             }
         });
 

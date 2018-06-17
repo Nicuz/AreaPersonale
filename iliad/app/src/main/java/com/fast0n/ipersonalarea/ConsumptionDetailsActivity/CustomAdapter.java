@@ -11,9 +11,9 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
 
-public class CustomAdapter extends ExpandableRecyclerViewAdapter<DataModelChildren, DataModel> {
+class CustomAdapter extends ExpandableRecyclerViewAdapter<DataModelChildren, DataModel> {
 
-    private Activity activity;
+    private final Activity activity;
 
     public CustomAdapter(Activity activity, List<? extends ExpandableGroup> groups) {
         super(groups);

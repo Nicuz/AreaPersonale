@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CustomAdapterConditions extends RecyclerView.Adapter<CustomAdapterConditions.MyViewHolder> {
 
-    private List<DataConditionsFragments> conditionList;
+    private final List<DataConditionsFragments> conditionList;
 
     CustomAdapterConditions(List<DataConditionsFragments> conditionList) {
         this.conditionList = conditionList;
@@ -42,7 +42,9 @@ public class CustomAdapterConditions extends RecyclerView.Adapter<CustomAdapterC
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView, textView1, url;
+        final TextView textView;
+        final TextView textView1;
+        TextView url;
 
         MyViewHolder(View view) {
             super(view);

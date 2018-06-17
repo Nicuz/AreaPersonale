@@ -64,23 +64,17 @@ public class CreditRoamingFragment extends Fragment {
 
         getObject(url, context, view);
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ConsumptionRoamingDetailActivity.class);
-                intent.putExtra("token", token);
-                startActivity(intent);
-            }
+        button1.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ConsumptionRoamingDetailActivity.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
         });
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ChargeActivity.class);
-                intent.putExtra("token", token);
-                startActivity(intent);
-            }
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChargeActivity.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
         });
 
         return view;
@@ -106,68 +100,53 @@ public class CreditRoamingFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(llm);
 
-        recyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                startActivity(new Intent(context, LoginActivity.class));
-            }
-        });
+        recyclerView.setOnRefreshListener(() -> startActivity(new Intent(context, LoginActivity.class)));
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json = new JSONObject(iliad);
+                        String string1 = json.getString("0");
+                        JSONObject json_strings1 = new JSONObject(string1);
+                        String btn = json_strings1.getString("1");
+                        String btn1 = json_strings1.getString("2");
 
-                            String string1 = json.getString("0");
-                            JSONObject json_strings1 = new JSONObject(string1);
-                            String btn = json_strings1.getString("1");
-                            String btn1 = json_strings1.getString("2");
+                        if (btn.equals("true"))
+                            button.setVisibility(View.VISIBLE);
+                        else
+                            button.setVisibility(View.INVISIBLE);
 
-                            if (btn.equals("true"))
-                                button.setVisibility(View.VISIBLE);
-                            else
-                                button.setVisibility(View.INVISIBLE);
-
-                            if (btn1.equals("true"))
-                                button1.setVisibility(View.VISIBLE);
-                            else
-                                button1.setVisibility(View.INVISIBLE);
+                        if (btn1.equals("true"))
+                            button1.setVisibility(View.VISIBLE);
+                        else
+                            button1.setVisibility(View.INVISIBLE);
 
 
-                            for (int j = 1; j < json.length(); j++) {
+                        for (int j = 1; j < json.length(); j++) {
 
-                                String string = json.getString(String.valueOf(j));
-                                JSONObject json_strings = new JSONObject(string);
+                            String string = json.getString(String.valueOf(j));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String c = json_strings.getString("0");
-                                String b = json_strings.getString("1");
-                                String a = json_strings.getString("2");
-                                String d = json_strings.getString("3");
-                                creditEsteroList.add(new DataCreditRoamingFragments(a, b, c, d));
-                                CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
-                                recyclerView.setAdapter(ca);
-                            }
-                            loading.setVisibility(View.INVISIBLE);
-
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
+                            String c = json_strings.getString("0");
+                            String b = json_strings.getString("1");
+                            String a = json_strings.getString("2");
+                            String d = json_strings.getString("3");
+                            creditEsteroList.add(new DataCreditRoamingFragments(a, b, c, d));
+                            CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
+                            recyclerView.setAdapter(ca);
                         }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                startActivity(new Intent(context, LoginActivity.class));
+                        loading.setVisibility(View.INVISIBLE);
 
-            }
-        });
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
+                    }
+                }, error -> startActivity(new Intent(context, LoginActivity.class)));
 
         queue.add(getRequest);
 

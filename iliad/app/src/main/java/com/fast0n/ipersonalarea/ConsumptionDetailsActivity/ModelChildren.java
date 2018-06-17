@@ -22,7 +22,7 @@ public class ModelChildren implements Parcelable {
     private String e;
     private String f;
 
-    public ModelChildren(Parcel in) {
+    private ModelChildren(Parcel in) {
 
         a = in.readString();
         b = in.readString();

@@ -29,12 +29,14 @@ import java.util.Objects;
 
 public class ConsumptionDetailsActivity extends AppCompatActivity {
 
-    ActionBar actionBar;
-    RecyclerView recyclerView;
-    ArrayList<Model> model;
-    CustomAdapter adapter;
-    ProgressBar loading;
-    ArrayList<ModelChildren> iphones, nexus, windows;
+    private ActionBar actionBar;
+    private RecyclerView recyclerView;
+    private ArrayList<Model> model;
+    private CustomAdapter adapter;
+    private ProgressBar loading;
+    private ArrayList<ModelChildren> iphones;
+    private ArrayList<ModelChildren> nexus;
+    private ArrayList<ModelChildren> windows;
 
 
     @Override
@@ -88,74 +90,67 @@ public class ConsumptionDetailsActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(ConsumptionDetailsActivity.this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
-                            JSONObject json = new JSONObject(iliad);
+                        String title = json.getString("title");
+                        JSONObject json_title = new JSONObject(title);
 
-                            String title = json.getString("title");
-                            JSONObject json_title = new JSONObject(title);
-
-                            for (int z = 0; z < json_title.length(); z++) {
-                                String x = json_title.getString(String.valueOf(z));
+                        for (int z = 0; z < json_title.length(); z++) {
+                            String x = json_title.getString(String.valueOf(z));
 
 
-                                try {
+                            try {
 
-                                    ArrayList[] ciao = new ArrayList[]{iphones, nexus, windows};
-                                    ciao[z] = new ArrayList<>();
+                                ArrayList[] ciao = new ArrayList[]{iphones, nexus, windows};
+                                ciao[z] = new ArrayList<>();
 
-                                    String string = json.getString(String.valueOf(z));
-                                    JSONObject json_strings = new JSONObject(string);
+                                String string = json.getString(String.valueOf(z));
+                                JSONObject json_strings = new JSONObject(string);
 
-                                    for (int j = 0; j < json_strings.length(); j++) {
+                                for (int j = 0; j < json_strings.length(); j++) {
 
-                                        String string_one = json_strings.getString(String.valueOf(j));
-                                        JSONObject json_strings_one = new JSONObject(string_one);
+                                    String string_one = json_strings.getString(String.valueOf(j));
+                                    JSONObject json_strings_one = new JSONObject(string_one);
 
-                                        for (int i = 0; i < json_strings_one.length(); i++) {
+                                    for (int i = 0; i < json_strings_one.length(); i++) {
 
-                                            String a = json_strings_one.getString(String.valueOf(0));
-                                            String b = json_strings_one.getString(String.valueOf(1));
-                                            String c = json_strings_one.getString(String.valueOf(2));
-                                            String d = json_strings_one.getString(String.valueOf(3));
-                                            String e = json_strings_one.getString(String.valueOf(4));
-                                            String f = json_strings_one.getString(String.valueOf(5));
-
-
-                                            ciao[z].add(new ModelChildren(a, b, c, d, e, f));
-                                            break;
-                                        }
+                                        String a = json_strings_one.getString(String.valueOf(0));
+                                        String b = json_strings_one.getString(String.valueOf(1));
+                                        String c = json_strings_one.getString(String.valueOf(2));
+                                        String d = json_strings_one.getString(String.valueOf(3));
+                                        String e = json_strings_one.getString(String.valueOf(4));
+                                        String f = json_strings_one.getString(String.valueOf(5));
 
 
+                                        ciao[z].add(new ModelChildren(a, b, c, d, e, f));
+                                        break;
                                     }
-                                    model.add(new Model(x, ciao[z]));
-                                    loading.setVisibility(View.INVISIBLE);
-                                } catch (Exception ignored) {
+
 
                                 }
+                                model.add(new Model(x, ciao[z]));
+                                loading.setVisibility(View.INVISIBLE);
+                            } catch (Exception ignored) {
+
                             }
-
-
-                            adapter = new CustomAdapter(ConsumptionDetailsActivity.this, model);
-                            recyclerView.setAdapter(adapter);
-
-
-                        } catch (JSONException ignored) {
                         }
 
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                        adapter = new CustomAdapter(ConsumptionDetailsActivity.this, model);
+                        recyclerView.setAdapter(adapter);
+
+
+                    } catch (JSONException ignored) {
+                    }
+
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 

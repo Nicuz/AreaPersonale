@@ -27,9 +27,9 @@ import es.dmoral.toasty.Toasty;
 
 public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterServices.MyViewHolder> {
 
-    Context context;
-    String token;
-    private List<DataServicesFragments> ServicesList;
+    private final Context context;
+    private final String token;
+    private final List<DataServicesFragments> ServicesList;
 
     CustomAdapterServices(Context context, List<DataServicesFragments> ServicesList, String token) {
         this.context = context;
@@ -73,32 +73,25 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
                 RequestQueue queue = Volley.newRequestQueue(context);
 
                 JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                        new Response.Listener<JSONObject>() {
+                        response -> {
+                            try {
+                                JSONObject json_raw = new JSONObject(response.toString());
+                                String iliad = json_raw.getString("iliad");
 
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    JSONObject json_raw = new JSONObject(response.toString());
-                                    String iliad = json_raw.getString("iliad");
+                                JSONObject json = new JSONObject(iliad);
+                                String string_response = json.getString("0");
 
-                                    JSONObject json = new JSONObject(iliad);
-                                    String string_response = json.getString("0");
+                                if (string_response.equals("true")) {
 
-                                    if (string_response.equals("true")) {
-
-                                        Toasty.warning(context, labelOn, Toast.LENGTH_SHORT, true).show();
-                                    }
-
-                                } catch (JSONException ignored) {
+                                    Toasty.warning(context, labelOn, Toast.LENGTH_SHORT, true).show();
                                 }
 
+                            } catch (JSONException ignored) {
                             }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
 
-                    }
-                });
+                        }, error -> {
+
+                        });
 
                 queue.add(getRequest);
 
@@ -120,8 +113,8 @@ public class CustomAdapterServices extends RecyclerView.Adapter<CustomAdapterSer
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView;
-        Switch toggle;
+        final TextView textView;
+        final Switch toggle;
 
         MyViewHolder(View view) {
             super(view);

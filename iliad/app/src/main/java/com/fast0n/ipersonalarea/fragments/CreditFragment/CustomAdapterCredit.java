@@ -16,8 +16,8 @@ import java.util.List;
 
 public class CustomAdapterCredit extends RecyclerView.Adapter<CustomAdapterCredit.MyViewHolder> {
 
-    Context context;
-    private List<DataCreditFragments> creditList;
+    private final Context context;
+    private final List<DataCreditFragments> creditList;
 
     CustomAdapterCredit(Context context, List<DataCreditFragments> creditList) {
         this.context = context;
@@ -48,8 +48,9 @@ public class CustomAdapterCredit extends RecyclerView.Adapter<CustomAdapterCredi
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView2, textView3;
-        ImageView icon_info;
+        final TextView textView2;
+        final TextView textView3;
+        final ImageView icon_info;
 
         MyViewHolder(View view) {
             super(view);

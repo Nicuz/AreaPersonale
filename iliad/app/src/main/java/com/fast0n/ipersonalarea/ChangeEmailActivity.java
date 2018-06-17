@@ -35,13 +35,14 @@ import es.dmoral.toasty.Toasty;
 
 public class ChangeEmailActivity extends AppCompatActivity {
 
-    EditText edt_email, edt_password;
-    Button btn_change_email;
-    ActionBar actionBar;
-    ProgressBar loading;
-    CardView cardView;
+    private EditText edt_email;
+    private EditText edt_password;
+    private Button btn_change_email;
+    private ActionBar actionBar;
+    private ProgressBar loading;
+    private CardView cardView;
 
-    public static boolean isEmail(String email) {
+    private static boolean isEmail(String email) {
         String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
         CharSequence inputString = email;
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
@@ -82,40 +83,37 @@ public class ChangeEmailActivity extends AppCompatActivity {
         loading.setIndeterminateDrawable(cubeGrid);
         cubeGrid.setColor(getResources().getColor(R.color.colorPrimary));
 
-        btn_change_email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btn_change_email.setOnClickListener(v -> {
 
-                byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
-                String ppassword = new String(decodeValue1);
+            byte[] decodeValue1 = Base64.decode(password, Base64.DEFAULT);
+            String ppassword = new String(decodeValue1);
 
 
-                if (edt_password.getText().toString().equals(ppassword.replace("\n", "").replace("    ", ""))
-                        && edt_password.getText().toString().length() != 0
-                        && edt_email.getText().toString().length() != 0) {
-                    if (isEmail(edt_email.getText().toString())) {
-                        String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
-                                + edt_email.getText().toString() + "&password=" + password.replaceAll("\\s+", "") + "&token=" + token;
+            if (edt_password.getText().toString().equals(ppassword.replace("\n", "").replace("    ", ""))
+                    && edt_password.getText().toString().length() != 0
+                    && edt_email.getText().toString().length() != 0) {
+                if (isEmail(edt_email.getText().toString())) {
+                    String url = site_url + "?email=" + edt_email.getText().toString() + "&email_confirm="
+                            + edt_email.getText().toString() + "&password=" + password.replaceAll("\\s+", "") + "&token=" + token;
 
-                        loading.setVisibility(View.VISIBLE);
-                        cardView.setVisibility(View.INVISIBLE);
-                        changeMail(url);
-
-
-                        btn_change_email.setEnabled(false);
-                    } else {
+                    loading.setVisibility(View.VISIBLE);
+                    cardView.setVisibility(View.INVISIBLE);
+                    changeMail(url);
 
 
-                        edt_password.setInputType(0);
-                        btn_change_email.setEnabled(true);
-                        Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,
-                                true).show();
-                    }
-                } else
-                    Toasty.warning(ChangeEmailActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
+                    btn_change_email.setEnabled(false);
+                } else {
+
+
+                    edt_password.setInputType(0);
+                    btn_change_email.setEnabled(true);
+                    Toasty.warning(ChangeEmailActivity.this, getString(R.string.email_wrong), Toast.LENGTH_LONG,
                             true).show();
+                }
+            } else
+                Toasty.warning(ChangeEmailActivity.this, getString(R.string.wrong_password), Toast.LENGTH_LONG,
+                        true).show();
 
-            }
         });
 
     }
@@ -125,38 +123,31 @@ public class ChangeEmailActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(ChangeEmailActivity.this);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
+                        String string_response = json.getString("0");
 
-                            JSONObject json = new JSONObject(iliad);
-                            String string_response = json.getString("0");
+                        if (string_response.equals("true")) {
 
-                            if (string_response.equals("true")) {
+                            edt_password.setInputType(0);
+                            Intent intent = new Intent(ChangeEmailActivity.this, LoginActivity.class);
+                            startActivity(intent);
 
-                                edt_password.setInputType(0);
-                                Intent intent = new Intent(ChangeEmailActivity.this, LoginActivity.class);
-                                startActivity(intent);
-
-                                Toasty.success(ChangeEmailActivity.this, getString(R.string.email_change_success),
-                                        Toast.LENGTH_LONG, true).show();
-                            }
-
-                        } catch (JSONException ignored) {
+                            Toasty.success(ChangeEmailActivity.this, getString(R.string.email_change_success),
+                                    Toast.LENGTH_LONG, true).show();
                         }
 
+                    } catch (JSONException ignored) {
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 

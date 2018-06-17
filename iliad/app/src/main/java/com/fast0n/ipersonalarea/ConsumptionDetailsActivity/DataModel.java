@@ -8,7 +8,12 @@ import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 public class DataModel extends ChildViewHolder {
 
-    private TextView a, b, c, d, e, f;
+    private final TextView a;
+    private final TextView b;
+    private final TextView c;
+    private final TextView d;
+    private final TextView e;
+    private final TextView f;
 
     public DataModel(View itemView) {
         super(itemView);

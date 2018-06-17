@@ -153,63 +153,56 @@ public class InfoFragments extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json = new JSONObject(iliad);
+                        for (int i = 0; i < json.length(); i++) {
 
-                            for (int i = 0; i < json.length(); i++) {
+                            String string = json.getString(String.valueOf(i));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String string = json.getString(String.valueOf(i));
-                                JSONObject json_strings = new JSONObject(string);
+                            try {
+                                String a = json_strings.getString("0");
+                                String b = json_strings.getString("1");
+                                String c = json_strings.getString("2");
+                                String d = json_strings.getString("3");
+                                String e = json_strings.getString("4");
+                                infoList.add(new DataInfoFragments(d, a, b, c, e));
 
-                                try {
-                                    String a = json_strings.getString("0");
-                                    String b = json_strings.getString("1");
-                                    String c = json_strings.getString("2");
-                                    String d = json_strings.getString("3");
-                                    String e = json_strings.getString("4");
-                                    infoList.add(new DataInfoFragments(d, a, b, c, e));
+                            } catch (Exception e) {
+                                String a = json_strings.getString("0");
+                                String b = json_strings.getString("1");
+                                String c = json_strings.getString("2");
+                                String d = json_strings.getString("3");
 
-                                } catch (Exception e) {
-                                    String a = json_strings.getString("0");
-                                    String b = json_strings.getString("1");
-                                    String c = json_strings.getString("2");
-                                    String d = json_strings.getString("3");
-
-                                    infoList.add(new DataInfoFragments(c, a, b, "", d));
-                                    CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
-                                    recyclerView.setAdapter(ca);
-                                }
-
+                                infoList.add(new DataInfoFragments(c, a, b, "", d));
+                                CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
+                                recyclerView.setAdapter(ca);
                             }
 
-
-                            offer.setVisibility(View.VISIBLE);
-                            loading.setVisibility(View.INVISIBLE);
-
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
                         }
+
+
+                        offer.setVisibility(View.VISIBLE);
+                        loading.setVisibility(View.INVISIBLE);
+
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
+                }, error -> {
+                    try {
 
-                } catch (Exception e) {
-                    startActivity(new Intent(context, LoginActivity.class));
+                    } catch (Exception e) {
+                        startActivity(new Intent(context, LoginActivity.class));
 
-                }
+                    }
 
-            }
-        });
+                });
 
         // add it to the RequestQueue
         queue.add(getRequest);

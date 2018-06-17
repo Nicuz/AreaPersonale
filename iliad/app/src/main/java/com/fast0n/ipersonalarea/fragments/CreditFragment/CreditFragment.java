@@ -112,63 +112,54 @@ public class CreditFragment extends Fragment {
 
         CustomPriorityRequest customPriorityRequest = new CustomPriorityRequest(
                 Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                response -> {
+                    try {
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            JSONObject json = new JSONObject(iliad);
+                        JSONObject json = new JSONObject(iliad);
 
-                            String string1 = json.getString("0");
-                            JSONObject json_strings1 = new JSONObject(string1);
-                            String btn = json_strings1.getString("1");
-                            String btn1 = json_strings1.getString("2");
+                        String string1 = json.getString("0");
+                        JSONObject json_strings1 = new JSONObject(string1);
+                        String btn = json_strings1.getString("1");
+                        String btn1 = json_strings1.getString("2");
 
-                            if (btn.equals("true"))
-                                button.setVisibility(View.VISIBLE);
-                            else
-                                button.setVisibility(View.INVISIBLE);
+                        if (btn.equals("true"))
+                            button.setVisibility(View.VISIBLE);
+                        else
+                            button.setVisibility(View.INVISIBLE);
 
-                            if (btn1.equals("true"))
-                                button1.setVisibility(View.VISIBLE);
-                            else
-                                button1.setVisibility(View.INVISIBLE);
+                        if (btn1.equals("true"))
+                            button1.setVisibility(View.VISIBLE);
+                        else
+                            button1.setVisibility(View.INVISIBLE);
 
 
-                            for (int j = 1; j < json.length(); j++) {
+                        for (int j = 1; j < json.length(); j++) {
 
-                                String string = json.getString(String.valueOf(j));
-                                JSONObject json_strings = new JSONObject(string);
+                            String string = json.getString(String.valueOf(j));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String c = json_strings.getString("0");
-                                String b = json_strings.getString("1");
-                                String a = json_strings.getString("2");
-                                String d = json_strings.getString("3");
+                            String c = json_strings.getString("0");
+                            String b = json_strings.getString("1");
+                            String a = json_strings.getString("2");
+                            String d = json_strings.getString("3");
 
-                                creditList.add(new DataCreditFragments(a, b, c, d));
-                                CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
-                                recyclerView.setAdapter(ca);
+                            creditList.add(new DataCreditFragments(a, b, c, d));
+                            CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
+                            recyclerView.setAdapter(ca);
 
-                            }
-
-                            loading.setVisibility(View.INVISIBLE);
-
-
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
                         }
+
+                        loading.setVisibility(View.INVISIBLE);
+
+
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        startActivity(new Intent(context, LoginActivity.class));
-
-                    }
-                });
+                error -> startActivity(new Intent(context, LoginActivity.class)));
 
         customPriorityRequest.setPriority(Request.Priority.IMMEDIATE);
         queue.add(customPriorityRequest);

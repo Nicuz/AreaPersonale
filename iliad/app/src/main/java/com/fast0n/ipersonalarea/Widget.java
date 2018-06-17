@@ -28,7 +28,7 @@ import static android.view.View.VISIBLE;
 public class Widget extends AppWidgetProvider {
 
 
-    String token = GenerateToken.randomString(20);
+    private final String token = GenerateToken.randomString(20);
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

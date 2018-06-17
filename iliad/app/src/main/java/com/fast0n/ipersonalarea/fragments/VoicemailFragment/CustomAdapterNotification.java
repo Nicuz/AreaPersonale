@@ -27,9 +27,9 @@ import es.dmoral.toasty.Toasty;
 
 public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapterNotification.MyViewHolder> {
 
-    Context context;
-    String token;
-    private List<DataNotificationFragments> modelList;
+    private final Context context;
+    private final String token;
+    private final List<DataNotificationFragments> modelList;
 
     public CustomAdapterNotification(Context context, List<DataNotificationFragments> modelList, String token) {
         this.context = context;
@@ -46,52 +46,42 @@ public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapte
         holder.textView3.setText(c.textView3);
 
 
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String site_url = context.getString(R.string.site_url);
+        holder.button.setOnClickListener(v -> {
+            final String site_url = context.getString(R.string.site_url);
 
-                String url = site_url + "?voicemailemail=true&email=" + c.textView1 + "&action=delete&token=" + token;
+            String url = site_url + "?voicemailemail=true&email=" + c.textView1 + "&action=delete&token=" + token;
 
 
-                RequestQueue queue = Volley.newRequestQueue(context);
+            RequestQueue queue = Volley.newRequestQueue(context);
 
-                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                        new Response.Listener<JSONObject>() {
+            JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    response -> {
+                        try {
 
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
 
-                                    JSONObject json_raw = new JSONObject(response.toString());
-                                    String iliad = json_raw.getString("iliad");
-
-                                    JSONObject json = new JSONObject(iliad);
-                                    String string_json1 = json.getString("0");
+                            JSONObject json = new JSONObject(iliad);
+                            String string_json1 = json.getString("0");
 
 
-                                    Toasty.success(context, Html.fromHtml(string_json1), Toast.LENGTH_LONG,
-                                            true).show();
+                            Toasty.success(context, Html.fromHtml(string_json1), Toast.LENGTH_LONG,
+                                    true).show();
 
-                                    int newPosition = holder.getAdapterPosition();
-                                    modelList.remove(newPosition);
-                                    notifyItemRemoved(newPosition);
-                                    notifyItemRangeChanged(newPosition, modelList.size());
+                            int newPosition = holder.getAdapterPosition();
+                            modelList.remove(newPosition);
+                            notifyItemRemoved(newPosition);
+                            notifyItemRangeChanged(newPosition, modelList.size());
 
 
-                                } catch (JSONException ignored) {
-                                }
+                        } catch (JSONException ignored) {
+                        }
 
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    }, error -> {
 
-                    }
-                });
+            });
 
-                queue.add(getRequest);
-            }
+            queue.add(getRequest);
         });
 
 
@@ -110,10 +100,13 @@ public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapte
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView textView, textView1, textView2, textView3;
-        ImageButton button;
+        final TextView textView;
+        final TextView textView1;
+        final TextView textView2;
+        final TextView textView3;
+        final ImageButton button;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             button = view.findViewById(R.id.button);
             textView = view.findViewById(R.id.textView);

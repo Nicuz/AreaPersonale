@@ -1,12 +1,12 @@
 package com.fast0n.ipersonalarea.fragments.VoicemailFragment;
 
-public class DataVoicemailFragments {
+class DataVoicemailFragments {
 
 
-    public String num_tell;
-    public String date;
-    public String id;
-    public String token;
+    public final String num_tell;
+    public final String date;
+    public final String id;
+    public final String token;
 
 
     DataVoicemailFragments(String num_tell, String date, String id, String token) {

@@ -131,27 +131,20 @@ public class VoicemailFragment extends Fragment {
                     final String site_url = getString(R.string.site_url);
 
                     JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?email=" + editText.getText().toString() + "&action=add&type=" + montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment") + "&token=" + token, null,
-                            new Response.Listener<JSONObject>() {
+                            response -> {
+                                try {
 
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
+                                    JSONObject json_raw = new JSONObject(response.toString());
+                                    String iliad = json_raw.getString("iliad");
 
-                                        JSONObject json_raw = new JSONObject(response.toString());
-                                        String iliad = json_raw.getString("iliad");
+                                    JSONObject json = new JSONObject(iliad);
 
-                                        JSONObject json = new JSONObject(iliad);
-
-                                    } catch (JSONException ignored) {
-                                    }
-
+                                } catch (JSONException ignored) {
                                 }
-                            }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
 
-                        }
-                    });
+                            }, error -> {
+
+                            });
 
                     queue.add(getRequest);
 
@@ -161,7 +154,7 @@ public class VoicemailFragment extends Fragment {
                 }
             }
 
-            public boolean isEmail(String email) {
+            boolean isEmail(String email) {
                 String expression = "^[\\w\\.]+@([\\w]+\\.)+[A-Z]{2,7}$";
                 CharSequence inputString = email;
                 Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
@@ -195,165 +188,144 @@ public class VoicemailFragment extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
-                            JSONObject json = new JSONObject(iliad);
+                        String string1 = json.getString("0");
+                        JSONObject json_strings1 = new JSONObject(string1);
+                        String stringCredit = json_strings1.getString("0");
+                        textvoicemail.setText(stringCredit);
 
-                            String string1 = json.getString("0");
-                            JSONObject json_strings1 = new JSONObject(string1);
-                            String stringCredit = json_strings1.getString("0");
-                            textvoicemail.setText(stringCredit);
+                        for (int i = 1; i < json.length(); i++) {
 
-                            for (int i = 1; i < json.length(); i++) {
+                            String string = json.getString(String.valueOf(i));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String string = json.getString(String.valueOf(i));
-                                JSONObject json_strings = new JSONObject(string);
-
-                                String a = json_strings.getString("0");
-                                try {
-                                    String b = json_strings.getString("1");
-                                    String c = json_strings.getString("2");
-                                    infomail.add(new DataVoicemailFragments(a, b, c, token));
-                                } catch (Exception ignored) {
-                                    infomail.add(new DataVoicemailFragments(a, "", "0", token));
-                                }
-
-                                CustomAdapterVoicemail ca = new CustomAdapterVoicemail(infomail, context);
-                                recyclerView.setAdapter(ca);
+                            String a = json_strings.getString("0");
+                            try {
+                                String b = json_strings.getString("1");
+                                String c = json_strings.getString("2");
+                                infomail.add(new DataVoicemailFragments(a, b, c, token));
+                            } catch (Exception ignored) {
+                                infomail.add(new DataVoicemailFragments(a, "", "0", token));
                             }
 
-                            textvoicemail.setVisibility(View.VISIBLE);
-
-
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
+                            CustomAdapterVoicemail ca = new CustomAdapterVoicemail(infomail, context);
+                            recyclerView.setAdapter(ca);
                         }
 
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                        textvoicemail.setVisibility(View.VISIBLE);
 
-            }
-        });
+
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
+                    }
+
+                }, error -> {
+
+                });
 
         queue.add(getRequest);
 
 
         RequestQueue queue1 = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest1 = new JsonObjectRequest(Request.Method.GET, url1, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json = new JSONObject(iliad);
+                        String string1 = json.getString("0");
+                        JSONObject json_strings1 = new JSONObject(string1);
+                        String stringCredit = json_strings1.getString("0");
+                        customization.setText(stringCredit);
 
-                            String string1 = json.getString("0");
-                            JSONObject json_strings1 = new JSONObject(string1);
-                            String stringCredit = json_strings1.getString("0");
-                            customization.setText(stringCredit);
+                        for (int i = 1; i < json.length(); i++) {
 
-                            for (int i = 1; i < json.length(); i++) {
+                            String string = json.getString(String.valueOf(i));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String string = json.getString(String.valueOf(i));
-                                JSONObject json_strings = new JSONObject(string);
+                            String a = json_strings.getString("0");
+                            String b = json_strings.getString("2");
+                            String c = json_strings.getString("3");
+                            infoList.add(new DataCustomizationFragments(a, b, c, i));
+                            customization.setVisibility(View.VISIBLE);
 
-                                String a = json_strings.getString("0");
-                                String b = json_strings.getString("2");
-                                String c = json_strings.getString("3");
-                                infoList.add(new DataCustomizationFragments(a, b, c, i));
-                                customization.setVisibility(View.VISIBLE);
-
-                            }
-
-                            CustomAdapterCustomization ca = new CustomAdapterCustomization(context, infoList, token);
-                            recyclerView1.setAdapter(ca);
-                            notification.setVisibility(View.VISIBLE);
-
-
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
                         }
 
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                        CustomAdapterCustomization ca = new CustomAdapterCustomization(context, infoList, token);
+                        recyclerView1.setAdapter(ca);
+                        notification.setVisibility(View.VISIBLE);
 
-            }
-        });
+
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
+                    }
+
+                }, error -> {
+
+                });
 
         queue1.add(getRequest1);
 
 
         RequestQueue queue2 = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
+                    try {
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                    @Override
-                    public void onResponse(JSONObject response) {
+
                         try {
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
+                            JSONObject json = new JSONObject(iliad);
+
+                            String string1 = json.getString("0");
+                            JSONObject json_strings1 = new JSONObject(string1);
+                            String stringCredit = json_strings1.getString("0");
+                            notification.setText(stringCredit);
 
 
-                            try {
-                                JSONObject json = new JSONObject(iliad);
+                            for (int i = 1; i < json.length(); i++) {
 
-                                String string1 = json.getString("0");
-                                JSONObject json_strings1 = new JSONObject(string1);
-                                String stringCredit = json_strings1.getString("0");
-                                notification.setText(stringCredit);
+                                String string = json.getString(String.valueOf(i));
+                                JSONObject json_strings = new JSONObject(string);
 
 
-                                for (int i = 1; i < json.length(); i++) {
+                                String a = json_strings.getString("0");
+                                String d = json_strings.getString("3");
 
-                                    String string = json.getString(String.valueOf(i));
-                                    JSONObject json_strings = new JSONObject(string);
-
-
-                                    String a = json_strings.getString("0");
-                                    String d = json_strings.getString("3");
-
-                                    try {
-                                        String b = json_strings.getString("1");
-                                        String c = json_strings.getString("2");
-                                        infoList1.add(new DataNotificationFragments(a, b, c, d));
-                                    } catch (Exception ignored) {
-                                        infoList1.add(new DataNotificationFragments(a, "", "0", d));
-                                    }
-
-
+                                try {
+                                    String b = json_strings.getString("1");
+                                    String c = json_strings.getString("2");
+                                    infoList1.add(new DataNotificationFragments(a, b, c, d));
+                                } catch (Exception ignored) {
+                                    infoList1.add(new DataNotificationFragments(a, "", "0", d));
                                 }
 
-                                CustomAdapterNotification ca = new CustomAdapterNotification(context, infoList1, token);
-                                recyclerView2.setAdapter(ca);
-                                loading.setVisibility(View.INVISIBLE);
-                                cardView1.setVisibility(View.VISIBLE);
-                            } catch (Exception ignored) {
+
                             }
 
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
+                            CustomAdapterNotification ca = new CustomAdapterNotification(context, infoList1, token);
+                            recyclerView2.setAdapter(ca);
+                            loading.setVisibility(View.INVISIBLE);
+                            cardView1.setVisibility(View.VISIBLE);
+                        } catch (Exception ignored) {
                         }
 
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                }, error -> {
+
+                });
 
         queue2.add(getRequest2);
 

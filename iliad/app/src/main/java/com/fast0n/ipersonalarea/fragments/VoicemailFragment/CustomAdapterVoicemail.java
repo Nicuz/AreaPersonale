@@ -32,8 +32,8 @@ import es.dmoral.toasty.Toasty;
 
 public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVoicemail.MyViewHolder> {
 
-    private List<DataVoicemailFragments> conditionList;
-    private Context context;
+    private final List<DataVoicemailFragments> conditionList;
+    private final Context context;
     private MediaPlayer mediaPlayer;
 
     private boolean playPause;
@@ -57,50 +57,40 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
             holder.button1.setVisibility(View.INVISIBLE);
         }
 
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String site_url = context.getString(R.string.site_url);
+        holder.button.setOnClickListener(v -> {
+            final String site_url = context.getString(R.string.site_url);
 
-                String url = site_url + "?deleteaudio=true&idaudio=" + c.id + "&token=" + c.token;
+            String url = site_url + "?deleteaudio=true&idaudio=" + c.id + "&token=" + c.token;
 
 
-                RequestQueue queue = Volley.newRequestQueue(context);
+            RequestQueue queue = Volley.newRequestQueue(context);
 
-                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                        new Response.Listener<JSONObject>() {
+            JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                    response -> {
+                        try {
 
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
 
-                                    JSONObject json_raw = new JSONObject(response.toString());
-                                    String iliad = json_raw.getString("iliad");
-
-                                    JSONObject json = new JSONObject(iliad);
-                                    String string_json1 = json.getString("1");
+                            JSONObject json = new JSONObject(iliad);
+                            String string_json1 = json.getString("1");
 
 
-                                    Toasty.success(context, string_json1, Toast.LENGTH_LONG,
-                                            true).show();
-                                    int newPosition = holder.getAdapterPosition();
-                                    conditionList.remove(newPosition);
-                                    notifyItemRemoved(newPosition);
-                                    notifyItemRangeChanged(newPosition, conditionList.size());
+                            Toasty.success(context, string_json1, Toast.LENGTH_LONG,
+                                    true).show();
+                            int newPosition = holder.getAdapterPosition();
+                            conditionList.remove(newPosition);
+                            notifyItemRemoved(newPosition);
+                            notifyItemRangeChanged(newPosition, conditionList.size());
 
-                                } catch (JSONException ignored) {
-                                }
+                        } catch (JSONException ignored) {
+                        }
 
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    }, error -> {
 
-                    }
-                });
+            });
 
-                queue.add(getRequest);
-            }
+            queue.add(getRequest);
         });
 
 
@@ -147,15 +137,12 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
 
                     try {
                         mediaPlayer.setDataSource(strings[0]);
-                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mediaPlayer) {
-                                initialStage = true;
-                                playPause = false;
-                                holder.button1.setBackgroundResource(R.drawable.ic_play);
-                                mediaPlayer.stop();
-                                mediaPlayer.reset();
-                            }
+                        mediaPlayer.setOnCompletionListener(mediaPlayer -> {
+                            initialStage = true;
+                            playPause = false;
+                            holder.button1.setBackgroundResource(R.drawable.ic_play);
+                            mediaPlayer.stop();
+                            mediaPlayer.reset();
                         });
 
                         mediaPlayer.prepare();
@@ -205,9 +192,11 @@ public class CustomAdapterVoicemail extends RecyclerView.Adapter<CustomAdapterVo
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView, textView1;
-        ImageButton button, button1;
-        RecyclerView recyclerView;
+        final TextView textView;
+        final TextView textView1;
+        final ImageButton button;
+        final ImageButton button1;
+        final RecyclerView recyclerView;
 
 
         MyViewHolder(View view) {

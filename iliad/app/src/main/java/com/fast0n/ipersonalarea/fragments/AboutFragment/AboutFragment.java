@@ -69,44 +69,41 @@ public class AboutFragment extends Fragment {
 
 
         // setOnItemClickListener listview
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 1:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fast0n/iliad")));
-                        break;
-                    case 2:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.paypal.me/Fast0n/0.5")));
-                        break;
-                    case 3:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fast0n/")));
-                        break;
-                    case 4:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/fast0n/")));
-                        break;
-                    case 5:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
-                        break;
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            switch (position) {
+                case 1:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fast0n/iliad")));
+                    break;
+                case 2:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.paypal.me/Fast0n/0.5")));
+                    break;
+                case 3:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/fast0n/")));
+                    break;
+                case 4:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/fast0n/")));
+                    break;
+                case 5:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mattvoid/")));
+                    break;
 
-                    case 6:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/matte_monteleone/")));
-                        break;
-                    case 7:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nicuz/")));
-                        break;
+                case 6:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/matte_monteleone/")));
+                    break;
+                case 7:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Nicuz/")));
+                    break;
 
-                    case 8:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/nicuz06/")));
-                        break;
+                case 8:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/nicuz06/")));
+                    break;
 
-                    case 9:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Fast0n/iliad/blob/master/LICENSE")));
-                        break;
-
-                }
+                case 9:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Fast0n/iliad/blob/master/LICENSE")));
+                    break;
 
             }
+
         });
 
 

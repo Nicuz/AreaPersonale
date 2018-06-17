@@ -18,8 +18,9 @@ import es.dmoral.toasty.Toasty;
 
 public class ErrorConnectionActivity extends AppCompatActivity {
 
-    Button button;
-    TextView textView, textView1;
+    private Button button;
+    private TextView textView;
+    private TextView textView1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,38 +42,30 @@ public class ErrorConnectionActivity extends AppCompatActivity {
                 textView1.setText(R.string.old_version);
                 button.setText(R.string.update);
 
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID)));
-                    }
-                });
+                button.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID))));
             } else {
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                button.setOnClickListener(v -> {
 
-                        if (isOnline()) {
+                    if (isOnline()) {
 
-                            Intent mStartActivity = new Intent(ErrorConnectionActivity.this, LoginActivity.class);
-                            int mPendingIntentId = 123456;
-                            PendingIntent mPendingIntent = PendingIntent.getActivity(ErrorConnectionActivity.this,
-                                    mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                            AlarmManager mgr = (AlarmManager) ErrorConnectionActivity.this
-                                    .getSystemService(Context.ALARM_SERVICE);
-                            assert mgr != null;
-                            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-                            System.exit(0);
+                        Intent mStartActivity = new Intent(ErrorConnectionActivity.this, LoginActivity.class);
+                        int mPendingIntentId = 123456;
+                        PendingIntent mPendingIntent = PendingIntent.getActivity(ErrorConnectionActivity.this,
+                                mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                        AlarmManager mgr = (AlarmManager) ErrorConnectionActivity.this
+                                .getSystemService(Context.ALARM_SERVICE);
+                        assert mgr != null;
+                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                        System.exit(0);
 
-                        } else {
-                            Toasty.info(ErrorConnectionActivity.this, textView.getText(), Toast.LENGTH_SHORT, true)
-                                    .show();
-                            Toasty.info(ErrorConnectionActivity.this, textView1.getText(), Toast.LENGTH_SHORT, true)
-                                    .show();
-                        }
-
+                    } else {
+                        Toasty.info(ErrorConnectionActivity.this, textView.getText(), Toast.LENGTH_SHORT, true)
+                                .show();
+                        Toasty.info(ErrorConnectionActivity.this, textView1.getText(), Toast.LENGTH_SHORT, true)
+                                .show();
                     }
+
                 });
             }
         } catch (Exception ignored) {
@@ -86,7 +79,7 @@ public class ErrorConnectionActivity extends AppCompatActivity {
 
     }
 
-    public boolean isOnline() {
+    private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null ? cm.getActiveNetworkInfo() : null) != null
                 && cm.getActiveNetworkInfo().isConnectedOrConnecting();

@@ -88,58 +88,48 @@ public class ConditionsFragment extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+                response -> {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
+                    JSONObject json_raw;
+                    try {
+                        json_raw = new JSONObject(response.toString());
 
-                        JSONObject json_raw;
-                        try {
-                            json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
 
-                            String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            JSONObject json = new JSONObject(iliad);
+                        for (int j = 0; j < json.length(); j++) {
 
-                            for (int j = 0; j < json.length(); j++) {
+                            String string = json.getString(String.valueOf(j));
+                            JSONObject json_strings = new JSONObject(string);
 
-                                String string = json.getString(String.valueOf(j));
-                                JSONObject json_strings = new JSONObject(string);
+                            String a = json_strings.getString("0");
+                            String b = json_strings.getString("1");
+                            String c = json_strings.getString("2");
 
-                                String a = json_strings.getString("0");
-                                String b = json_strings.getString("1");
-                                String c = json_strings.getString("2");
+                            recyclerView.addOnItemTouchListener(
+                                    new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
+                                        public void onClickItem(View arg1, int position) {
+                                            Intent i = new Intent(Intent.ACTION_VIEW);
+                                            i.setData(Uri.parse(c));
+                                            startActivity(i);
+                                        }
 
-                                recyclerView.addOnItemTouchListener(
-                                        new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
-                                            public void onClickItem(View arg1, int position) {
-                                                Intent i = new Intent(Intent.ACTION_VIEW);
-                                                i.setData(Uri.parse(c));
-                                                startActivity(i);
-                                            }
+                                        public void onLongClickItem(View v, int position) {
+                                        }
+                                    }));
 
-                                            public void onLongClickItem(View v, int position) {
-                                            }
-                                        }));
-
-                                conditionList.add(new DataConditionsFragments(a, b, c));
-                                CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
-                                recyclerView.setAdapter(ca);
-                            }
-
-                            linearLayout.setVisibility(View.VISIBLE);
-                            loading.setVisibility(View.INVISIBLE);
-                        } catch (JSONException e) {
-                            startActivity(new Intent(context, LoginActivity.class));
+                            conditionList.add(new DataConditionsFragments(a, b, c));
+                            CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
+                            recyclerView.setAdapter(ca);
                         }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                startActivity(new Intent(context, LoginActivity.class));
 
-            }
-        });
+                        linearLayout.setVisibility(View.VISIBLE);
+                        loading.setVisibility(View.INVISIBLE);
+                    } catch (JSONException e) {
+                        startActivity(new Intent(context, LoginActivity.class));
+                    }
+                }, error -> startActivity(new Intent(context, LoginActivity.class)));
 
         // add it to the RequestQueue
         queue.add(getRequest);

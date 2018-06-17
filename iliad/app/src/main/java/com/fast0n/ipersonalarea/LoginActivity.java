@@ -40,11 +40,12 @@ import es.dmoral.toasty.Toasty;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button btn_login;
-    EditText edt_id, edt_password;
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
-    CheckBox checkBox;
+    private Button btn_login;
+    private EditText edt_id;
+    private EditText edt_password;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+    private CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +70,14 @@ public class LoginActivity extends AppCompatActivity {
             checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
         }
 
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-                if (checkBox.isChecked()) {
-                    checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
-                } else {
-                    checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
-                }
-
+            if (checkBox.isChecked()) {
+                checkBox.setText(getString(R.string.stay_connected) + ": Attivo");
+            } else {
+                checkBox.setText(getString(R.string.stay_connected) + ": Disattivo");
             }
+
         });
 
 
@@ -114,25 +112,19 @@ public class LoginActivity extends AppCompatActivity {
                                     .setStyle(Style.HEADER_WITH_TITLE)
                                     .setPositiveText(R.string.accept)
                                     .setCancelable(false)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            settings = getSharedPreferences("sharedPreferences", 0);
-                                            editor = settings.edit();
-                                            editor.putString("alert", "1");
-                                            editor.apply();
-                                        }
+                                    .onPositive((dialog, which) -> {
+                                        settings = getSharedPreferences("sharedPreferences", 0);
+                                        editor = settings.edit();
+                                        editor.putString("alert", "1");
+                                        editor.apply();
                                     }).setScrollable(true, 10)
                                     .show();
 
                         } catch (JSONException ignored) {
                         }
 
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                }
-            });
+                    }, error -> {
+                    });
             queue.add(getRequest);
 
 
@@ -150,42 +142,39 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isOnline() && edt_id.getText().toString().length() != 0
-                        && edt_password.getText().toString().length() != 0) {
+        btn_login.setOnClickListener(v -> {
+            if (isOnline() && edt_id.getText().toString().length() != 0
+                    && edt_password.getText().toString().length() != 0) {
 
-                    String userid = edt_id.getText().toString();
-                    String password = edt_password.getText().toString();
-                    String token = GenerateToken.randomString(20);
+                String userid1 = edt_id.getText().toString();
+                String password1 = edt_password.getText().toString();
+                String token = GenerateToken.randomString(20);
 
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("userid", userid);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                intent.putExtra("userid", userid1);
 
 
-                    byte[] encodeValue = Base64.encode(password.getBytes(), Base64.DEFAULT);
-                    String npassword = new String(encodeValue);
-                    intent.putExtra("password", npassword);
-                    intent.putExtra("token", token);
+                byte[] encodeValue = Base64.encode(password1.getBytes(), Base64.DEFAULT);
+                String npassword = new String(encodeValue);
+                intent.putExtra("password", npassword);
+                intent.putExtra("token", token);
 
-                    if (checkBox.isChecked()) {
-                        intent.putExtra("checkbox", "true");
-                    } else {
-                        intent.putExtra("checkbox", "false");
-                    }
-                    startActivity(intent);
-                    btn_login.setEnabled(false);
-
+                if (checkBox.isChecked()) {
+                    intent.putExtra("checkbox", "true");
                 } else {
-                    btn_login.setEnabled(true);
-                    Toasty.error(LoginActivity.this, getString(R.string.errorconnection), Toast.LENGTH_SHORT).show();
+                    intent.putExtra("checkbox", "false");
                 }
+                startActivity(intent);
+                btn_login.setEnabled(false);
+
+            } else {
+                btn_login.setEnabled(true);
+                Toasty.error(LoginActivity.this, getString(R.string.errorconnection), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public boolean isOnline() {
+    private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();

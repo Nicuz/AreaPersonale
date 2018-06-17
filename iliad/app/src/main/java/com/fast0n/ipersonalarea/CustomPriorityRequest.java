@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class CustomPriorityRequest extends JsonObjectRequest {
 
-    Priority priority = Priority.HIGH;
+    private Priority priority = Priority.HIGH;
 
     public CustomPriorityRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);

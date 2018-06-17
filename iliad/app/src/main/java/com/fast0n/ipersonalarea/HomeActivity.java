@@ -56,14 +56,14 @@ import es.dmoral.toasty.Toasty;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    ActionBarDrawerToggle toggle;
-    DrawerLayout drawer;
-    Menu nav_Menu;
-    NavigationView navigationView;
-    ProgressBar loading;
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
-    View headerView;
+    private ActionBarDrawerToggle toggle;
+    private DrawerLayout drawer;
+    private Menu nav_Menu;
+    private NavigationView navigationView;
+    private ProgressBar loading;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+    private View headerView;
     private boolean backPressedToExitOnce = false;
 
 
@@ -135,104 +135,98 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         CustomPriorityRequest customPriorityRequest = new CustomPriorityRequest(
                 Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+                response -> {
+                    try {
 
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
-                            JSONObject json = new JSONObject(iliad);
+                        JSONObject json_raw = new JSONObject(response.toString());
+                        String iliad = json_raw.getString("iliad");
+                        JSONObject json = new JSONObject(iliad);
 
-                            String stringVersion = json.getString("version");
-                            if (BuildConfig.VERSION_CODE < Integer.parseInt(stringVersion)) {
-                                Intent intent = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
-                                intent.putExtra("errorAPI", "true");
-                                startActivity(intent);
+                        String stringVersion = json.getString("version");
+                        if (BuildConfig.VERSION_CODE < Integer.parseInt(stringVersion)) {
+                            Intent intent = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
+                            intent.putExtra("errorAPI", "true");
+                            startActivity(intent);
 
-                            }
-
-                            String stringSim = json.getString("sim");
-                            String user_name = json.getString("user_name");
-                            String user_id = json.getString("user_id");
-                            String user_numtell = json.getString("user_numtell");
-
-
-                            try {
-                                if (stringSim.equals("false")) {
-
-                                    Fragment fragment;
-                                    fragment = new SimFragments();
-
-                                    FragmentManager fragmentManager = getSupportFragmentManager();
-                                    FragmentTransaction ft = fragmentManager.beginTransaction();
-                                    ft.replace(R.id.fragment, fragment);
-                                    ft.commit();
-
-                                } else {
-                                    Fragment fragment;
-                                    fragment = new MasterCreditFragment();
-
-                                    nav_Menu.findItem(R.id.nav_credit).setVisible(true);
-                                    nav_Menu.findItem(R.id.nav_credit).setChecked(true);
-                                    nav_Menu.findItem(R.id.nav_options).setVisible(true);
-                                    nav_Menu.findItem(R.id.nav_services).setVisible(true);
-                                    nav_Menu.findItem(R.id.nav_voicemail).setVisible(true);
-
-                                    FragmentManager fragmentManager = getSupportFragmentManager();
-                                    FragmentTransaction ft = fragmentManager.beginTransaction();
-                                    ft.replace(R.id.fragment, fragment);
-                                    ft.commit();
-                                }
-                            } catch (IllegalStateException ignored) {
-                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-                            }
-
-                            TextView textView = headerView.findViewById(R.id.textView);
-                            TextView textView1 = headerView.findViewById(R.id.textView1);
-                            TextView textView2 = headerView.findViewById(R.id.textView2);
-
-                            loading.setVisibility(View.INVISIBLE);
-                            textView.setText(user_name);
-                            textView1.setText(user_id);
-                            textView2.setText(user_numtell);
-
-                            editor.putString("telefono", user_numtell);
-                            editor.apply();
-
-
-                            toggle.syncState();
-                            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-                        } catch (JSONException ignored) {
                         }
+
+                        String stringSim = json.getString("sim");
+                        String user_name = json.getString("user_name");
+                        String user_id = json.getString("user_id");
+                        String user_numtell = json.getString("user_numtell");
+
+
+                        try {
+                            if (stringSim.equals("false")) {
+
+                                Fragment fragment;
+                                fragment = new SimFragments();
+
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction ft = fragmentManager.beginTransaction();
+                                ft.replace(R.id.fragment, fragment);
+                                ft.commit();
+
+                            } else {
+                                Fragment fragment;
+                                fragment = new MasterCreditFragment();
+
+                                nav_Menu.findItem(R.id.nav_credit).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_credit).setChecked(true);
+                                nav_Menu.findItem(R.id.nav_options).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_services).setVisible(true);
+                                nav_Menu.findItem(R.id.nav_voicemail).setVisible(true);
+
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction ft = fragmentManager.beginTransaction();
+                                ft.replace(R.id.fragment, fragment);
+                                ft.commit();
+                            }
+                        } catch (IllegalStateException ignored) {
+                            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                        }
+
+                        TextView textView = headerView.findViewById(R.id.textView);
+                        TextView textView1 = headerView.findViewById(R.id.textView1);
+                        TextView textView2 = headerView.findViewById(R.id.textView2);
+
+                        loading.setVisibility(View.INVISIBLE);
+                        textView.setText(user_name);
+                        textView1.setText(user_id);
+                        textView2.setText(user_numtell);
+
+                        editor.putString("telefono", user_numtell);
+                        editor.apply();
+
+
+                        toggle.syncState();
+                        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+                    } catch (JSONException ignored) {
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                error -> {
 
 
-                        try {
-                            int error_code = error.networkResponse.statusCode;
+                    try {
+                        int error_code = error.networkResponse.statusCode;
 
-                            if (error_code == 503) {
-                                settings = getSharedPreferences("sharedPreferences", 0);
-                                editor = settings.edit();
-                                editor.putString("userid", null);
-                                editor.putString("password", null);
-                                editor.apply();
+                        if (error_code == 503) {
+                            settings = getSharedPreferences("sharedPreferences", 0);
+                            editor = settings.edit();
+                            editor.putString("userid", null);
+                            editor.putString("password", null);
+                            editor.apply();
 
-                                Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
-                                        .show();
-                                Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
-                                startActivity(mainActivity);
-                            } else {
+                            Toasty.warning(HomeActivity.this, getString(R.string.error_login), Toast.LENGTH_LONG, true)
+                                    .show();
+                            Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
+                            startActivity(mainActivity);
+                        } else {
 
-                            }
-                        } catch (Exception ignored) {
-                            getObject(url, nav_Menu);
                         }
+                    } catch (Exception ignored) {
+                        getObject(url, nav_Menu);
                     }
                 });
 
@@ -243,7 +237,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public boolean isOnline() {
+    private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return (cm != null ? cm.getActiveNetworkInfo() : null) != null
                 && cm.getActiveNetworkInfo().isConnectedOrConnecting();
@@ -256,13 +250,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (backPressedToExitOnce) {
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        finishAffinity();
-                    }
-                }, 500);
+                new Handler().postDelayed(() -> finishAffinity(), 500);
 
             } else {
                 this.backPressedToExitOnce = true;
@@ -276,13 +264,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
                 Toasty.info(HomeActivity.this, getString(R.string.press_back), Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        backPressedToExitOnce = false;
-                    }
-                }, 1000);
+                new Handler().postDelayed(() -> backPressedToExitOnce = false, 1000);
             }
 
         }
@@ -309,115 +291,118 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         Fragment fragment = null;
 
-        if (id == R.id.nav_credit) {
-            if (isOnline())
-                fragment = new MasterCreditFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+        switch (id) {
+            case R.id.nav_credit:
+                if (isOnline())
+                    fragment = new MasterCreditFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_options) {
+                break;
+            case R.id.nav_options:
 
-            if (isOnline())
-                fragment = new OptionsFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                if (isOnline())
+                    fragment = new OptionsFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_services) {
+                break;
+            case R.id.nav_services:
 
-            if (isOnline())
-                fragment = new ServicesFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                if (isOnline())
+                    fragment = new ServicesFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_info) {
+                break;
+            case R.id.nav_info:
 
-            if (isOnline())
-                fragment = new InfoFragments();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                if (isOnline())
+                    fragment = new InfoFragments();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_voicemail) {
+                break;
+            case R.id.nav_voicemail:
 
-            if (isOnline())
-                fragment = new VoicemailFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                if (isOnline())
+                    fragment = new VoicemailFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_sim) {
+                break;
+            case R.id.nav_sim:
 
-            if (isOnline())
-                fragment = new SimFragments();
+                if (isOnline())
+                    fragment = new SimFragments();
 
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-        } else if (id == R.id.nav_conditions) {
+                break;
+            case R.id.nav_conditions:
 
-            if (isOnline())
-                fragment = new ConditionsFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
-
-
-        } else if (id == R.id.nav_about) {
-
-            if (isOnline())
-                fragment = new AboutFragment();
-            else
-                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
-
-
-        } else if (id == R.id.nav_contactus) {
-
-            RequestQueue queue = Volley.newRequestQueue(HomeActivity.this);
-
-            String site_url = getString(R.string.site_url);
-            String url = site_url + "?alert=true";
-
-            JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                    response -> {
-                        try {
-
-                            JSONObject json_raw = new JSONObject(response.toString());
-                            String iliad = json_raw.getString("iliad");
-
-                            JSONObject json = new JSONObject(iliad);
-                            String string_response = json.getString("0");
-
-                            new MaterialStyledDialog.Builder(this)
-                                    .setTitle(R.string.warning)
-                                    .setDescription(Html.fromHtml(string_response))
-                                    .setScrollable(true)
-                                    .setStyle(Style.HEADER_WITH_TITLE)
-                                    .setPositiveText(R.string.accept)
-                                    .setCancelable(false)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                                        }
-                                    }).setScrollable(true, 10)
-                                    .show();
-
-                        } catch (JSONException ignored) {
-                        }
-
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                }
-            });
-
-            queue.add(getRequest);
+                if (isOnline())
+                    fragment = new ConditionsFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
 
-        } else if (id == R.id.nav_logout) {
+                break;
+            case R.id.nav_about:
 
-            if (isOnline()) {
+                if (isOnline())
+                    fragment = new AboutFragment();
+                else
+                    startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
 
-                new AlertDialog.Builder(this).setMessage(R.string.dialog_exit).setCancelable(false)
-                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+
+                break;
+            case R.id.nav_contactus:
+
+                RequestQueue queue = Volley.newRequestQueue(HomeActivity.this);
+
+                String site_url = getString(R.string.site_url);
+                String url = site_url + "?alert=true";
+
+                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                        response -> {
+                            try {
+
+                                JSONObject json_raw = new JSONObject(response.toString());
+                                String iliad = json_raw.getString("iliad");
+
+                                JSONObject json = new JSONObject(iliad);
+                                String string_response = json.getString("0");
+
+                                new MaterialStyledDialog.Builder(this)
+                                        .setTitle(R.string.warning)
+                                        .setDescription(Html.fromHtml(string_response))
+                                        .setScrollable(true)
+                                        .setStyle(Style.HEADER_WITH_TITLE)
+                                        .setPositiveText(R.string.accept)
+                                        .setCancelable(false)
+                                        .onPositive((dialog, which) -> {
+
+                                        }).setScrollable(true, 10)
+                                        .show();
+
+                            } catch (JSONException ignored) {
+                            }
+
+                        }, error -> {
+                });
+
+                queue.add(getRequest);
+
+
+                break;
+            case R.id.nav_logout:
+
+                if (isOnline()) {
+
+                    new AlertDialog.Builder(this).setMessage(R.string.dialog_exit).setCancelable(false)
+                            .setPositiveButton(getString(R.string.yes), (dialog, id1) -> {
                                 settings = getSharedPreferences("sharedPreferences", 0);
                                 editor = settings.edit();
                                 editor.putString("userid", null);
@@ -426,12 +411,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                                 Intent mainActivity = new Intent(HomeActivity.this, LoginActivity.class);
                                 startActivity(mainActivity);
-                            }
-                        }).setNegativeButton(getString(R.string.no), null).show();
+                            }).setNegativeButton(getString(R.string.no), null).show();
 
-            }
-        } else
-            startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                }
+                break;
+            default:
+                startActivity(new Intent(HomeActivity.this, ErrorConnectionActivity.class));
+                break;
+        }
 
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();

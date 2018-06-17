@@ -1,10 +1,10 @@
 package com.fast0n.ipersonalarea.fragments.ConditionsFragment;
 
-public class DataConditionsFragments {
+class DataConditionsFragments {
 
-    public String textView;
-    public String textView1;
-    public String url;
+    public final String textView;
+    public final String textView1;
+    private final String url;
 
     DataConditionsFragments(String textView, String textView1, String url) {
         this.textView = textView;

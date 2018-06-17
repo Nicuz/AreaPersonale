@@ -53,8 +53,11 @@ public class CustomAdapterInfo extends RecyclerView.Adapter<CustomAdapterInfo.My
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textView2, textView3, textView4;
-        ImageView icon_info, icon;
+        final TextView textView2;
+        final TextView textView3;
+        final TextView textView4;
+        final ImageView icon_info;
+        final ImageView icon;
 
         MyViewHolder(View view) {
             super(view);

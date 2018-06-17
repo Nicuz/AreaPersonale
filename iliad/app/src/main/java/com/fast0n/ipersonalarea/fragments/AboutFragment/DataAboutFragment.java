@@ -2,8 +2,8 @@ package com.fast0n.ipersonalarea.fragments.AboutFragment;
 
 public class DataAboutFragment {
 
-    private String name;
-    private int icon;
+    private final String name;
+    private final int icon;
 
     DataAboutFragment(String name, int icon) {
         this.name = name;
