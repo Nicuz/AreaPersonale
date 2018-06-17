@@ -82,10 +82,18 @@ public class InfoFragments extends Fragment {
         TextView offer;
         final List<DataInfoFragments> infoList = new ArrayList<>();
 
+
+
         // java adresses
         offer = view.findViewById(R.id.offer);
         recyclerView = view.findViewById(R.id.recycler_view);
         loading = view.findViewById(R.id.progressBar);
+
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemListener(context, recyclerView, new RecyclerItemListener.RecyclerTouchListener() {
                     public void onClickItem(View arg1, int position) {
@@ -177,18 +185,15 @@ public class InfoFragments extends Fragment {
                                     String d = json_strings.getString("3");
 
                                     infoList.add(new DataInfoFragments(c, a, b, "", d));
-
+                                    CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
+                                    recyclerView.setAdapter(ca);
                                 }
 
                             }
 
-                            recyclerView.setHasFixedSize(true);
-                            LinearLayoutManager llm = new LinearLayoutManager(context);
-                            llm.setOrientation(LinearLayoutManager.VERTICAL);
-                            recyclerView.setLayoutManager(llm);
 
-                            CustomAdapterInfo ca = new CustomAdapterInfo(context, infoList);
-                            recyclerView.setAdapter(ca);
+
+
                             offer.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 

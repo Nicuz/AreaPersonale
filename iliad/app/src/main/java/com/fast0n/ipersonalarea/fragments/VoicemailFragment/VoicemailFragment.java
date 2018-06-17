@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -26,7 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.fast0n.ipersonalarea.ChangeEmailActivity;
 import com.fast0n.ipersonalarea.LoginActivity;
 import com.fast0n.ipersonalarea.R;
 import com.github.ybq.android.spinkit.style.CubeGrid;
@@ -119,8 +117,8 @@ public class VoicemailFragment extends Fragment {
         String list[] = {"Notifica inviata via email","File audio inviato in allegato"};
 
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context,   android.R.layout.simple_spinner_item, list);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context,   R.layout.spinner_item, list);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(spinnerArrayAdapter);
 
 
@@ -132,8 +130,6 @@ public class VoicemailFragment extends Fragment {
 
                     RequestQueue queue = Volley.newRequestQueue(context);
                     final String site_url = getString(R.string.site_url);
-
-                    System.out.println(site_url + "?email=" +  editText.getText().toString() + "&action=add&type="+  montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment") +token);
 
                     JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?email=" +  editText.getText().toString() + "&action=add&type="+  montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment")+"&token=" +token , null,
                             new Response.Listener<JSONObject>() {
@@ -232,10 +228,10 @@ public class VoicemailFragment extends Fragment {
                                     infomail.add(new DataVoicemailFragments(a, "", "0", token));
                                 }
 
-
+                                CustomAdapterVoicemail ca = new CustomAdapterVoicemail(infomail, context);
+                                recyclerView.setAdapter(ca);
                             }
-                            CustomAdapterVoicemail ca = new CustomAdapterVoicemail(infomail, context);
-                            recyclerView.setAdapter(ca);
+
                             textvoicemail.setVisibility(View.VISIBLE);
 
 

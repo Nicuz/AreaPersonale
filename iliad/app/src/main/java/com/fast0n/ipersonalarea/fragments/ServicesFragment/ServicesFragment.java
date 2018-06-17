@@ -119,11 +119,11 @@ public class ServicesFragment extends Fragment {
                                 String c = json_strings.getString("3");
 
                                 infoList.add(new DataServicesFragments(a, b, c));
-
+                                CustomAdapterServices ca = new CustomAdapterServices(context, infoList, token);
+                                recyclerView.setAdapter(ca);
                             }
 
-                            CustomAdapterServices ca = new CustomAdapterServices(context, infoList, token);
-                            recyclerView.setAdapter(ca);
+
                             linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 

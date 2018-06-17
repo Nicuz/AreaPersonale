@@ -126,10 +126,10 @@ public class ConditionsFragment extends Fragment {
                                         }));
 
                                 conditionList.add(new DataConditionsFragments(a, b, c));
+                                CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
+                                recyclerView.setAdapter(ca);
                             }
 
-                            CustomAdapterConditions ca = new CustomAdapterConditions(conditionList);
-                            recyclerView.setAdapter(ca);
                             linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
                         } catch (JSONException e) {

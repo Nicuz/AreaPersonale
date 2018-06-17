@@ -121,11 +121,12 @@ public class OptionsFragment extends Fragment {
                                 String b = json_strings.getString("2");
                                 String c = json_strings.getString("3");
                                 infoList.add(new DataOptionsFragments(a, b, c, i));
+                                CustomAdapterOptions ca = new CustomAdapterOptions(context, infoList, token);
+                                recyclerView.setAdapter(ca);
 
                             }
 
-                            CustomAdapterOptions ca = new CustomAdapterOptions(context, infoList, token);
-                            recyclerView.setAdapter(ca);
+
                             linearLayout.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.INVISIBLE);
 

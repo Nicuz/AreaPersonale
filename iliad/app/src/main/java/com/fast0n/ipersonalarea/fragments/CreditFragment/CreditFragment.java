@@ -149,11 +149,11 @@ public class CreditFragment extends Fragment {
                                 String d = json_strings.getString("3");
 
                                 creditList.add(new DataCreditFragments(a, b, c, d));
+                                CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
+                                recyclerView.setAdapter(ca);
 
                             }
 
-                            CustomAdapterCredit ca = new CustomAdapterCredit(context, creditList);
-                            recyclerView.setAdapter(ca);
                             loading.setVisibility(View.INVISIBLE);
 
 

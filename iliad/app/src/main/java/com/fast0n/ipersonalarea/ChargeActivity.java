@@ -70,7 +70,6 @@ public class ChargeActivity extends AppCompatActivity {
 
 
         SharedPreferences settings = getSharedPreferences("sharedPreferences", 0);
-        String telefono = settings.getString("telefono", null);
         SharedPreferences.Editor editor = settings.edit();
         editor.apply();
 

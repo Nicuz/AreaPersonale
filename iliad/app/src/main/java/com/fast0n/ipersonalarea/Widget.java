@@ -22,6 +22,8 @@ import com.fast0n.ipersonalarea.java.GenerateToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.view.View.VISIBLE;
+
 
 public class Widget extends AppWidgetProvider {
 
@@ -30,7 +32,6 @@ public class Widget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
 
             RequestOptions options = new RequestOptions().override(50, 50);
@@ -43,6 +44,16 @@ public class Widget extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.widget_click, piSetting);
 
 
+            AppWidgetTarget img = new AppWidgetTarget(context, R.id.img, views, appWidgetId) {
+                @Override
+                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                    super.onResourceReady(resource, transition);
+                }
+            };
+            Glide.with(context.getApplicationContext()).asBitmap()
+                    .load("http://android12.altervista.org/res/ic_call.png").apply(options).into(img);
+
+
             AppWidgetTarget img2 = new AppWidgetTarget(context, R.id.img2, views, appWidgetId) {
                 @Override
                 public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
@@ -50,34 +61,8 @@ public class Widget extends AppWidgetProvider {
                 }
             };
             Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_call.png").apply(options).into(img2);
+                    .load("http://android12.altervista.org/res/ic_sms.png").apply(options).into(img2);
 
-            AppWidgetTarget img6 = new AppWidgetTarget(context, R.id.img6, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_call.png").apply(options).into(img6);
-
-            AppWidgetTarget img4 = new AppWidgetTarget(context, R.id.img4, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_gb.png").apply(options).into(img4);
-
-            AppWidgetTarget img8 = new AppWidgetTarget(context, R.id.img8, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_gb.png").apply(options).into(img8);
 
             AppWidgetTarget img3 = new AppWidgetTarget(context, R.id.img3, views, appWidgetId) {
                 @Override
@@ -86,45 +71,7 @@ public class Widget extends AppWidgetProvider {
                 }
             };
             Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_email.png").apply(options).into(img3);
-
-            AppWidgetTarget img7 = new AppWidgetTarget(context, R.id.img7, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_email.png").apply(options).into(img7);
-
-            AppWidgetTarget img5 = new AppWidgetTarget(context, R.id.img5, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_mms.png").apply(options).into(img5);
-
-            AppWidgetTarget img9 = new AppWidgetTarget(context, R.id.img9, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_mms.png").apply(options).into(img9);
-
-
-            AppWidgetTarget button = new AppWidgetTarget(context, R.id.refresh, views, appWidgetId) {
-                @Override
-                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                    super.onResourceReady(resource, transition);
-                }
-            };
-            Glide.with(context.getApplicationContext()).asBitmap()
-                    .load("http://android12.altervista.org/res/widget/ic_update.png").apply(options).into(button);
-
+                    .load("http://android12.altervista.org/res/ic_mms.png").apply(options).into(img3);
 
             SharedPreferences settings = context.getSharedPreferences("sharedPreferences", 0);
             SharedPreferences.Editor editor = settings.edit();
@@ -134,23 +81,36 @@ public class Widget extends AppWidgetProvider {
             String password = settings.getString("password", null);
 
 
+            if (password.length() == 0) {
+                views.setViewVisibility(R.id.login, VISIBLE);
+            } else {
+                views.setViewVisibility(R.id.linearLayout, VISIBLE);
+            }
+
+
             String url = (site_url + "?userid=" + userid + "&password=" + password + "&token=" + token).replaceAll("\\s+", "");
             RequestQueue login = Volley.newRequestQueue(context);
             JsonObjectRequest getRequestLogin = new JsonObjectRequest(Request.Method.GET, url, null,
                     response -> {
 
 
+                        try {
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
+                            JSONObject json = new JSONObject(iliad);
+
+                            String stringUser_numtell = json.getString("user_numtell");
+                            views.setTextViewText(R.id.user_numtell, stringUser_numtell.replace("Numero: ", ""));
+
+                        } catch (JSONException ignored) {
+                        }
+
+
                         Intent intent1 = new Intent(context, Widget.class);
                         intent1.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                         intent1.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-                        //PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context,0, intent1, 0);
-
                         context.sendBroadcast(intent1);
 
-
-
-
-/*
 
                         String url1 = site_url + "?credit=true&token=" + token;
                         RequestQueue creditqueue = Volley.newRequestQueue(context);
@@ -165,30 +125,43 @@ public class Widget extends AppWidgetProvider {
                                         String stringCredit = json.getString("0");
                                         JSONObject json_Credit = new JSONObject(stringCredit);
                                         String credit = json_Credit.getString("0");
-                                        views.setTextViewText(R.id.textView1, credit.replace("Offerta iliad - Credito : ",""));
+                                        views.setTextViewText(R.id.credit, credit.split("&")[0]);
 
                                         String stringCall = json.getString("1");
                                         JSONObject json_Call = new JSONObject(stringCall);
                                         String call = json_Call.getString("0");
-                                        views.setTextViewText(R.id.textView3, call.replace("Chiamate: ",""));
+                                        views.setTextViewText(R.id.call, call.replace("Chiamate: ", ""));
 
                                         String stringSms = json.getString("2");
                                         JSONObject json_Sms = new JSONObject(stringSms);
                                         String sms = json_Sms.getString("0");
-                                        views.setTextViewText(R.id.textView4, sms);
+                                        views.setTextViewText(R.id.sms, sms);
 
                                         String stringGb = json.getString("3");
                                         JSONObject json_Gb = new JSONObject(stringGb);
                                         String gb = json_Gb.getString("0");
-                                        views.setTextViewText(R.id.textView5, gb.replace("/","/ \n"));
+                                        views.setTextViewText(R.id.gb, gb);
+
+                                        String x = gb.split("/")[0].replace("GB","0").replace("MB","");
+                                        String y = gb.split("/")[1];
+
+                                        String a = x.substring(0, x.length() - 2);
+                                        String b = y.substring(0, y.length() - 2)+"000";
+
+                                        Double e = Double.parseDouble(a.replace(",","."));
+                                        Double f = Double.parseDouble(b);
+
+                                        Double ef = (e / (e + f)) * 100;
+                                        int result1 = ef.intValue();
+
+                                        views.setProgressBar(R.id.progressbar, 100,result1,false);
 
                                         String stringMms = json.getString("4");
                                         JSONObject json_Mms = new JSONObject(stringMms);
                                         String mms = json_Mms.getString("0");
-                                        views.setTextViewText(R.id.textView6, mms);
+                                        views.setTextViewText(R.id.mms, mms);
 
                                         appWidgetManager.updateAppWidget(appWidgetId, views);
-
 
 
                                     } catch (JSONException ignored) {
@@ -199,142 +172,6 @@ public class Widget extends AppWidgetProvider {
                         creditqueue.add(getRequestCredit);
 
 
-
-*/
-
-                        String url2 = site_url + "?creditestero=true&token=" + token;
-                        RequestQueue creditesteroqueue = Volley.newRequestQueue(context);
-                        JsonObjectRequest getRequestCreditEstero = new JsonObjectRequest(Request.Method.GET, url2, null,
-                                response2 -> {
-                                    try {
-
-                                        JSONObject json_raw = new JSONObject(response2.toString());
-                                        String iliad = json_raw.getString("iliad");
-                                        JSONObject json = new JSONObject(iliad);
-
-
-                                        String stringCall = json.getString("1");
-                                        JSONObject json_Call = new JSONObject(stringCall);
-                                        String call = json_Call.getString("0");
-                                        views.setTextViewText(R.id.textView7, call.replace("Chiamate: ", ""));
-
-                                        String stringSms = json.getString("2");
-                                        JSONObject json_Sms = new JSONObject(stringSms);
-                                        String sms = json_Sms.getString("0");
-                                        views.setTextViewText(R.id.textView8, sms);
-
-                                        String stringGb = json.getString("3");
-                                        JSONObject json_Gb = new JSONObject(stringGb);
-                                        String gb = json_Gb.getString("0");
-                                        views.setTextViewText(R.id.textView9, gb.replace("/", "/ \n"));
-
-                                        String stringMms = json.getString("4");
-                                        JSONObject json_Mms = new JSONObject(stringMms);
-                                        String mms = json_Mms.getString("0");
-                                        views.setTextViewText(R.id.textView10, mms);
-
-
-                                        appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
-                                    } catch (JSONException ignored) {
-                                    }
-
-                                }, error -> {
-
-                          /*
-
-                            System.out.println("ciao");
-
-                            SharedPreferences settings12 = context.getSharedPreferences("sharedPreferences", 0);
-                            String userid = settings12.getString("userid", null);
-                            String password = settings12.getString("password", null);
-                            SharedPreferences.Editor editor12 = settings12.edit();
-                            editor12.apply();
-                            final String site_url1 = context.getString(R.string.site_url);
-                            String url22 = site_url1 + "?userid=" + userid + "&password=" + password + "&token=" + token1;
-                            RequestQueue login = Volley.newRequestQueue(context);
-                            JsonObjectRequest getRequest22 = new JsonObjectRequest(Request.Method.GET, url22, null,
-                                    response -> {
-
-                                        SharedPreferences settings1 = context.getSharedPreferences("sharedPreferences", 0);
-                                        SharedPreferences.Editor editor1 = settings1.edit();
-                                        editor1.putString("token", token1);
-                                        editor1.apply();
-
-                                        Intent intent1 = new Intent(context, Widget.class);
-                                        intent1.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                                        intent1.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-                                        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context,
-                                                0, intent1, 0);
-
-                                        context.sendBroadcast(intent1);
-
-                                    }, error1 -> {});
-
-                            login.add(getRequest22);
-
-
-                           */
-                        });
-
-                        creditesteroqueue.add(getRequestCreditEstero);
-
-
-                        String url3 = site_url + "?getNumTell=true&token=" + token;
-                        RequestQueue queue2 = Volley.newRequestQueue(context);
-                        JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url3, null,
-                                response1 -> {
-                                    try {
-
-                                        JSONObject json_raw = new JSONObject(response1.toString());
-                                        String iliad = json_raw.getString("iliad");
-                                        JSONObject json = new JSONObject(iliad);
-
-                                        String stringNum = json.getString("0");
-                                        views.setTextViewText(R.id.textView2, stringNum.replace("Numero: ", ""));
-
-
-                                    } catch (JSONException ignored) {
-                                    }
-
-                                }, error -> {
-
-                /*
-                System.out.println("ciao");
-
-                SharedPreferences settings12 = context.getSharedPreferences("sharedPreferences", 0);
-                String userid = settings12.getString("userid", null);
-                String password = settings12.getString("password", null);
-                SharedPreferences.Editor editor12 = settings12.edit();
-                editor12.apply();
-                final String site_url1 = context.getString(R.string.site_url);
-                String url22 = site_url1 + "?userid=" + userid + "&password=" + password + "&token=" + token1;
-                RequestQueue login = Volley.newRequestQueue(context);
-                JsonObjectRequest getRequest22 = new JsonObjectRequest(Request.Method.GET, url22, null,
-                        response -> {
-
-                            SharedPreferences settings1 = context.getSharedPreferences("sharedPreferences", 0);
-                            SharedPreferences.Editor editor1 = settings1.edit();
-                            editor1.putString("token", token1);
-                            editor1.apply();
-
-                            Intent intent1 = new Intent(context, Widget.class);
-                            intent1.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                            intent1.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-                            PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context,
-                                    0, intent1, 0);
-
-                            context.sendBroadcast(intent1);
-
-
-                        }, error1 -> {});
-
-                login.add(getRequest22);
-                */
-                        });
-
-                        queue2.add(getRequest2);
 
 
                     }, error1 -> {
@@ -350,7 +187,7 @@ public class Widget extends AppWidgetProvider {
                     0, intent1, 0);
 
 
-            views.setOnClickPendingIntent(R.id.textView1, pendingIntent1);
+            views.setOnClickPendingIntent(R.id.button, pendingIntent1);
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
 

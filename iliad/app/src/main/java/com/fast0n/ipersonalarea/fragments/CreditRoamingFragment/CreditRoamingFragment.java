@@ -152,11 +152,9 @@ public class CreditRoamingFragment extends Fragment {
                                 String a = json_strings.getString("2");
                                 String d = json_strings.getString("3");
                                 creditEsteroList.add(new DataCreditRoamingFragments(a, b, c, d));
-
+                                CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
+                                recyclerView.setAdapter(ca);
                             }
-
-                            CustomAdapterCreditRoaming ca = new CustomAdapterCreditRoaming(context, creditEsteroList);
-                            recyclerView.setAdapter(ca);
                             loading.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException e) {
