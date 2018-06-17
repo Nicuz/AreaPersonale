@@ -137,10 +137,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                         String stringVersion = json.getString("version");
                         if (BuildConfig.VERSION_CODE < Integer.parseInt(stringVersion)) {
-                            Intent intent = new Intent(HomeActivity.this, ErrorConnectionActivity.class);
+                            Intent intent = new Intent(this, ErrorConnectionActivity.class);
                             intent.putExtra("errorAPI", "true");
                             startActivity(intent);
-
+                            finish();
                         }
 
                         String stringSim = json.getString("sim");
