@@ -36,7 +36,7 @@ public class CustomAdapterInfo extends RecyclerView.Adapter<CustomAdapterInfo.My
         holder.textView3.setText(c.textView3);
         holder.textView4.setText(c.textView4);
         Glide.with(context).load(c.url).into(holder.icon_info);
-         Glide.with(context).load(c.url1).into(holder.icon);
+        Glide.with(context).load(c.url1).into(holder.icon);
 
     }
 

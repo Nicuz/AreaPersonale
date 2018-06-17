@@ -45,7 +45,7 @@ public class SimFragments extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_sim, container, false);
 
         final ProgressBar loading;
-        final CardView  cardView1, cardView2, cardView3;
+        final CardView cardView1, cardView2, cardView3;
         final Button btn_activatesim;
         final EditText edt_iccid;
         final Context context;
@@ -153,7 +153,7 @@ public class SimFragments extends Fragment {
     private void getObject(String url, final Context context, View view) {
 
         final ProgressBar loading;
-        final CardView  cardView1, cardView2, cardView3;
+        final CardView cardView1, cardView2, cardView3;
         final TextView tvvalidation, tvorder_date, tvdate, tvtracking, tvshipping, tvorder_shipped, tvactivation,
                 tvtitle_activation, tvoffer;
         final EditText edt_iccid;

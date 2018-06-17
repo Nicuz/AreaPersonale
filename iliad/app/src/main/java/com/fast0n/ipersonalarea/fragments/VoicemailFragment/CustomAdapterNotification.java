@@ -1,15 +1,11 @@
 package com.fast0n.ipersonalarea.fragments.VoicemailFragment;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,24 +27,9 @@ import es.dmoral.toasty.Toasty;
 
 public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapterNotification.MyViewHolder> {
 
-    private List<DataNotificationFragments> modelList;
     Context context;
     String token;
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView textView, textView1, textView2, textView3;
-        ImageButton button;
-
-        public MyViewHolder(View view) {
-            super(view);
-            button = view.findViewById(R.id.button);
-            textView = view.findViewById(R.id.textView);
-            textView1 = view.findViewById(R.id.textView1);
-            textView2 = view.findViewById(R.id.textView2);
-            textView3 = view.findViewById(R.id.textView3);
-        }
-    }
+    private List<DataNotificationFragments> modelList;
 
     public CustomAdapterNotification(Context context, List<DataNotificationFragments> modelList, String token) {
         this.context = context;
@@ -63,7 +44,6 @@ public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapte
         holder.textView1.setText(c.textView1);
         holder.textView2.setText(c.textView2);
         holder.textView3.setText(c.textView3);
-
 
 
         holder.button.setOnClickListener(new View.OnClickListener() {
@@ -115,8 +95,6 @@ public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapte
         });
 
 
-
-
     }
 
     @Override
@@ -128,5 +106,20 @@ public class CustomAdapterNotification extends RecyclerView.Adapter<CustomAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_voicemail_notification, parent, false);
         return new MyViewHolder(v);
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView textView, textView1, textView2, textView3;
+        ImageButton button;
+
+        public MyViewHolder(View view) {
+            super(view);
+            button = view.findViewById(R.id.button);
+            textView = view.findViewById(R.id.textView);
+            textView1 = view.findViewById(R.id.textView1);
+            textView2 = view.findViewById(R.id.textView2);
+            textView3 = view.findViewById(R.id.textView3);
+        }
     }
 }

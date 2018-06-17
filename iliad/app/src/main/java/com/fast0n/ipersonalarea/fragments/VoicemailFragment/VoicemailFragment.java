@@ -80,12 +80,12 @@ public class VoicemailFragment extends Fragment {
         String url2 = site_url + "?voicemailreport=true&token=" + token;
 
 
-        getObject(url,url1, url2, context, view, token);
+        getObject(url, url1, url2, context, view, token);
 
         return view;
     }
 
-    private void getObject(String url,String url1, String url2, Context context, View view, String token) {
+    private void getObject(String url, String url1, String url2, Context context, View view, String token) {
 
         final ProgressBar loading;
         final RecyclerView recyclerView, recyclerView1, recyclerView2, recyclerView3;
@@ -113,11 +113,10 @@ public class VoicemailFragment extends Fragment {
         spinner = view.findViewById(R.id.spinner);
 
 
+        String list[] = {"Notifica inviata via email", "File audio inviato in allegato"};
 
-        String list[] = {"Notifica inviata via email","File audio inviato in allegato"};
 
-
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context,   R.layout.spinner_item, list);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, list);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(spinnerArrayAdapter);
 
@@ -131,7 +130,7 @@ public class VoicemailFragment extends Fragment {
                     RequestQueue queue = Volley.newRequestQueue(context);
                     final String site_url = getString(R.string.site_url);
 
-                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?email=" +  editText.getText().toString() + "&action=add&type="+  montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment")+"&token=" +token , null,
+                    JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, site_url + "?email=" + editText.getText().toString() + "&action=add&type=" + montant.replace("Notifica inviata via email", "report").replace("File audio inviato in allegato", "attachment") + "&token=" + token, null,
                             new Response.Listener<JSONObject>() {
 
                                 @Override
@@ -156,8 +155,7 @@ public class VoicemailFragment extends Fragment {
 
                     queue.add(getRequest);
 
-                }
-                else{
+                } else {
                     Toasty.warning(context, getString(R.string.email_wrong), Toast.LENGTH_LONG,
                             true).show();
                 }
@@ -193,8 +191,6 @@ public class VoicemailFragment extends Fragment {
         llm3.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView3.setHasFixedSize(true);
         recyclerView3.setLayoutManager(llm3);
-
-
 
 
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -235,7 +231,6 @@ public class VoicemailFragment extends Fragment {
                             textvoicemail.setVisibility(View.VISIBLE);
 
 
-
                         } catch (JSONException e) {
                             startActivity(new Intent(context, LoginActivity.class));
                         }
@@ -249,7 +244,6 @@ public class VoicemailFragment extends Fragment {
         });
 
         queue.add(getRequest);
-
 
 
         RequestQueue queue1 = Volley.newRequestQueue(context);
@@ -302,73 +296,66 @@ public class VoicemailFragment extends Fragment {
         queue1.add(getRequest1);
 
 
+        RequestQueue queue2 = Volley.newRequestQueue(context);
+        JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject json_raw = new JSONObject(response.toString());
+                            String iliad = json_raw.getString("iliad");
 
 
-
-            RequestQueue queue2 = Volley.newRequestQueue(context);
-            JsonObjectRequest getRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null,
-                    new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
                             try {
-                                JSONObject json_raw = new JSONObject(response.toString());
-                                String iliad = json_raw.getString("iliad");
+                                JSONObject json = new JSONObject(iliad);
+
+                                String string1 = json.getString("0");
+                                JSONObject json_strings1 = new JSONObject(string1);
+                                String stringCredit = json_strings1.getString("0");
+                                notification.setText(stringCredit);
 
 
-                                try {
-                                    JSONObject json = new JSONObject(iliad);
+                                for (int i = 1; i < json.length(); i++) {
 
-                                    String string1 = json.getString("0");
-                                    JSONObject json_strings1 = new JSONObject(string1);
-                                    String stringCredit = json_strings1.getString("0");
-                                    notification.setText(stringCredit);
+                                    String string = json.getString(String.valueOf(i));
+                                    JSONObject json_strings = new JSONObject(string);
 
 
-                                    for (int i = 1; i < json.length(); i++) {
+                                    String a = json_strings.getString("0");
+                                    String d = json_strings.getString("3");
 
-                                        String string = json.getString(String.valueOf(i));
-                                        JSONObject json_strings = new JSONObject(string);
-
-
-                                        String a = json_strings.getString("0");
-                                        String d = json_strings.getString("3");
-
-                                        try {
-                                            String b = json_strings.getString("1");
-                                            String c = json_strings.getString("2");
-                                            infoList1.add(new DataNotificationFragments(a, b, c, d));
-                                        } catch (Exception ignored) {
-                                            infoList1.add(new DataNotificationFragments(a, "", "0", d));
-                                        }
-
-
+                                    try {
+                                        String b = json_strings.getString("1");
+                                        String c = json_strings.getString("2");
+                                        infoList1.add(new DataNotificationFragments(a, b, c, d));
+                                    } catch (Exception ignored) {
+                                        infoList1.add(new DataNotificationFragments(a, "", "0", d));
                                     }
 
-                                    CustomAdapterNotification ca = new CustomAdapterNotification(context, infoList1, token);
-                                    recyclerView2.setAdapter(ca);
-                                    loading.setVisibility(View.INVISIBLE);
-                                    cardView1.setVisibility(View.VISIBLE);
-                                }
-                                catch (Exception ignored){}
 
-                            } catch (JSONException e) {
-                                startActivity(new Intent(context, LoginActivity.class));
+                                }
+
+                                CustomAdapterNotification ca = new CustomAdapterNotification(context, infoList1, token);
+                                recyclerView2.setAdapter(ca);
+                                loading.setVisibility(View.INVISIBLE);
+                                cardView1.setVisibility(View.VISIBLE);
+                            } catch (Exception ignored) {
                             }
 
+                        } catch (JSONException e) {
+                            startActivity(new Intent(context, LoginActivity.class));
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
 
-                }
-            });
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-            queue2.add(getRequest2);
+            }
+        });
 
-
-
-
+        queue2.add(getRequest2);
 
 
     }

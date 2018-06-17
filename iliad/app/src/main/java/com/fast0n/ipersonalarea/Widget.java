@@ -142,19 +142,19 @@ public class Widget extends AppWidgetProvider {
                                         String gb = json_Gb.getString("0");
                                         views.setTextViewText(R.id.gb, gb);
 
-                                        String x = gb.split("/")[0].replace("GB","0").replace("MB","");
+                                        String x = gb.split("/")[0].replace("GB", "0").replace("MB", "");
                                         String y = gb.split("/")[1];
 
                                         String a = x.substring(0, x.length() - 2);
-                                        String b = y.substring(0, y.length() - 2)+"000";
+                                        String b = y.substring(0, y.length() - 2) + "000";
 
-                                        Double e = Double.parseDouble(a.replace(",","."));
+                                        Double e = Double.parseDouble(a.replace(",", "."));
                                         Double f = Double.parseDouble(b);
 
                                         Double ef = (e / (e + f)) * 100;
                                         int result1 = ef.intValue();
 
-                                        views.setProgressBar(R.id.progressbar, 100,result1,false);
+                                        views.setProgressBar(R.id.progressbar, 100, result1, false);
 
                                         String stringMms = json.getString("4");
                                         JSONObject json_Mms = new JSONObject(stringMms);
@@ -170,8 +170,6 @@ public class Widget extends AppWidgetProvider {
                                 }, error -> {
                         });
                         creditqueue.add(getRequestCredit);
-
-
 
 
                     }, error1 -> {

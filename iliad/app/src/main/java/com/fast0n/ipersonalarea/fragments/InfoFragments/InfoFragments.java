@@ -83,7 +83,6 @@ public class InfoFragments extends Fragment {
         final List<DataInfoFragments> infoList = new ArrayList<>();
 
 
-
         // java adresses
         offer = view.findViewById(R.id.offer);
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -190,8 +189,6 @@ public class InfoFragments extends Fragment {
                                 }
 
                             }
-
-
 
 
                             offer.setVisibility(View.VISIBLE);
